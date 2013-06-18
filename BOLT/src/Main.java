@@ -11,6 +11,7 @@ public class Main
 		try
 		{
 			Display.setDisplayMode(Display.getDesktopDisplayMode());
+			Display.setFullscreen(true);
 			Display.create();
 		}
 		catch (LWJGLException e)

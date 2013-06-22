@@ -36,7 +36,7 @@ public class Model
 			if(this.hasTextures)
 			{
 				Vector2f t1 = this.tetxures.get((int)face.texture.x - 1);
-				glTexCoord2f(t1.x, t1.y);
+				glTexCoord2f(t1.x, 1 - t1.y);
 			}
 			Vector3f v1 = this.vertices.get((int) face.vertex.x - 1);
 			glVertex3f(v1.x, v1.y, v1.z);
@@ -50,7 +50,7 @@ public class Model
 			if(this.hasTextures)
 			{
 				Vector2f t2 = this.tetxures.get((int)face.texture.y - 1);
-				glTexCoord2f(t2.x, t2.y);
+				glTexCoord2f(t2.x, 1 - t2.y);
 			}
 			Vector3f v2 = this.vertices.get((int) face.vertex.y - 1);
 			glVertex3f(v2.x, v2.y, v2.z);
@@ -63,7 +63,7 @@ public class Model
 			if(this.hasTextures)
 			{
 				Vector2f t3 = this.tetxures.get((int)face.texture.z - 1);
-				glTexCoord2f(t3.x, t3.y);
+				glTexCoord2f(t3.x, 1 - t3.y);
 			}
 			Vector3f v3 = this.vertices.get((int) face.vertex.z - 1);
 			glVertex3f(v3.x, v3.y, v3.z);

@@ -58,7 +58,7 @@ public class Main
 		
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1}));	
 
-		ShaderLoader.useProgram("test/shader");
+		ShaderLoader.useProgram("test/", "shader");
 
 		while (!Display.isCloseRequested())
 			gameLoop();

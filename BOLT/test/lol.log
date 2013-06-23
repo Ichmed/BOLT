@@ -1,0 +1,3 @@
+Vertex-Shader test/shader could not be compiled 
+ Error log:
+0(25) : error C1008: undefined variable "gl_Psition"

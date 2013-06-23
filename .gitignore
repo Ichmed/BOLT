@@ -18,6 +18,7 @@ local.properties
 .blend1
 .blend2
 .loadpath
+.log
 
 # External tool builders
 .externalToolBuilders/

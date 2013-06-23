@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.lwjgl.opengl.Display;
 
@@ -24,29 +23,17 @@ public class GameRules
 		try
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
-			ArrayList<String> rulesIdentifier = new ArrayList<String>();
-			ArrayList<Float> rulesValues = new ArrayList<Float>();
 			String line;
 			while((line = reader.readLine()) != null)
 			{
-				String identifier = line.split("=")[0];
-				float value = Float.parseFloat(line.split("=")[1]);
-				rulesIdentifier.add(identifier);
-				rulesValues.add(value);
+				if(line.startsWith("gravity "))
+					gravity = Float.valueOf(line.split("=")[1]);
+				if(line.startsWith("playerMaxSpeed "))
+					playerMaxSpeed = Float.valueOf(line.split("=")[1]);
+				if(line.startsWith("devMode "))
+					devMode = Boolean.valueOf(line.split("=")[1]);
 			}
 			reader.close();
-			for(int i = 0; i < rulesIdentifier.size(); i++)
-			{
-				if (rulesIdentifier.get(i) == "gravity")
-					gravity = rulesValues.get(i);
-				else if (rulesIdentifier.get(i) == "playerMaxSpeed")
-					playerMaxSpeed = rulesValues.get(i);
-				else if (rulesIdentifier.get(i) == "devMode")
-					if(rulesValues.get(i) != 0.0)
-						devMode = true;
-					else
-						devMode = false;
-			}
 		}
 		catch (IOException e)
 		{

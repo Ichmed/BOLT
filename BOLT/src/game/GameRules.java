@@ -14,6 +14,8 @@ public class GameRules
 	public static float gravity = 9.8f;
 	//MaxSpeed in m/s
 	public static float playerMaxSpeed = 2.77f;
+	//DeveloperMode on/off
+	public static boolean devMode = false;
 	
 	//load game.rules to static variables
 	public static void loadRules()
@@ -39,6 +41,11 @@ public class GameRules
 					gravity = rulesValues.get(i);
 				else if (rulesIdentifier.get(i) == "playerMaxSpeed")
 					playerMaxSpeed = rulesValues.get(i);
+				else if (rulesIdentifier.get(i) == "devMode")
+					if(rulesValues.get(i) != 0.0)
+						devMode = true;
+					else
+						devMode = false;
 			}
 		}
 		catch (IOException e)

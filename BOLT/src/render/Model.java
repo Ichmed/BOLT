@@ -48,9 +48,7 @@ public class Model
 				glMaterial(GL_FRONT, GL_DIFFUSE, Misc.asFloatBuffer(new float[]{m.diffuseColor.x, m.diffuseColor.y, m.diffuseColor.z, m.diffuseColor.w}));
 				glMaterial(GL_FRONT, GL_SPECULAR, Misc.asFloatBuffer(new float[]{m.specularColor.x, m.specularColor.y, m.specularColor.z, m.specularColor.w}));
 				
-				glMaterialf(GL_FRONT, GL_SHININESS, m.shininess);
-				
-//				glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{m.ambientColor.x, m.ambientColor.y, m.ambientColor.z, m.ambientColor.w}));				
+				glMaterialf(GL_FRONT, GL_SHININESS, m.shininess);							
 			}
 			glBegin(GL_TRIANGLES);
 			for (Face face : this.faces.get(i))

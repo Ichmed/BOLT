@@ -1,6 +1,5 @@
 varying vec3 color;
 
-
 void main()
 {
     gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0; 
@@ -12,7 +11,7 @@ void main()
     float diffuseLightIntensity = max(0.0, dot(surfaceNormal, lightDirection));
     
     color.rgb = diffuseLightIntensity * gl_FrontMaterial.diffuse.rgb;
-    color += gl_FrontMaterial.ambient.rgb;
+    color += gl_FrontMaterial.ambient.rgb + gl_LightModel.ambient.rgb;
     
     vec3 reflectionDirection = normalize(reflect(-lightDirection, surfaceNormal));
     

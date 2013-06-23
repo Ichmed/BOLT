@@ -1,7 +1,6 @@
 varying vec3 color;
 uniform sampler2D tex;
 
-
 void main()
 {
     vec3 ct,cf;

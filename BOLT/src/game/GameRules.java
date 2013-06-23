@@ -18,10 +18,10 @@ public class GameRules
 	//load game.rules to static variables
 	public static void loadRules()
 	{
-		File gravityLoader = new File("game.rules");
+		File file = new File("game.rules");
 		try
 		{
-			BufferedReader reader = new BufferedReader(new FileReader(gravityLoader));
+			BufferedReader reader = new BufferedReader(new FileReader(file));
 			ArrayList<String> rulesIdentifier = new ArrayList<String>();
 			ArrayList<Float> rulesValues = new ArrayList<Float>();
 			String line;

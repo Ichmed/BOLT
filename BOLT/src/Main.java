@@ -88,6 +88,8 @@ public class Main
 
 //		 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		m.renderModel();
+		glTranslated(0, 0, 2);
+		m.renderModel();
 
 		Display.update();
 		Display.sync(50);

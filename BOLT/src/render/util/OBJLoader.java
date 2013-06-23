@@ -123,15 +123,6 @@ public class OBJLoader
 				model.materials.put(line.split(" ")[1], m);
 				model.faceMaterials.add(line.split(" ")[1]);
 			}
-			else if(line.startsWith("Kd "))
-			{
-				float red = Float.valueOf(line.split(" ")[1]);
-				float green = Float.valueOf(line.split(" ")[2]);
-				float blue = Float.valueOf(line.split(" ")[3]);
-				float alpha = 1;
-				if(line.split(" ").length > 4) alpha = Float.valueOf(line.split(" ")[4]);
-				m.difuseColor = new Vector4f(red, green, blue, alpha);
-			}
 			else if(line.startsWith("Ka "))
 			{
 				float red = Float.valueOf(line.split(" ")[1]);
@@ -140,7 +131,29 @@ public class OBJLoader
 				float alpha = 1;
 				if(line.split(" ").length > 4) alpha = Float.valueOf(line.split(" ")[4]);
 				m.ambientColor = new Vector4f(red, green, blue, alpha);
-				//TODO: Specular lighting
+			}
+			else if(line.startsWith("Kd "))
+			{
+				float red = Float.valueOf(line.split(" ")[1]);
+				float green = Float.valueOf(line.split(" ")[2]);
+				float blue = Float.valueOf(line.split(" ")[3]);
+				float alpha = 1;
+				if(line.split(" ").length > 4) alpha = Float.valueOf(line.split(" ")[4]);
+				m.diffuseColor = new Vector4f(red, green, blue, alpha);
+			}
+			else if(line.startsWith("Ks "))
+			{
+				float red = Float.valueOf(line.split(" ")[1]);
+				float green = Float.valueOf(line.split(" ")[2]);
+				float blue = Float.valueOf(line.split(" ")[3]);
+				float alpha = 1;
+				if(line.split(" ").length > 4) alpha = Float.valueOf(line.split(" ")[4]);
+				m.specularColor = new Vector4f(red, green, blue, alpha);
+				
+			}
+			else if(line.startsWith("Ns "))
+			{
+				m.shininess = Float.valueOf(line.split(" ")[1]);
 			}
 			else if(line.startsWith("d ") || line.startsWith("Tr "))
 			{

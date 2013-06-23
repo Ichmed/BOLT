@@ -42,11 +42,15 @@ public class Model
 				if (m.hasTexture) RenderHelper.bindTexture(m.texturePath);
 				else glDisable(GL_TEXTURE_2D);
 				
-				glColor4f(m.difuseColor.x, m.difuseColor.y, m.difuseColor.z, m.difuseColor.w);
+//				glColor4f(m.difuseColor.x, m.difuseColor.y, m.difuseColor.z, m.difuseColor.w);
+
+				glMaterial(GL_FRONT, GL_AMBIENT, Misc.asFloatBuffer(new float[]{m.ambientColor.x, m.ambientColor.y, m.ambientColor.z, m.ambientColor.w}));
+				glMaterial(GL_FRONT, GL_DIFFUSE, Misc.asFloatBuffer(new float[]{m.diffuseColor.x, m.diffuseColor.y, m.diffuseColor.z, m.diffuseColor.w}));
+				glMaterial(GL_FRONT, GL_SPECULAR, Misc.asFloatBuffer(new float[]{m.specularColor.x, m.specularColor.y, m.specularColor.z, m.specularColor.w}));
 				
-				glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{m.ambientColor.x, m.ambientColor.y, m.ambientColor.z, m.ambientColor.w}));
+				glMaterialf(GL_FRONT, GL_SHININESS, m.shininess);
 				
-				//TODO: Specular lighting
+//				glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{m.ambientColor.x, m.ambientColor.y, m.ambientColor.z, m.ambientColor.w}));				
 			}
 			glBegin(GL_TRIANGLES);
 			for (Face face : this.faces.get(i))
@@ -93,6 +97,5 @@ public class Model
 			glEnd();
 		}
 		glEnable(GL_TEXTURE_2D);
-		glColor4f(1, 1, 1, 1);
 	}
 }

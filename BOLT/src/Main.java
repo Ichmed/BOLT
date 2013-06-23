@@ -19,6 +19,8 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		//TODO: Catch arguments for Console
+		
 		try
 		{
 			Display.setDisplayMode(new DisplayMode(640, 480));

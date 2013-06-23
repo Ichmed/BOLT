@@ -45,12 +45,20 @@ public class ShaderLoader
 		glShaderSource(vertex, vertexSource);
 		glCompileShader(vertex);
 		if(glGetShaderi(vertex, GL_COMPILE_STATUS) == GL_FALSE)
+		{
 			System.err.println("Vertex-Shader " + vertexName + " could not be compiled");
+			System.err.println("Error log:");
+			System.err.println(glGetShaderInfoLog(vertex, 1024));
+		}
 		
 		glShaderSource(fragment, fragmentSource);
 		glCompileShader(fragment);
 		if(glGetShaderi(fragment, GL_COMPILE_STATUS) == GL_FALSE)
+		{
 			System.err.println("Fragment-Shader " + fragmentName + " could not be compiled");
+			System.err.println("Error log:");
+			System.err.println(glGetShaderInfoLog(fragment, 1024));
+		}
 		
 		glAttachShader(program, vertex);
 		glAttachShader(program, fragment);

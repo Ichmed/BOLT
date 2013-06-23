@@ -130,11 +130,21 @@ public class OBJLoader
 				float blue = Float.valueOf(line.split(" ")[3]);
 				float alpha = 1;
 				if(line.split(" ").length > 4) alpha = Float.valueOf(line.split(" ")[4]);
-				m.colorVec = new Vector4f(red, green, blue, alpha);
+				m.difuseColor = new Vector4f(red, green, blue, alpha);
+			}
+			else if(line.startsWith("Ka "))
+			{
+				float red = Float.valueOf(line.split(" ")[1]);
+				float green = Float.valueOf(line.split(" ")[2]);
+				float blue = Float.valueOf(line.split(" ")[3]);
+				float alpha = 1;
+				if(line.split(" ").length > 4) alpha = Float.valueOf(line.split(" ")[4]);
+				m.ambientColor = new Vector4f(red, green, blue, alpha);
+				//TODO: Specular lighting
 			}
 			else if(line.startsWith("d ") || line.startsWith("Tr "))
 			{
-				m.colorVec.setW(Float.valueOf(line.split(" ")[1]));
+				m.transperency = Float.valueOf(line.split(" ")[1]);
 			}
 			else if(line.startsWith("map_Kd "))
 			{

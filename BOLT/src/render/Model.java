@@ -9,6 +9,8 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import render.util.Misc;
+
 public class Model
 {
 	public List<Vector3f> vertices = new ArrayList<Vector3f>();
@@ -27,6 +29,7 @@ public class Model
 	public Model()
 	{
 	}
+	
 
 	public void renderModel()
 	{
@@ -39,7 +42,11 @@ public class Model
 				if (m.hasTexture) RenderHelper.bindTexture(m.texturePath);
 				else glDisable(GL_TEXTURE_2D);
 				
-				glColor4f(m.colorVec.x, m.colorVec.y, m.colorVec.z, m.colorVec.w);
+				glColor4f(m.difuseColor.x, m.difuseColor.y, m.difuseColor.z, m.difuseColor.w);
+				
+				glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{m.ambientColor.x, m.ambientColor.y, m.ambientColor.z, m.ambientColor.w}));
+				
+				//TODO: Specular lighting
 			}
 			glBegin(GL_TRIANGLES);
 			for (Face face : this.faces.get(i))

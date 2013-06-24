@@ -1,6 +1,8 @@
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 import static org.lwjgl.opengl.GL11.*;
 
+import game.Camera;
+
 import java.io.IOException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -16,6 +18,7 @@ public class Main
 	public static Model m;
 
 	static int i = 0;
+	static Camera camera = new Camera();
 
 	public static void main(String[] args)
 	{
@@ -24,13 +27,14 @@ public class Main
 		try
 		{
 			Display.setDisplayMode(new DisplayMode(640, 480));
-			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+//			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
 		}
 		catch (LWJGLException e)
 		{
 			e.printStackTrace();
 		}
+		
 
 		try
 		{
@@ -71,7 +75,14 @@ public class Main
 	public static void gameLoop()
 	{
 		i++;
+		
+		//TODO: Camera Control and rotation
+		
 		glPushMatrix();
+		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
+		glRotatef(camera.rotation.x * 180, 1f, 0f, 0f);
+		glRotatef(camera.rotation.y * 180, 0f, 1f, 0f);
+		glRotatef(camera.rotation.z * 180, 0f, 0f, 1f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

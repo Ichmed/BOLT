@@ -26,11 +26,11 @@ public class GameRules
 			String line;
 			while((line = reader.readLine()) != null)
 			{
-				if(line.startsWith("gravity "))
+				if(line.startsWith("gravity"))
 					gravity = Float.valueOf(line.split("=")[1]);
-				if(line.startsWith("playerMaxSpeed "))
+				if(line.startsWith("playerMaxSpeed"))
 					playerMaxSpeed = Float.valueOf(line.split("=")[1]);
-				if(line.startsWith("devMode "))
+				if(line.startsWith("devMode"))
 					devMode = Boolean.valueOf(line.split("=")[1]);
 			}
 			reader.close();

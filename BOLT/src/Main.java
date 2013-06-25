@@ -5,6 +5,8 @@ import game.Camera;
 
 import java.io.IOException;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -27,7 +29,7 @@ public class Main
 		try
 		{
 			Display.setDisplayMode(new DisplayMode(640, 480));
-//			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
 		}
 		catch (LWJGLException e)
@@ -65,6 +67,9 @@ public class Main
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1}));	
 
 		ShaderLoader.useProgram("test/", "shader");
+		
+		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+		Mouse.setGrabbed(true);
 
 		while (!Display.isCloseRequested())
 			gameLoop();
@@ -75,6 +80,17 @@ public class Main
 	public static void gameLoop()
 	{
 		i++;
+		
+		camera.rotation.y += (Mouse.getX() - (Display.getWidth() / 2f)) / (float)Display.getWidth();
+		camera.rotation.x -= (Mouse.getY() - (Display.getHeight() / 2f)) / (float)Display.getHeight();
+		
+		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_W))
+		{
+			camera.position.x += camera.rotation.y % 2;
+			camera.position.y += camera.rotation.x % 2;
+		}
 		
 		//TODO: Camera Control and rotation
 		

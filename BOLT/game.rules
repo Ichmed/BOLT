@@ -1,3 +1,3 @@
 gravity=9.81
 playerMaxSpeed=2.77
-devMode=0
+devMode=true

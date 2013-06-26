@@ -3,8 +3,6 @@ package util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.GregorianCalendar;
-import java.util.logging.Logger;
 
 
 public class ErrorHandler

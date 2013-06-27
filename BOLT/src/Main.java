@@ -115,12 +115,12 @@ public class Main
 	{
 		i++;		
 		
-		camera.rotation.x += (Mouse.getX() - (Display.getWidth() / 2f)) / (float)Display.getWidth();
+		camera.rotation.x -= (Mouse.getX() - (Display.getWidth() / 2f)) / (float)Display.getWidth();
 		camera.rotation.y -= (Mouse.getY() - (Display.getHeight() / 2f)) / (float)Display.getHeight();
 		
 		if((Mouse.getY() - (Display.getHeight() / 2f)) / (float)Display.getHeight() != 0)
 		
-		MathHelper.normalize(camera.rotation);
+//		MathHelper.normalize(camera.rotation);
 //		System.out.println(camera.rotation.x);
 		System.out.println(camera.rotation.y);
 		System.out.println(camera.rotation.z);
@@ -139,8 +139,13 @@ public class Main
 		glPushMatrix();
 		glTranslated(-5, -5, -5);
 		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
-		glRotated(Math.toDegrees(Math.atan2(camera.rotation.y, camera.rotation.z)), 1f, 0f, 0f);
-		glRotated(Math.toDegrees(Math.atan2(camera.rotation.z, camera.rotation.x)), 0f, 1f, 0f);
+		glRotated(Math.toDegrees(Math.asin(camera.rotation.z / MathHelper.pyth(camera.rotation.z, camera.rotation.y))), 1f, 0f, 0f);
+		glRotated(Math.toDegrees(Math.asin(camera.rotation.x / MathHelper.pyth(camera.rotation.x, camera.rotation.z))), 1f, 0f, 0f);
+		glRotated(Math.toDegrees(Math.asin(camera.rotation.y / MathHelper.pyth(camera.rotation.y, camera.rotation.x))), 1f, 0f, 0f);
+		
+//		
+//		glRotated(Math.toDegrees(Math.atan2(camera.rotation.y, camera.rotation.z)), 1f, 0f, 0f);
+//		glRotated(Math.toDegrees(Math.atan2(camera.rotation.z, camera.rotation.x)), 0f, 1f, 0f);
 //		glRotated(Math.toDegrees(Math.atan2(camera.rotation.y, camera.rotation.x)), 0f, 0f, 1f);
 		glTranslated(5, 5, 5);
 //

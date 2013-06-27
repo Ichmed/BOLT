@@ -14,4 +14,12 @@ public class Plane
 		this.normal = normal;
 		this.startingPoint = startingPoint;
 	}
+	
+	public void TransformToHesseNormalForm()
+	{
+		normal.normalise ();
+		float lastFactor = normal.x * (-startingPoint.x) + normal.y * (-startingPoint.y) + normal.z * (-startingPoint.z);
+		if(lastFactor > 0)
+			normal.negate ();
+	}
 }

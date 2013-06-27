@@ -24,7 +24,7 @@ public abstract class MathHelper
 		return v;
 	}
 	
-	/*TODO: Intersection between a plane and a straight line
+	/*TODO: Intersection between a plane and a graph
 	public static Vector3f calculateIntersection()
 	{
 		

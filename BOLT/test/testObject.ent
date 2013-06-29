@@ -3,17 +3,17 @@
 name testObject
 
 # all unasigned values will be read from the parent-file instead
-# set null ifthere is no parent-file
+# set null if there is no parent-file
 parent null
 
 # the display name of the entity (two or more entities may have the same 'fullName' but never the same 'name'
 # spaces are allowed
 fullName Test Object
 
-# how the entity replies to physikal force applied to it
+# how the entity reacts to physikal force applied to it
 # types:
 #     phys(ical)
-#     static (like phys but without a motion vector)
+#     static
 physType phys 
 
 # types:
@@ -24,6 +24,9 @@ collType solid
 
 # if true the entity won't be rendered ingame
 invis false
+
+# should the entity be affected by gravity
+grav true
 
 # set to "a/class/that/does/stuff.class to tell the engine that this entity should have a special class assigned to it
 # otherwise the parents .class will be used instead. Set to 'null' if you want the default class to handle this entity
@@ -36,6 +39,7 @@ model testObject.obj
 # types:
 #     block x, y, z
 #     sphere radius
+#     ell(ipsoid) x y z
 #     pyramid x, y, height
 collisionBox block 5.0 7.5 1.25
 
@@ -45,12 +49,13 @@ collisionModel testObject.obj
 ###### INDIVIDUAL VARIABLES ######
 # these will be read in and stored in a HashMap for ingame acces
 # types:
-#    f(loat)
-#    i(nteger)
-#    b(oolean)
-#    s(tring)
+#     b(yte)
+#     f(loat)
+#     i(nteger)
+#     bool(ean)
+#     s(tring)
 
-b isThisATest true
+bool isThisATest true
 i randomInteger 5
 # everything after a string's name will be read in
 s testString this is only a test it doesn't matter what this text says

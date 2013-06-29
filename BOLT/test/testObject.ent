@@ -1,0 +1,56 @@
+# a unique identifier for this entity
+# no spaces
+name testObject
+
+# all unasigned values will be read from the parent-file instead
+# set null ifthere is no parent-file
+parent null
+
+# the display name of the entity (two or more entities may have the same 'fullName' but never the same 'name'
+# spaces are allowed
+fullName Test Object
+
+# how the entity replies to physikal force applied to it
+# types:
+#     phys(ical)
+#     static (like phys but without a motion vector)
+physType phys 
+
+# types:
+#     solid (all objects will collide with this object)
+#     gameSolid (only object marked as gamePlay objects will collide with the object (players, projectiles, etc.) but not particles etc.
+#     nSolid (everything will pass through this entity)
+collType solid
+
+# if true the entity won't be rendered ingame
+invis false
+
+# set to "a/class/that/does/stuff.class to tell the engine that this entity should have a special class assigned to it
+# otherwise the parents .class will be used instead. Set to 'null' if you want the default class to handle this entity
+class null
+
+# the display model for this entity
+model testObject.obj
+
+# the rough collission box to check for a possible collision before complex handeling
+# types:
+#     block x, y, z
+#     sphere radius
+#     pyramid x, y, height
+collisionBox block 5.0 7.5 1.25
+
+# the complex collision model (might be something else than the display model)
+collisionModel testObject.obj
+
+###### INDIVIDUAL VARIABLES ######
+# these will be read in and stored in a HashMap for ingame acces
+# types:
+#    f(loat)
+#    i(nteger)
+#    b(oolean)
+#    s(tring)
+
+b isThisATest true
+i randomInteger 5
+# everything after a string's name will be read in
+s testString this is only a test it doesn't matter what this text says

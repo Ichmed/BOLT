@@ -1,7 +1,5 @@
 package util;
 
-import java.nio.FloatBuffer;
-
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 

@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.vector.Vector3f;
 
 import render.Model;
 import render.util.Misc;
@@ -80,45 +81,33 @@ public class Main
 
 	public static void gameLoop()
 	{
-		i++;		
+		i++;
 		
-		camera.rotation.x -= (Mouse.getX() - (Display.getWidth() / 2f)) / (float)Display.getWidth();
-		camera.rotation.y -= (Mouse.getY() - (Display.getHeight() / 2f)) / (float)Display.getHeight();
+		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float)Display.getWidth()) * 180;
+		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float)Display.getHeight()) * 180;
 		
-		if((Mouse.getY() - (Display.getHeight() / 2f)) / (float)Display.getHeight() != 0)
-		
-		camera.rotation.normalise();
-//		System.out.println(camera.rotation.x);
-		System.out.println(camera.rotation.y);
-		System.out.println(camera.rotation.z);
 		
 		
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		
-		if(Keyboard.isKeyDown(Keyboard.KEY_W))
-		{
-			camera.position.x += camera.rotation.y % 2;
-			camera.position.y += camera.rotation.x % 2;
-		}
+		Vector3f rot = new Vector3f((float)Math.cos(camera.rotation.x), (float)Math.cos(camera.rotation.y), (float)Math.cos(camera.rotation.z));
 		
-		//TODO: Camera Control and rotation
+		//TODO camera movement
+//		if(Keyboard.isKeyDown(Keyboard.KEY_W))
+//		{
+//			camera.position.x += rot.x;
+//			camera.position.y += rot.y;
+//			camera.position.z += rot.z;
+//		}
 		
 		glPushMatrix();
-		glTranslated(-5, -5, -5);
-		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
-		glRotated(Math.toDegrees(Math.asin(camera.rotation.z / MathHelper.pyth(camera.rotation.z, camera.rotation.y))), 1f, 0f, 0f);
-		glRotated(Math.toDegrees(Math.asin(camera.rotation.x / MathHelper.pyth(camera.rotation.x, camera.rotation.z))), 1f, 0f, 0f);
-		glRotated(Math.toDegrees(Math.asin(camera.rotation.y / MathHelper.pyth(camera.rotation.y, camera.rotation.x))), 1f, 0f, 0f);
 		
-//		
-//		glRotated(Math.toDegrees(Math.atan2(camera.rotation.y, camera.rotation.z)), 1f, 0f, 0f);
-//		glRotated(Math.toDegrees(Math.atan2(camera.rotation.z, camera.rotation.x)), 0f, 1f, 0f);
-//		glRotated(Math.toDegrees(Math.atan2(camera.rotation.y, camera.rotation.x)), 0f, 0f, 1f);
-		glTranslated(5, 5, 5);
-//
-//		System.out.println(Math.atan2(camera.rotation.y, camera.rotation.z));
-		System.out.println(Math.toDegrees(Math.atan2(camera.rotation.y, camera.rotation.z)));
-
+		glRotated(camera.rotation.x, 1f, 0f, 0f);
+		glRotated(camera.rotation.y, 0f, 1f, 0f);
+		glRotated(camera.rotation.z, 0f, 0f, 1f);
+		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
+		
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnable(GL_BLEND);

@@ -232,9 +232,9 @@ public class CollisionBox
 		//Initializing "best values" for left and right Points and distances
 		Vector3f bestPointLeft = new Vector3f();
 		Vector3f bestPointRight = new Vector3f();
-		Vector3f bestNormalLeft = new Vector3f(1, 0, 0);
+		Vector3f bestNormalLeft = MathHelper.createPerpendicularVector(bestNormalFront);
 		float minDistanceLeftRight = Math.abs(maxX - minX);
-		Vector3f normalLeft = new Vector3f(1, 0, 0);
+		Vector3f normalLeft = bestNormalLeft;
 		//working values for Planes and distances
 		float distanceLeftRight = Math.abs(maxX - minX);
 		Plane left = new Plane(normalLeft, pointLeft);

@@ -86,7 +86,7 @@ public class Main
 		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float)Display.getWidth()) * 180;
 		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float)Display.getHeight()) * 180;
 		
-		
+		camera.rotation.x = MathHelper.clamp(camera.rotation.x, -90, 90);
 		
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		

@@ -32,4 +32,9 @@ public abstract class MathHelper
 		rotationMatrix.m22 = (float)(rotationPlane.normal.z * rotationPlane.normal.z * (1 - Math.cos (degree)) + Math.cos (degree));
 		Matrix3f.transform (rotationMatrix, vector, vector);
 	}
+	
+	public static float clamp (float f, float min, float max)
+	{
+		return Math.max(min, Math.min(f, max));
+	}	
 }

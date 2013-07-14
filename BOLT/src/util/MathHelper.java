@@ -36,5 +36,12 @@ public abstract class MathHelper
 	public static float clamp (float f, float min, float max)
 	{
 		return Math.max(min, Math.min(f, max));
-	}	
+	}
+	
+	public static Vector3f createPerpendicularVector(Vector3f startingVector)
+	{
+		Vector3f perpendicularVector = new Vector3f(1,1,((-startingVector.x-startingVector.y)/startingVector.z));
+		perpendicularVector.normalise();
+		return perpendicularVector;
+	}
 }

@@ -1,5 +1,7 @@
 package entity;
 
+import game.World;
+
 import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -20,4 +22,12 @@ public class Entity
 	public Vector3f balancePoint;
 	
 	public HashMap<String, Object> customValues;
+	
+	public World worldObj;
+	
+	public Vector3f position;
+	
+	public void onTick()
+	{
+	}
 }

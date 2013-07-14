@@ -36,6 +36,7 @@ public class CollisionBox
 	
 	public CollisionBox(Vector3f... points)
 	{
+		//TODO change to code: create Colisionbox
 		float minX = points[0].x;
 		float minY = points[0].y;
 		float minZ = points[0].z;

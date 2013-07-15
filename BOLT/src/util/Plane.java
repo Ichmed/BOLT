@@ -15,7 +15,7 @@ public class Plane
 		this.startingPoint = startingPoint;
 	}
 	
-	public void TransformToHesseNormalForm()
+	public void transformToHesseNormalForm()
 	{
 		normal.normalise ();
 		float lastFactor = normal.x * (-startingPoint.x) + normal.y * (-startingPoint.y) + normal.z * (-startingPoint.z);

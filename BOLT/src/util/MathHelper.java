@@ -3,11 +3,16 @@ package util;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * 
+ * @author Felix & Michael
+ *
+ */
 public abstract class MathHelper
 {	
 	public static float calculateDistancePointPlane(Vector3f point, Plane plane)
 	{
-		plane.TransformToHesseNormalForm();
+		plane.transformToHesseNormalForm();
 		return (plane.normal.x * point.x + plane.normal.y * point.y + plane.normal.z * point.z - plane.startingPoint.x * plane.normal.x -
 				plane.startingPoint.y * plane.normal.y - plane.startingPoint.z * plane.normal.z);
 	}
@@ -37,7 +42,7 @@ public abstract class MathHelper
 	 * @param value
 	 * @param min
 	 * @param max
-	 * @return min if the value is smaller then min, max if the value is greater than max and tha value itself if it is between min and max
+	 * @return min if the value is smaller then min, max if the value is greater than max and the value itself if it is between min and max
 	 */
 	public static float clamp (float value, float min, float max)
 	{
@@ -53,13 +58,16 @@ public abstract class MathHelper
 	
 	public static Vector3f intersectLineWithPlane(Line line, Plane plane)
 	{
-		plane.TransformToHesseNormalForm();
+		plane.transformToHesseNormalForm();
+		float factor = 0;
+		
 		return new Vector3f ();
 	}
 	
 	public static Vector3f intersectPlaneWithPlane(Plane plane1, Plane plane2)
 	{
-		
+		plane1.transformToHesseNormalForm();
+		plane2.transformToHesseNormalForm();
 		return new Vector3f ();
 	}
 }

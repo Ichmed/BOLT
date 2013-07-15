@@ -4,13 +4,12 @@ import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
 public abstract class MathHelper
-{
-	//TODO: Intersection between a plane and a graph
-	
-	public static float calculateDistancePointPlane(Vector3f point, Plane hesseNormalForm)
+{	
+	public static float calculateDistancePointPlane(Vector3f point, Plane plane)
 	{
-		return (hesseNormalForm.normal.x * point.x + hesseNormalForm.normal.y * point.y + hesseNormalForm.normal.z * point.z - hesseNormalForm.startingPoint.x * hesseNormalForm.normal.x -
-				hesseNormalForm.startingPoint.y * hesseNormalForm.normal.y - hesseNormalForm.startingPoint.z * hesseNormalForm.normal.z);
+		plane.TransformToHesseNormalForm();
+		return (plane.normal.x * point.x + plane.normal.y * point.y + plane.normal.z * point.z - plane.startingPoint.x * plane.normal.x -
+				plane.startingPoint.y * plane.normal.y - plane.startingPoint.z * plane.normal.z);
 	}
 	
 	public static double pyth(float a, float b)
@@ -43,5 +42,17 @@ public abstract class MathHelper
 		Vector3f perpendicularVector = new Vector3f(1,1,((-startingVector.x-startingVector.y)/startingVector.z));
 		perpendicularVector.normalise();
 		return perpendicularVector;
+	}
+	
+	public static Vector3f intersectLineWithPlane(Line line, Plane plane)
+	{
+		plane.TransformToHesseNormalForm();
+		return new Vector3f ();
+	}
+	
+	public static Vector3f intersectPlaneWithPlane(Plane plane1, Plane plane2)
+	{
+		
+		return new Vector3f ();
 	}
 }

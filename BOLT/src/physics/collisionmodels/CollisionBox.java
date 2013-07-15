@@ -202,7 +202,7 @@ public class CollisionBox
 			//Rotating frontPlane and transforming it to the standard (HesseNormalForm)
 			//
 			front = new Plane(normalFront, pointFront);
-			front.TransformToHesseNormalForm();
+			front.transformToHesseNormalForm();
 			//Initializing temporary maximum values
 			Vector3f maxFrontPoint = new Vector3f (0, 0, 0);
 			float maxFrontDis = 0;
@@ -234,12 +234,12 @@ public class CollisionBox
 			}
 			//setting the temporary bestFrontPlane and normalize it
 			front = new Plane(normalFront, maxFrontPoint);
-			front.TransformToHesseNormalForm();
+			front.transformToHesseNormalForm();
 			//
 			//Rotating backPlane and transforming it to the standard (HesseNormalForm)
 			//
 			back = new Plane(normalFront, pointBack);
-			back.TransformToHesseNormalForm();
+			back.transformToHesseNormalForm();
 			//Initializing temporary maximum values
 			Vector3f maxBackPoint = new Vector3f (0, 0, 0);
 			float maxBackDis = 0;
@@ -270,7 +270,7 @@ public class CollisionBox
 			}
 			//setting the round-best-Values (for the next rotation as compareValues)
 			back = new Plane(normalFront, maxBackPoint);
-			back.TransformToHesseNormalForm();
+			back.transformToHesseNormalForm();
 			distanceFrontBack = Math.abs(MathHelper.calculateDistancePointPlane(maxBackPoint, front));
 			if(distanceFrontBack < minDistanceFrontBack)
 			{
@@ -309,7 +309,7 @@ public class CollisionBox
 			//Rotating leftPlane and transforming it to the standard (HesseNormalForm)
 			//
 			left = new Plane(normalLeft, pointLeft);
-			left.TransformToHesseNormalForm();
+			left.transformToHesseNormalForm();
 			//Initializing temporary maximum values
 			Vector3f maxLeftPoint = new Vector3f (0, 0, 0);
 			float maxLeftDis = 0;
@@ -341,12 +341,12 @@ public class CollisionBox
 			}
 			//setting the temporary bestLeftPlane and normalize it
 			left = new Plane(normalLeft, maxLeftPoint);
-			left.TransformToHesseNormalForm();
+			left.transformToHesseNormalForm();
 			//
 			//Rotating rightPlane and transforming it to the standard (HesseNormalForm)
 			//
 			right = new Plane(normalLeft, pointRight);
-			right.TransformToHesseNormalForm();
+			right.transformToHesseNormalForm();
 			//Initializing temporary maximum values
 			Vector3f maxRightPoint = new Vector3f (0, 0, 0);
 			float maxRightDis = 0;
@@ -377,7 +377,7 @@ public class CollisionBox
 			}
 			//setting the round-best-Values (for the next rotation as compareValues)
 			right = new Plane(normalLeft, maxRightPoint);
-			right.TransformToHesseNormalForm();
+			right.transformToHesseNormalForm();
 			distanceLeftRight = Math.abs(MathHelper.calculateDistancePointPlane(maxRightPoint, left));
 			if(distanceLeftRight < minDistanceLeftRight)
 			{
@@ -403,7 +403,7 @@ public class CollisionBox
 		Vector3f maxPointTop = new Vector3f();
 		//working values for Planes
 		Plane top = new Plane(bestNormalTop, pointTop);
-		top.TransformToHesseNormalForm();
+		top.transformToHesseNormalForm();
 		float maxTopDis = 0;
 		//calculating if the topPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
@@ -431,7 +431,7 @@ public class CollisionBox
 				}
 		}
 		top = new Plane(bestNormalTop, maxPointTop);
-		top.TransformToHesseNormalForm();
+		top.transformToHesseNormalForm();
 		//
 		//Adjusting bottomPlane
 		//
@@ -439,7 +439,7 @@ public class CollisionBox
 		Vector3f maxPointBottom = new Vector3f();
 		//working values for Planes
 		Plane bottom = new Plane(bestNormalTop, pointBottom);
-		bottom.TransformToHesseNormalForm();
+		bottom.transformToHesseNormalForm();
 		float maxBottomDis = 0;
 		//calculating if the bottomPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
@@ -467,7 +467,7 @@ public class CollisionBox
 				}
 		}
 		bottom = new Plane(bestNormalTop, maxPointBottom);
-		bottom.TransformToHesseNormalForm();
+		bottom.transformToHesseNormalForm();
 		//
 		//Calculating the edgePoints of the collisionBox
 		//

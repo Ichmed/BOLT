@@ -30,6 +30,9 @@ public class Model
 	{
 	}
 
+	/**
+	 * renders the Model with the textures, color, etc. specified in the .obj and the .mtl file
+	 */
 	public void renderModel()
 	{
 		if (!this.usesMaterials) glDisable(GL_TEXTURE_2D);

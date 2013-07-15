@@ -16,6 +16,13 @@ import render.Model;
 
 public class OBJLoader
 {
+	/**
+	 * Loads a .obj file and creates a Model object from it
+	 * @param path The path to the file relative to the .jar's directory 
+	 * @param file The name of the .obj file
+	 * @return an instance of Model
+	 * @throws IOException
+	 */
 	public static Model loadModel(String path, String file) throws IOException
 	{
 		File OBJFile = new File(path + file);

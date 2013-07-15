@@ -1,4 +1,4 @@
-package physics.Collisionmodels;
+package physics.collisionmodels;
 
 import org.lwjgl.util.vector.Vector3f;
 

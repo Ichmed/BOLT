@@ -1,8 +1,8 @@
 package physics;
 
 import org.lwjgl.util.vector.Vector3f;
-import physics.Collisionmodels.CollisionSphere;
-import physics.Collisionmodels.CollisionBox;
+
+import physics.collisionmodels.CollisionSphere;
 
 public abstract class DoCollision
 {

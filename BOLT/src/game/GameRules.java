@@ -9,11 +9,19 @@ import org.lwjgl.opengl.Display;
 
 public class GameRules
 {
-	// Gravity in m/s^2
+	/**
+	 *  Gravity in m/s^2
+	 */
 	public static float gravity = 9.8f;
-	//MaxSpeed in m/s
+	
+	/**
+	 * Max player speed in m/s
+	 */
 	public static float playerMaxSpeed = 2.77f;
-	//DeveloperMode on/off
+	
+	/**
+	 * Developer-mode on/off
+	 */
 	public static boolean devMode = false;
 	
 	//load game.rules to static variables

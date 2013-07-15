@@ -25,6 +25,9 @@ public class EntityBuilder
 
 	public HashMap<String, Object> customValues = new HashMap<>();
 
+	/**
+	 * @return returns an exact copy of this EntityBuilder, used for 'parents'
+	 */
 	@SuppressWarnings("unchecked")
 	public EntityBuilder clone()
 	{
@@ -50,6 +53,13 @@ public class EntityBuilder
 		return e;
 	}
 
+	/**
+	 * 
+	 * @return creates and returns an instance of Entity specified in this EntityBuilder
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	@SuppressWarnings("unchecked")
 	public Entity createEntity() throws ClassNotFoundException, InstantiationException, IllegalAccessException
 	{

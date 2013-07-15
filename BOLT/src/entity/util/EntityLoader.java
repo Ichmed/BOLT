@@ -13,12 +13,19 @@ import entity.EntityRegistry;
 
 public class EntityLoader
 {
-	public static ArrayList<FilePath> firstParsingFiles = new ArrayList<>();
-	public static ArrayList<FilePath> secondParsingFiles = new ArrayList<>();
+	public static ArrayList<String> firstParsingFiles = new ArrayList<>();
+	public static ArrayList<String> secondParsingFiles = new ArrayList<>();
 
-	public static EntityBuilder loadEntity(FilePath p, boolean secondParsing) throws IOException
+	/**
+	 * 
+	 * @param path The path of the .entity file
+	 * @param secondParsing Is this the second parsing?
+	 * @return Returns an instance of EntityBuilder if successful and null if not
+	 * @throws IOException
+	 */
+	private static EntityBuilder loadEntity(String path, boolean secondParsing) throws IOException
 	{
-		File OBJFile = new File(p.path + p.file);
+		File OBJFile = new File(path);
 		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
 		EntityBuilder e = new EntityBuilder();
 		String line;
@@ -38,11 +45,11 @@ public class EntityLoader
 				}
 				else
 				{
-					secondParsingFiles.add(p);
-					if (!secondParsing) System.err.println(p + " has no parent, will be parsed a second time");
+					secondParsingFiles.add(path);
+					if (!secondParsing) System.err.println(path + " has no parent, will be parsed a second time");
 					else
 					{
-						System.err.println(p + " has no parent, will be parsed a second time using default values");
+						System.err.println(path + " has no parent, will be parsed a second time using default values");
 						e = EntityBuilder.defaultEntityBuilder.clone();
 					}
 					break;
@@ -50,7 +57,8 @@ public class EntityLoader
 			}
 			else if (!parentFound)
 			{
-				break;
+				reader.close();
+				return null;
 			}
 			else if (line.startsWith("name "))
 			{
@@ -123,56 +131,45 @@ public class EntityLoader
 		reader.close();
 		return e;
 	}
-
-	public static void loadEntities(String path, String file) throws IOException
+	
+	/**
+	 * 
+	 * @param path The path of the .entlist file to read in
+	 * @throws IOException
+	 */
+	public static void loadEntities(String path) throws IOException
 	{
-		File OBJFile = new File(path + file);
+		File OBJFile = new File(path);
 		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
 		String line;
 		while ((line = reader.readLine()) != null)
 		{
-			firstParsingFiles.add(new FilePath(line.split(" ")[0], line.split(" ")[1]));
+			firstParsingFiles.add(line);
 		}
 		reader.close();
 
-		for (FilePath p : firstParsingFiles)
+		for (String s : firstParsingFiles)
 			try
 			{
-				loadEntity(p, false);
+				EntityBuilder b = loadEntity(s, false);
+				if(b != null) EntityRegistry.registerEntityBuilder(b);
 			}
 			catch (IOException e1)
 			{
-				System.err.println("Could not read " + p);
+				System.err.println("Could not read " + s);
 				e1.printStackTrace();
 			}
-		for (FilePath p : secondParsingFiles)
+		for (String s : secondParsingFiles)
 			try
 			{
-				loadEntity(p, false);
+				EntityBuilder b = loadEntity(s, true);
+				if(b != null) EntityRegistry.registerEntityBuilder(b);
 			}
 			catch (IOException e1)
 			{
-				System.err.println("Could not read " + p);
+				System.err.println("Could not read " + s);
 				e1.printStackTrace();
 			}
 
-	}
-
-	private static class FilePath
-	{
-		public final String path;
-		public final String file;
-
-		public FilePath(String path, String file)
-		{
-			this.path = path;
-			this.file = file;
-		}
-
-		@Override
-		public String toString()
-		{
-			return path + file;
-		}
 	}
 }

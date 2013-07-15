@@ -32,9 +32,16 @@ public abstract class MathHelper
 		Matrix3f.transform (rotationMatrix, vector, vector);
 	}
 	
-	public static float clamp (float f, float min, float max)
+	/**
+	 * Clamps a value between two others
+	 * @param value
+	 * @param min
+	 * @param max
+	 * @return min if the value is smaller then min, max if the value is greater than max and tha value itself if it is between min and max
+	 */
+	public static float clamp (float value, float min, float max)
 	{
-		return Math.max(min, Math.min(f, max));
+		return Math.max(min, Math.min(value, max));
 	}
 	
 	public static Vector3f createPerpendicularVector(Vector3f startingVector)

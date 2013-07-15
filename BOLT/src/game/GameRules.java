@@ -24,7 +24,9 @@ public class GameRules
 	 */
 	public static boolean devMode = false;
 	
-	//load game.rules to static variables
+	/**
+	 * load game.rules to static variables
+	 */
 	public static void loadRules()
 	{
 		File file = new File("game.rules");

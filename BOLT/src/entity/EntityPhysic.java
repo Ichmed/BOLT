@@ -11,6 +11,7 @@ public class EntityPhysic extends Entity
 		this.velocity.translate(v.x, v.y, v.z);
 	}
 
+	@Override
 	public void onTick()
 	{
 		this.position.translate(this.velocity.x, this.velocity.y, this.velocity.z);

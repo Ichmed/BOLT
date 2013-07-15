@@ -14,83 +14,83 @@ public class CollisionEllipsoid {
 	 */
 	public float mass = 0;
 	/**
-	 * first radius
+	 * the length of the ellipsoid
 	 */
-	public float rad1 = 0;
+	public float length = 0;
 	/**
-	 * second radius
+	 * the width of the ellipsoid
 	 */
-	public float rad2 = 0;
+	public float width = 0;
 	/**
-	 * third radius
+	 * the height of the ellipsoid
 	 */
-	public float rad3 = 0;
+	public float height = 0;
 	/**
 	 * a vector pointing at the middle of the ellipsoid
 	 */
 	public Vector3f middle = null;
 
 	/**
-	 * create a new Collisionbox based on a Vector pointing at the middle and 3 radii and a mass
+	 * create a new Collisionbox based on a Vector pointing at the middle, length, width, height and a mass
 	 * @param middle a vector to the middle
-	 * @param rad1 the first radius
-	 * @param rad2 the second radius
-	 * @param rad3 the third radius
+	 * @param length the first radius
+	 * @param width the second radius
+	 * @param height the third radius
 	 * @param mass the mass used for the calculation of falling
 	 */
-	public CollisionEllipsoid( Vector3f middle, float rad1, float rad2, float rad3, float mass ) {
+	public CollisionEllipsoid( Vector3f middle, float length, float width, float height, float mass ) {
 		this.middle = middle;
-		this.rad1 = rad1;
-		this.rad2 = rad2;
-		this.rad3 = rad3;
+		this.length = length;
+		this.width = width;
+		this.height = height;
 		this.mass = mass;
 	}
 	
 	/**
-	 * create a new Collisionbox based on a Vector pointing at the middle and 3 radii and a mass of 0
+	 * create a new Collisionbox based on a Vector pointing at the middle, length, width, height and a mass of 0
 	 * @param middle a vector to the middle
-	 * @param rad1 the first radius
-	 * @param rad2 the second radius
-	 * @param rad3 the third radius
+	 * @param length the first radius
+	 * @param width the second radius
+	 * @param height the third radius
 	 */
-	public CollisionEllipsoid( Vector3f middle, float rad1, float rad2, float rad3 ) {
+	public CollisionEllipsoid( Vector3f middle, float length, float width, float height ) {
 		this.middle = middle;
-		this.rad1 = rad1;
-		this.rad2 = rad2;
-		this.rad3 = rad3;
+		this.length = length;
+		this.width = width;
+		this.height = height;
 	}
 	
 	/**
-	 * create a new Collisionbox based on the position (with 3 Koordinates) and 3 radius
+	 * create a new Collisionbox based on the position (with 3 coordinates), length, width and height
 	 * @param x the position in x direction
-	 * @param y the position in y ditection
-	 * @param z the position in z ditection
-	 * @param rad1 the first radius
-	 * @param rad2 the second radius
-	 * @param rad3 the third radius
+	 * @param y the position in y direction
+	 * @param z the position in z direction
+	 * @param length the first radius
+	 * @param width the second radius
+	 * @param height the third radius
 	 */
-	public CollisionEllipsoid( float x, float y, float z, float rad1, float rad2, float rad3 ){
+	public CollisionEllipsoid( float x, float y, float z, float length, float width, float height ){
 		this.middle = new Vector3f(x,y,z);
-		this.rad1 = rad1;
-		this.rad2 = rad2;
-		this.rad3 = rad3;
+		this.length = length;
+		this.width = width;
+		this.height = height;
 	}
 	
 	/**
-	 * create a new Collisionbox based on the position (with 3 Koordinates) and 3 radius and a mass
+	 * create a new Collisionbox based on the position (with 3 coordinates), length, width, height and a mass
 	 * @param x the position in x direction
-	 * @param y the position in y ditection
-	 * @param z the position in z ditection
-	 * @param rad1 the first radius
-	 * @param rad2 the second radius
-	 * @param rad3 the third radius
+	 * @param y the position in y direction
+	 * @param z the position in z direction
+	 * @param length the first radius
+	 * @param width the second radius
+	 * @param height the third radius
 	 * @param mass the mass used for the calculation of falling
 	 */
-	public CollisionEllipsoid( float x, float y, float z, float rad1, float rad2, float rad3, float mass ){
+	public CollisionEllipsoid( float x, float y, float z, float length, float width, float height, float mass ){
 		this.middle = new Vector3f(x,y,z);
-		this.rad1 = rad1;
-		this.rad2 = rad2;
-		this.rad3 = rad3;
+		this.length = length;
+		this.width = width;
+		this.height = height;
 		this.mass = mass;
 	}
 

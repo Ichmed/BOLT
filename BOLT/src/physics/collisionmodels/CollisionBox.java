@@ -21,6 +21,13 @@ public class CollisionBox
 	
 	public CollisionBox () {	}
 	
+	/**
+	 * 
+	 * @param startingPoint
+	 * @param depth
+	 * @param width
+	 * @param height
+	 */
 	public CollisionBox (Vector3f startingPoint, Vector3f depth, Vector3f width, Vector3f height)
 	{
 		this.startingPoint = startingPoint;

@@ -226,7 +226,7 @@ public class CollisionBox
 			//calculating if the frontPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float frontDis = MathHelper.calculateDistancePointPlane(points[i], front);
+				float frontDis = front.calculateDistancePoint(points[i]);
 				if(frontDis > maxFrontDis)
 				{
 					maxFrontDis = frontDis;
@@ -239,7 +239,7 @@ public class CollisionBox
 				//Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(MathHelper.calculateDistancePointPlane(points[i], front)));
+					distances.add(Math.abs(front.calculateDistancePoint(points[i])));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -263,7 +263,7 @@ public class CollisionBox
 			//calculating if the backPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float backDis = MathHelper.calculateDistancePointPlane(points[i], back);
+				float backDis = back.calculateDistancePoint(points[i]);
 				if(backDis > maxBackDis)
 				{
 					maxBackDis = backDis;
@@ -275,7 +275,7 @@ public class CollisionBox
 			{
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(MathHelper.calculateDistancePointPlane(points[i], back)));
+					distances.add(Math.abs(back.calculateDistancePoint(points[i])));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -288,7 +288,7 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			back = new Plane(normalFront, maxBackPoint);
 			back.transformToHesseNormalForm();
-			distanceFrontBack = Math.abs(MathHelper.calculateDistancePointPlane(maxBackPoint, front));
+			distanceFrontBack = Math.abs(front.calculateDistancePoint(maxBackPoint));
 			if(distanceFrontBack < minDistanceFrontBack)
 			{
 				minDistanceFrontBack = distanceFrontBack;
@@ -333,7 +333,7 @@ public class CollisionBox
 			//calculating if the leftPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float leftDis = MathHelper.calculateDistancePointPlane(points[i], left);
+				float leftDis = left.calculateDistancePoint(points[i]);
 				if(leftDis > maxLeftDis)
 				{
 					maxLeftDis = leftDis;
@@ -346,7 +346,7 @@ public class CollisionBox
 				//Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(MathHelper.calculateDistancePointPlane(points[i], left)));
+					distances.add(Math.abs(left.calculateDistancePoint(points[i])));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -370,7 +370,7 @@ public class CollisionBox
 			//calculating if the leftPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float rightDis = MathHelper.calculateDistancePointPlane(points[i], right);
+				float rightDis = right.calculateDistancePoint(points[i]);
 				if(rightDis > maxRightDis)
 				{
 					maxRightDis = rightDis;
@@ -382,7 +382,7 @@ public class CollisionBox
 			{
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(MathHelper.calculateDistancePointPlane(points[i], right)));
+					distances.add(Math.abs(right.calculateDistancePoint(points[i])));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -395,7 +395,7 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			right = new Plane(normalLeft, maxRightPoint);
 			right.transformToHesseNormalForm();
-			distanceLeftRight = Math.abs(MathHelper.calculateDistancePointPlane(maxRightPoint, left));
+			distanceLeftRight = Math.abs(left.calculateDistancePoint(maxRightPoint));
 			if(distanceLeftRight < minDistanceLeftRight)
 			{
 				minDistanceLeftRight = distanceLeftRight;
@@ -425,7 +425,7 @@ public class CollisionBox
 		//calculating if the topPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
 		{
-			float topDis = MathHelper.calculateDistancePointPlane(points[i], top);
+			float topDis = top.calculateDistancePoint(points[i]);
 			if(topDis > maxTopDis)
 			{
 				maxTopDis = topDis;
@@ -437,7 +437,7 @@ public class CollisionBox
 		{
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for(int i = 0; i < points.length; i++)
-				distances.add(Math.abs(MathHelper.calculateDistancePointPlane(points[i], top)));
+				distances.add(Math.abs(top.calculateDistancePoint(points[i])));
 			//Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for(int i = 0; i < distances.size(); i++)
@@ -461,7 +461,7 @@ public class CollisionBox
 		//calculating if the bottomPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
 		{
-			float bottomDis = MathHelper.calculateDistancePointPlane(points[i], bottom);
+			float bottomDis = bottom.calculateDistancePoint(points[i]);
 			if(bottomDis > maxBottomDis)
 			{
 				maxBottomDis = bottomDis;
@@ -473,7 +473,7 @@ public class CollisionBox
 		{
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for(int i = 0; i < points.length; i++)
-				distances.add(Math.abs(MathHelper.calculateDistancePointPlane(points[i], bottom)));
+				distances.add(Math.abs(bottom.calculateDistancePoint(points[i])));
 			//Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for(int i = 0; i < distances.size(); i++)
@@ -491,19 +491,19 @@ public class CollisionBox
 		CollisionBox newColBox = new CollisionBox();
 		Line temp = MathHelper.intersectPlaneWithPlane(bottom, front);
 		//calculating the startingPoint
-		newColBox.startingPoint = MathHelper.intersectLineWithPlane(temp, left);
+		newColBox.startingPoint = left.intersectWithLine(temp);
 		//Calculating the rest points
 		newColBox.points[0] = newColBox.startingPoint;
-		newColBox.points[1] = MathHelper.intersectLineWithPlane(temp, right);
+		newColBox.points[1] = right.intersectWithLine(temp);
 		temp = MathHelper.intersectPlaneWithPlane(bottom, back);
-		newColBox.points[2] = MathHelper.intersectLineWithPlane(temp, left);
-		newColBox.points[3] = MathHelper.intersectLineWithPlane(temp, right);
+		newColBox.points[2] = left.intersectWithLine(temp);
+		newColBox.points[3] = right.intersectWithLine(temp);
 		temp = MathHelper.intersectPlaneWithPlane(top, front);
-		newColBox.points[4] = MathHelper.intersectLineWithPlane(temp, left);
-		newColBox.points[5] = MathHelper.intersectLineWithPlane(temp, right);
+		newColBox.points[4] = left.intersectWithLine(temp);
+		newColBox.points[5] = right.intersectWithLine(temp);
 		temp = MathHelper.intersectPlaneWithPlane(top, back);
-		newColBox.points[6] = MathHelper.intersectLineWithPlane(temp, left);
-		newColBox.points[7] = MathHelper.intersectLineWithPlane(temp, right);
+		newColBox.points[6] = left.intersectWithLine(temp);
+		newColBox.points[7] = right.intersectWithLine(temp);
 		//Calculating the width
 		Vector3f.sub(newColBox.points[1], newColBox.points[0], newColBox.width);
 		//Calculating the depth

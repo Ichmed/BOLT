@@ -76,37 +76,7 @@ public abstract class MathHelper
 			return perpendicularVector;
 		}
 	}
-	
-	/**
-	 * calculates the distance between a point and a plane
-	 * @param point the point
-	 * @param plane the plane
-	 * @return the distance
-	 */
-	public static float calculateDistancePointPlane(Vector3f point, Plane plane)
-	{
-		plane.transformToHesseNormalForm();
-		return (plane.normal.x * point.x + plane.normal.y * point.y + plane.normal.z * point.z - plane.startingPoint.x * plane.normal.x -
-				plane.startingPoint.y * plane.normal.y - plane.startingPoint.z * plane.normal.z);
-	}
-	
-	/**
-	 * intersects a line with a plane
-	 * @param line the line
-	 * @param plane the plane
-	 * @return the Vector3f to the point if parallel method returns the nullVector
-	 */
-	public static Vector3f intersectLineWithPlane(Line line, Plane plane)
-	{
-		//Checks weather the line is parallel to the plane
-		if(Vector3f.dot(line.direction, plane.normal) == 0)
-			return new Vector3f(0, 0, 0);
-		plane.transformToHesseNormalForm();
-		//Calculates the factor for the direction-vector of the line
-		float factor = (Vector3f.dot(plane.normal, plane.startingPoint)-Vector3f.dot(line.direction, line.startingPoint))/
-						Vector3f.dot(line.direction, plane.normal);
-		return line.getPoint(factor);
-	}
+
 	
 	/**
 	 * intersects a plane with another one

@@ -2,9 +2,14 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 import game.Camera;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -23,21 +28,21 @@ public class Main
 	static int i = 0;
 	static Camera camera = new Camera();
 
+	public static int cameraSpeed;
+
 	public static void main(String[] args)
 	{
-		//TODO: Catch arguments for Console
-		
+		// TODO: Catch arguments for Console
+
 		try
 		{
-			Display.setDisplayMode(new DisplayMode(640, 480));
-//			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
 		}
 		catch (LWJGLException e)
 		{
 			e.printStackTrace();
 		}
-		
 
 		try
 		{
@@ -48,27 +53,10 @@ public class Main
 			e.printStackTrace();
 		}
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(100, (float) Display.getWidth() / Display.getHeight(), 0.01f, 1000);
-		glMatrixMode(GL_MODELVIEW);
-
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
-		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1f }));
-		glLight(GL_LIGHT0, GL_DIFFUSE, Misc.asFloatBuffer(new float[] { 1.5f, 1.5f, 1.5f, 1 }));
-		glEnable(GL_COLOR_MATERIAL);
-		glColorMaterial(GL_FRONT, GL_DIFFUSE);
-		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
+		loadOptions();
 		
-		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1}));	
+		initGLSettings();		
 
-		ShaderLoader.useProgram("test/", "shader");
-		
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
 
@@ -81,32 +69,49 @@ public class Main
 	public static void gameLoop()
 	{
 		i++;
-		
-		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float)Display.getWidth()) * 180;
-		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float)Display.getHeight()) * 180;
-		
+
+		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float) Display.getWidth()) * cameraSpeed;
+		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float) Display.getHeight()) * cameraSpeed;
+
 		camera.rotation.x = MathHelper.clamp(camera.rotation.x, -90, 90);
-		
+
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
-		
-		Vector3f rot = new Vector3f((float)Math.cos(camera.rotation.x), (float)Math.cos(camera.rotation.y), (float)Math.cos(camera.rotation.z));
-		
-		//TODO camera movement
-//		if(Keyboard.isKeyDown(Keyboard.KEY_W))
-//		{
-//			camera.position.x += rot.x;
-//			camera.position.y += rot.y;
-//			camera.position.z += rot.z;
-//		}
-		
+
+		Vector3f rot = new Vector3f((float) Math.cos(camera.rotation.x), (float) Math.cos(camera.rotation.y), (float) Math.cos(camera.rotation.z));
+
+		// TODO camera movement
+		if (Keyboard.isKeyDown(Keyboard.KEY_F11))
+		{
+			try
+			{
+				Display.destroy();
+				if (Display.isFullscreen())
+				{
+					Display.setFullscreen(false);
+					Display.setDisplayMode(new DisplayMode(640, 480));
+				}
+				else 
+				{
+					Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+				}
+				Display.create();
+			}
+			catch (LWJGLException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			initGLSettings();
+			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+		}
+
 		glPushMatrix();
-		
+
 		glRotated(camera.rotation.x, 1f, 0f, 0f);
 		glRotated(camera.rotation.y, 0f, 1f, 0f);
 		glRotated(camera.rotation.z, 0f, 0f, 1f);
 		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
-		
-		
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnable(GL_BLEND);
@@ -133,5 +138,55 @@ public class Main
 		Display.sync(50);
 
 		glPopMatrix();
+	}
+	
+	public static void initGLSettings()
+	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(100, (float) Display.getWidth() / Display.getHeight(), 0.01f, 1000);
+		glMatrixMode(GL_MODELVIEW);
+
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1f }));
+		glLight(GL_LIGHT0, GL_DIFFUSE, Misc.asFloatBuffer(new float[] { 1.5f, 1.5f, 1.5f, 1 }));
+		glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
+
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1 }));
+		
+		ShaderLoader.useProgram("test/", "shader");
+	}
+
+	public static void loadOptions()
+	{
+		File OBJFile = new File("nonsync/options.txt");
+		String line;
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
+			while ((line = reader.readLine()) != null)
+			{
+				if (line.startsWith("cameraSpeed")) cameraSpeed = Integer.valueOf(line.split("=")[1]);
+			}
+		}
+		catch (FileNotFoundException e1)
+		{
+			e1.printStackTrace();
+		}
+		catch (NumberFormatException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

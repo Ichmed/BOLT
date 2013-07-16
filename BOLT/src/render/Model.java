@@ -23,7 +23,13 @@ public class Model
 	public boolean hasTextures = false;
 	public boolean usesMaterials = false;
 
+	/**
+	 * A list of all faces that make up this model, divided into smaller groups for use with materials
+	 */
 	public List<List<Face>> faces = new ArrayList<List<Face>>();
+	/**
+	 * A list of all materials used by this model
+	 */
 	public List<String> faceMaterials = new ArrayList<>();
 
 	public Model()
@@ -97,5 +103,20 @@ public class Model
 			glEnd();
 		}
 		glEnable(GL_TEXTURE_2D);
+	}
+	
+	/**
+	 * 
+	 * @return Returns a list of all faces used by this model without dividing them into material-groups
+	 */
+	public List<Face> getFaceList()
+	{
+		List<Face> l = new ArrayList<>();
+		for(List<Face> p : this.faces)
+		{
+			for(Face f : p)
+				l.add(f);
+		}
+		return l;		
 	}
 }

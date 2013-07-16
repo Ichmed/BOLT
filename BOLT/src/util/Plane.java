@@ -15,7 +15,12 @@ public class Plane
 		this.startingPoint = startingPoint;
 	}
 	
-	public void TransformToHesseNormalForm()
+	public Vector3f getPoint(float x, float y)
+	{
+		return new Vector3f (x, y, (Vector3f.dot(normal, startingPoint) - normal.x * x - normal.y * y) / normal.z);
+	}
+	
+	public void transformToHesseNormalForm()
 	{
 		normal.normalise ();
 		float lastFactor = normal.x * (-startingPoint.x) + normal.y * (-startingPoint.y) + normal.z * (-startingPoint.z);

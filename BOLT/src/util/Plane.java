@@ -27,4 +27,35 @@ public class Plane
 		if(lastFactor > 0)
 			normal.negate ();
 	}
+	
+	/**
+	 * calculates the distance between a point and a plane
+	 * @param point the point
+	 * @param plane the plane
+	 * @return the distance
+	 */
+	public float calculateDistancePoint(Vector3f point)
+	{
+		this.transformToHesseNormalForm();
+		return (this.normal.x * point.x + this.normal.y * point.y + this.normal.z * point.z - this.startingPoint.x * this.normal.x -
+				this.startingPoint.y * this.normal.y - this.startingPoint.z * this.normal.z);
+	}
+	
+	/**
+	 * intersects a line with a plane
+	 * @param line the line
+	 * @param plane the plane
+	 * @return the Vector3f to the point if parallel method returns the nullVector
+	 */
+	public Vector3f intersectWithLine(Line line)
+	{
+		//Checks weather the line is parallel to this
+		if(Vector3f.dot(line.direction, this.normal) == 0)
+			return new Vector3f(0, 0, 0);
+		this.transformToHesseNormalForm();
+		//Calculates the factor for the direction-vector of the line
+		float factor = (Vector3f.dot(this.normal, this.startingPoint)-Vector3f.dot(line.direction, line.startingPoint))/
+						Vector3f.dot(line.direction, this.normal);
+		return line.getPoint(factor);
+	}
 }

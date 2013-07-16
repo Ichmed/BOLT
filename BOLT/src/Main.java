@@ -24,25 +24,30 @@ import util.MathHelper;
 public class Main
 {
 	public static Model m;
-
+	
+	
 	static int i = 0;
 	static Camera camera = new Camera();
 
 	public static int cameraSpeed;
+	public static boolean fullscreen;
+	public static int resX = 0;
+	public static int resY = 0;
 
 	public static void main(String[] args)
 	{
 		// TODO: Catch arguments for Console
 
-		try
+	/*	try
 		{
-			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			Display.setDisplayMode(new DisplayMode(640, 480));
+			//Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
 		}
 		catch (LWJGLException e)
 		{
 			e.printStackTrace();
-		}
+		}*/
 
 		try
 		{
@@ -54,7 +59,15 @@ public class Main
 		}
 
 		loadOptions();
-		
+		try{
+			if(fullscreen){
+				enterFullscreen();
+			}else{
+				leaveFullscreen();
+			}
+		} catch(LWJGLException e){
+			e.printStackTrace();
+		}
 		initGLSettings();		
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
@@ -66,6 +79,39 @@ public class Main
 		Display.destroy();
 	}
 
+	public static void enterFullscreen() throws LWJGLException{
+		if(!Display.isFullscreen()){
+			Display.destroy();
+			Display.setFullscreen(true);
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			Display.create();
+			fullscreen = true;
+			return;
+		}
+	}
+
+	public static void leaveFullscreen() throws LWJGLException{
+		if(Display.isFullscreen()){
+			Display.destroy();
+			Display.setFullscreen(true);
+			Display.setDisplayMode(new DisplayMode(resX, resY));
+			Display.create();
+			fullscreen = false;
+		}
+	}
+	
+	public static void toggleFullscreen(){
+		try{
+			if(Display.isFullscreen()){
+				leaveFullscreen();
+			} else {
+				enterFullscreen();
+			}
+		} catch(LWJGLException e){
+			e.printStackTrace();
+		}
+	}
+	
 	public static void gameLoop()
 	{
 		i++;
@@ -82,25 +128,7 @@ public class Main
 		// TODO camera movement
 		if (Keyboard.isKeyDown(Keyboard.KEY_F11))
 		{
-			try
-			{
-				Display.destroy();
-				if (Display.isFullscreen())
-				{
-					Display.setFullscreen(false);
-					Display.setDisplayMode(new DisplayMode(640, 480));
-				}
-				else 
-				{
-					Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-				}
-				Display.create();
-			}
-			catch (LWJGLException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			toggleFullscreen();
 			initGLSettings();
 			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		}
@@ -174,6 +202,9 @@ public class Main
 			while ((line = reader.readLine()) != null)
 			{
 				if (line.startsWith("cameraSpeed")) cameraSpeed = Integer.valueOf(line.split("=")[1]);
+				if (line.startsWith("fullscreen")) fullscreen = Boolean.valueOf(line.split("=")[1]);
+				if (line.startsWith("resX")) resX = Integer.valueOf(line.split("=")[1]);
+				if (line.startsWith("resY")) resY = Integer.valueOf(line.split("=")[1]);
 			}
 		}
 		catch (FileNotFoundException e1)

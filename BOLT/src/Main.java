@@ -73,9 +73,10 @@ public class Main
 			Display.destroy();
 			Display.setFullscreen(true);
 			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+	//		Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32, 60));
 			Display.create();
-			initGLSettings();
 			fullscreen = true;
+			System.out.printf("laeuft\n");
 			return;
 		}
 	}
@@ -86,7 +87,6 @@ public class Main
 			Display.setFullscreen(true);
 			Display.setDisplayMode(new DisplayMode(resX, resY));
 			Display.create();
-			initGLSettings();
 			fullscreen = false;
 		}
 	}

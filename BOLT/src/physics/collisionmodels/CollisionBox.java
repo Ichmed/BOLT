@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import util.Line;
 import util.MathHelper;
 import util.Plane;
 
@@ -20,22 +21,32 @@ public class CollisionBox
 	 * one edge of the box where all the other vectors start
 	 */
 	public Vector3f startingPoint = new Vector3f(0, 0, 0);
+	
+	/**
+	 * a array which contains all 8 edges of the box
+	 */
+	public Vector3f[] points = new Vector3f[8];
+	
 	/**
 	 * the middle of the box
 	 */
 	public Vector3f middle = new Vector3f (0, 0, 0);
+	
 	/**
 	 * the depth of the box
 	 */
 	public Vector3f depth = new Vector3f (0, 0, 0);
+	
 	/**
 	 * the height of the box
 	 */
 	public Vector3f width = new Vector3f (0, 0, 0);
+	
 	/**
 	 * the width of the box
 	 */
 	public Vector3f height = new Vector3f (0, 0, 0);
+	
 	/**
 	 * the mass of the ellipsoid
 	 * used to calculate falling of objects
@@ -60,6 +71,16 @@ public class CollisionBox
 		this.depth = depth;
 		this.width = width;
 		this.height = height;
+		//setting the edges
+		points[0] = startingPoint;
+		Vector3f.add(startingPoint, width, points[1]);
+		Vector3f.add(points[1], depth, points[2]);
+		Vector3f.add(startingPoint, depth, points[3]);
+		Vector3f.add(startingPoint, height, points[4]);
+		Vector3f.add(points[4], width, points[5]);
+		Vector3f.add(points[5], depth, points[6]);
+		Vector3f.add(points[4], depth, points[7]);
+		//Setting the middle
 		Vector3f.add ((Vector3f)depth.scale (0.5f), (Vector3f)width.scale (0.5f), middle);
 		Vector3f.add ((Vector3f)middle, (Vector3f)height.scale (0.5f), middle);
 	}
@@ -79,56 +100,52 @@ public class CollisionBox
 	}
 	
 	/**
-	 * creates a CollisionBox based on the object which should be surrounded given as points but with mass set to 0
-	 * @param points all the points of the object
+	 * creates a CollisionBox based on points (from an object or the edges from the CollisionBox)
+	 * @param completeCollisionBox set to true if the points are only the 8 edges of the CollisionBox
+	 * @param points all the points of the object/CollisionBox (first the bottom clockwise than the top clockwise)
 	 */
-	public CollisionBox(Vector3f... points)
+	public CollisionBox(boolean completeCollisionBox, Vector3f... points)
 	{
-		//TODO change to code: createCollisionBox
-		float minX = points[0].x;
-		float minY = points[0].y;
-		float minZ = points[0].z;
-		float maxX = points[0].x;
-		float maxY = points[0].y;
-		float maxZ = points[0].z;
-		for(int a = 0; a < points.length; a++)
+		if(completeCollisionBox == true)
 		{
-			if(points[a].x < minX)
-				minX = points[a].x;
-			else if(points[a].x > maxX)
-				maxX = points[a].x;
-			if(points[a].y < minY)
-				minY = points[a].y;
-			else if(points[a].y > maxY)
-				maxY = points[a].y;
-			if(points[a].z < minZ)
-				minZ = points[a].z;
-			else if(points[a].z > maxZ)
-				maxZ = points[a].z;
+			this.points = points;
+			startingPoint = points[0];
+			Vector3f.sub(points[1], points[0], width);
+			Vector3f.sub(points[3], points[0], depth);
+			Vector3f.sub(points[4], points[0], height);
+			Vector3f.add(width, depth, middle);
+			Vector3f.add(middle, height, middle);
+			middle.scale(0.5f);
 		}
-		startingPoint = new Vector3f(minX, minY, minZ);
-		width = new Vector3f(maxX - minX, 0, 0);
-		height = new Vector3f(0, 0, maxZ - minZ);
-		depth = new Vector3f(0, maxY - minY, 0);
-		Vector3f.add ((Vector3f)depth.scale (0.5f), (Vector3f)width.scale (0.5f), middle);
-		Vector3f.add ((Vector3f)middle, (Vector3f)height.scale (0.5f), middle);
-		startingPoint = new Vector3f(minX, minY, minZ);
-		width = new Vector3f(maxX - minX, 0, 0);
-		height = new Vector3f(0, 0, maxZ - minZ);
-		depth = new Vector3f(0, maxY - minY, 0);
+		else
+		{
+			CollisionBox temp = createCollisionBox(points);
+			startingPoint = temp.startingPoint;
+			this.points = temp.points;
+			middle = temp.middle;
+			width = temp.width;
+			depth = temp.depth;
+			height = temp.height;
+		}
 	}
 	
 	/**
-	 * creates a CollisionBox with a given mass based on the surrounded object given as points
+	 * creates a CollisionBox based on points (from a n object or the edges from the CollisionBox)
 	 * @param mass the mass of the surrounded object
-	 * @param points all the points of the object
+	 * @param completeCollisionBox set to true if the points are only the 8 edges of the CollisionBox
+	 * @param points all the points of the object/CollisionBox (first the bottom clockwise than the top clockwise)
 	 */
-	public CollisionBox (float mass, Vector3f... points)
+	public CollisionBox (float mass, boolean completeCollisionBox, Vector3f... points)
 	{
-		this(points);
+		this(completeCollisionBox, points);
 		this.mass = mass;
 	}
 	
+	/**
+	 * creates the best CollisionBox from an object given with points
+	 * @param points the points which represent the object
+	 * @return returns the best CollisionBox of the object
+	 */
 	public static CollisionBox createCollisionBox(Vector3f... points)
 	{
 		//Initializing standards to start with
@@ -471,8 +488,32 @@ public class CollisionBox
 		//
 		//Calculating the edgePoints of the collisionBox
 		//
-		//startingPoint
-		//TODO Points -> Vectors
-		return new CollisionBox();
+		CollisionBox newColBox = new CollisionBox();
+		Line temp = MathHelper.intersectPlaneWithPlane(bottom, front);
+		//calculating the startingPoint
+		newColBox.startingPoint = MathHelper.intersectLineWithPlane(temp, left);
+		//Calculating the rest points
+		newColBox.points[0] = newColBox.startingPoint;
+		newColBox.points[1] = MathHelper.intersectLineWithPlane(temp, right);
+		temp = MathHelper.intersectPlaneWithPlane(bottom, back);
+		newColBox.points[2] = MathHelper.intersectLineWithPlane(temp, left);
+		newColBox.points[3] = MathHelper.intersectLineWithPlane(temp, right);
+		temp = MathHelper.intersectPlaneWithPlane(top, front);
+		newColBox.points[4] = MathHelper.intersectLineWithPlane(temp, left);
+		newColBox.points[5] = MathHelper.intersectLineWithPlane(temp, right);
+		temp = MathHelper.intersectPlaneWithPlane(top, back);
+		newColBox.points[6] = MathHelper.intersectLineWithPlane(temp, left);
+		newColBox.points[7] = MathHelper.intersectLineWithPlane(temp, right);
+		//Calculating the width
+		Vector3f.sub(newColBox.points[1], newColBox.points[0], newColBox.width);
+		//Calculating the depth
+		Vector3f.sub(newColBox.points[3], newColBox.points[0], newColBox.depth);
+		//Calculating the height
+		Vector3f.sub(newColBox.points[4], newColBox.points[0], newColBox.height);
+		//Calculating the middle
+		Vector3f.add(newColBox.width, newColBox.depth, newColBox.middle);
+		Vector3f.add(newColBox.middle, newColBox.height, newColBox.middle);
+		newColBox.middle.scale(0.5f);
+		return newColBox;
 	}
 }

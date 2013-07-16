@@ -58,4 +58,601 @@ public class Plane
 						Vector3f.dot(line.direction, this.normal);
 		return line.getPoint(factor);
 	}
+	
+	/**
+	 * intersects a plane with another one
+	 * @param plane the intersectionPlane plane
+	 * @return the intersectionLine of the 2 planes if parallel a Line with 0-initialization will be returned
+	 */
+	public Line intersectWithPlane(Plane plane)
+	{
+		plane.transformToHesseNormalForm();
+		this.transformToHesseNormalForm();
+		//Checks weather the planes are parallel
+		if(plane.normal.x == this.normal.x && plane.normal.y == this.normal.y && plane.normal.z == this.normal.z)
+			return new Line (0, 0, 0, new Vector3f(0,0,0));
+		Vector3f direction = new Vector3f();
+		direction.normalise();
+		Vector3f.cross(plane.normal, this.normal, direction);
+		//checks if plane1 is parallel to the x-axis
+		if(plane.normal.x == 0)
+		{
+			//If plane1 is parallel to the xy-plane
+			if(plane.normal.y == 0)
+			{
+				float z = plane.startingPoint.z;
+				//Check if this is parallel to the x-axis
+				 if(this.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.y;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(this.normal.z == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float x = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.x;
+					return new Line(x, 0, z, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.y;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the xz-plane
+			else if(plane.normal.z == 0)
+			{
+				float y = plane.startingPoint.y;
+				//Check if this is parallel to the x-axis
+				 if(this.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.y * y) / this.normal.z;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(this.normal.y == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float x = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.y * y) / this.normal.x;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.y * y) / this.normal.z;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//checks if this is parallel to the x-axis too
+			else if(this.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.y / plane.normal.y)) /
+							(this.normal.z - (this.normal.y * plane.normal.z) / plane.normal.y);
+				float y = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.z * z) / plane.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			//Check if this is parallel to the y-axis
+			else if(this.normal.y == 0)
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.y / plane.normal.y)) /
+							(this.normal.x - (this.normal.y * plane.normal.x) / plane.normal.y);
+				float y = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.x * x) / plane.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+			else
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.z / plane.normal.z)) /
+							(this.normal.x - (this.normal.y * plane.normal.x) / plane.normal.y);
+				float z = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.x * x) / plane.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+		}
+		//checks if plane1 is parallel to the y-axis
+		else if(plane.normal.y == 0)
+		{
+			//If plane1 is parallel to the xy-plane
+			if(plane.normal.x == 0)
+			{
+				float z = plane.startingPoint.z;
+				//Check if this is parallel to the x-axis
+				 if(this.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.y;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(this.normal.z == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float x = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.x;
+					return new Line(x, 0, z, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.y;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the yz-plane
+			else if(plane.normal.z == 0)
+			{
+				float x = plane.startingPoint.x;
+				//Check if this is parallel to the y-axis
+				 if(this.normal.y == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.x * x) / this.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(this.normal.x == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.x * x) / this.normal.y;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.x * x) / this.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+			}
+			//checks if this is parallel to the y-axis too
+			else if(this.normal.y == 0)
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.z / plane.normal.z)) /
+							(this.normal.x - (this.normal.y * plane.normal.x) / plane.normal.y);
+				float z = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.x * x) / plane.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+			//Check if this is parallel to the x-axis
+			else if(this.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.y / plane.normal.y)) /
+							(this.normal.z - (this.normal.y * plane.normal.z) / plane.normal.y);
+				float y = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.z * z) / plane.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			else
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.y / plane.normal.y)) /
+							(this.normal.x - (this.normal.y * plane.normal.x) / plane.normal.y);
+				float y = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.x * x) / plane.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+		}
+		//checks if plane1 is parallel to the z-axis
+		else if(plane.normal.z == 0)
+		{
+			//If plane1 is parallel to the xz-plane
+			if(plane.normal.x == 0)
+			{
+				float y = plane.startingPoint.y;
+				//Check if this is parallel to the x-axis
+				 if(this.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.y * y) / this.normal.z;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(this.normal.z == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float x = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.y * y) / this.normal.x;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.y * y) / this.normal.z;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the yz-plane
+			else if(plane.normal.y == 0)
+			{
+				float x = plane.startingPoint.x;
+				//Check if this is parallel to the y-axis
+				 if(this.normal.y == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.x * x) / this.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(this.normal.x == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.x * x) / this.normal.y;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.x * x) / this.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+			}
+			//checks if this is parallel to the z-axis too
+			else if(this.normal.z == 0)
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.y / plane.normal.y)) /
+							(this.normal.x - (this.normal.y * plane.normal.x) / plane.normal.y);
+				float y = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.x * x) / plane.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+			//Check if this is parallel to the x-axis
+			else if(this.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.y / plane.normal.y)) /
+							(this.normal.z - (this.normal.y * plane.normal.z) / plane.normal.y);
+				float y = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.z * z) / plane.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			else
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(this.normal, this.startingPoint) -
+							(plane.normal.y * plane.startingPoint.y - plane.normal.z * plane.startingPoint.z) *	(this.normal.z / plane.normal.z)) /
+							(this.normal.x - (this.normal.y * plane.normal.x) / plane.normal.y);
+				float z = (Vector3f.dot(plane.normal, this.startingPoint) - plane.normal.x * x) / plane.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+		}
+		//checks if this is parallel to the x-axis
+		else if(this.normal.x == 0)
+		{
+			//If plane1 is parallel to the xy-plane
+			if(this.normal.y == 0)
+			{
+				float z = this.startingPoint.z;
+				//Check if this is parallel to the x-axis
+				 if(plane.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.z * z) / plane.normal.y;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(plane.normal.z == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float x = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.z * z) / plane.normal.x;
+					return new Line(x, 0, z, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.z * z) / plane.normal.y;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the xz-plane
+			else if(this.normal.z == 0)
+			{
+				float y = this.startingPoint.y;
+				//Check if this is parallel to the x-axis
+				 if(plane.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.z;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(plane.normal.y == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float x = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.x;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.z;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//checks if this is parallel to the x-axis too
+			else if(plane.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.z - (plane.normal.y * this.normal.z) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.z * z) / this.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			//Check if this is parallel to the y-axis
+			else if(plane.normal.y == 0)
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(this.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+			else
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.z / this.normal.z)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float z = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+		}
+		//checks if this is parallel to the y-axis
+		else if(this.normal.y == 0)
+		{
+			//If plane1 is parallel to the xy-plane
+			if(this.normal.x == 0)
+			{
+				float z = this.startingPoint.z;
+				//Check if this is parallel to the x-axis
+				 if(plane.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.z * z) / plane.normal.y;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(plane.normal.z == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float x = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.z * z) / plane.normal.x;
+					return new Line(x, 0, z, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.z * z) / plane.normal.y;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the yz-plane
+			else if(this.normal.z == 0)
+			{
+				float x = this.startingPoint.x;
+				//Check if this is parallel to the y-axis
+				 if(plane.normal.y == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(plane.normal.x == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.y;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+			}
+			//checks if this is parallel to the y-axis too
+			else if(plane.normal.y == 0)
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.z / this.normal.z)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float z = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+			//Check if this is parallel to the x-axis
+			else if(plane.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.z - (plane.normal.y * this.normal.z) / plane.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.z * z) / this.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			else
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+		}
+		//checks if this is parallel to the z-axis
+		else if(this.normal.z == 0)
+		{
+			//If plane1 is parallel to the xz-plane
+			if(this.normal.x == 0)
+			{
+				float y = this.startingPoint.y;
+				//Check if this is parallel to the x-axis
+				 if(plane.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.z;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(plane.normal.z == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float x = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.x;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.z;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the yz-plane
+			else if(this.normal.y == 0)
+			{
+				float x = this.startingPoint.x;
+				//Check if this is parallel to the y-axis
+				 if(plane.normal.y == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(plane.normal.x == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.y;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+			}
+			//checks if this is parallel to the z-axis too
+			else if(plane.normal.z == 0)
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+			//Check if this is parallel to the x-axis
+			else if(plane.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.z - (plane.normal.y * this.normal.z) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.z * z) / this.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			else
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.z / this.normal.z)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float z = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+		}
+		else
+		{
+			//If plane1 is parallel to the xz-plane
+			if(this.normal.x == 0)
+			{
+				float y = this.startingPoint.y;
+				//Check if this is parallel to the x-axis
+				 if(plane.normal.x == 0)
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.z;
+					return new Line(0, y, z, direction);
+				}
+				//Check if plane 2 is parallel to the z-axis
+				else if(plane.normal.z == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float x = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.x;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set x value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.y * y) / plane.normal.z;
+					return new Line(0, y, z, direction);
+				}
+			}
+			//if plane1 is parallel to the yz-plane
+			else if(this.normal.y == 0)
+			{
+				float x = this.startingPoint.x;
+				//Check if this is parallel to the y-axis
+				 if(plane.normal.y == 0)
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+				//Check if plane 2 is parallel to the y-axis
+				else if(plane.normal.x == 0)
+				{
+					 //set z value to 0 and calculate the other values
+					float y = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.y;
+					return new Line(x, y, 0, direction);
+				}
+				else
+				{
+					 //set y value to 0 and calculate the other values
+					float z = (Vector3f.dot(plane.normal, plane.startingPoint) - plane.normal.x * x) / plane.normal.z;
+					return new Line(x, 0, z, direction);
+				}
+			}
+			//checks if this is parallel to the z-axis too
+			else if(plane.normal.z == 0)
+			{
+				 //set z value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.y;
+				return new Line(x, y, 0, direction);
+			}
+			//Check if this is parallel to the x-axis
+			else if(plane.normal.x == 0)
+			{
+				 //set x value to 0 and calculate the other values
+				float z = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.y / this.normal.y)) /
+							(plane.normal.z - (plane.normal.y * this.normal.z) / this.normal.y);
+				float y = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.z * z) / this.normal.y;
+				return new Line(0, y, z, direction);
+			}
+			else
+			{
+				 //set y value to 0 and calculate the other values
+				float x = (Vector3f.dot(plane.normal, plane.startingPoint) -
+							(this.normal.y * this.startingPoint.y - this.normal.z * this.startingPoint.z) *	(plane.normal.z / this.normal.z)) /
+							(plane.normal.x - (plane.normal.y * this.normal.x) / this.normal.y);
+				float z = (Vector3f.dot(this.normal, plane.startingPoint) - this.normal.x * x) / this.normal.z;
+				return new Line(x, 0, z, direction);
+			}
+		}
+	}
 }

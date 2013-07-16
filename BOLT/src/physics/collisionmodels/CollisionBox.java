@@ -8,9 +8,6 @@ import util.Line;
 import util.MathHelper;
 import util.Plane;
 
-//TODO -> Change axis form: x-axis is right-back-axis, y-axis is front-back-axis, z-axis is height-axis
-//						to: x-axis is right-back-axis, y-axis is height-axis, z-axis is front-back-axis
-
 /**
  * a Box shaped CollisionBox
  * @author Felix Schmidt
@@ -148,6 +145,9 @@ public class CollisionBox
 	 */
 	public static CollisionBox createCollisionBox(Vector3f... points)
 	{
+		//in this code names are changed:
+		//form:	x-axis is right-left-axis, y-axis is front-back-axis, z-axis is height-axis
+		//to:	x-axis is right-left-axis, y-axis is height-axis, z-axis is front-back-axis
 		//Initializing standards to start with
 		float minX = points[0].x;
 		float minY = points[0].y;
@@ -489,19 +489,19 @@ public class CollisionBox
 		//Calculating the edgePoints of the collisionBox
 		//
 		CollisionBox newColBox = new CollisionBox();
-		Line temp = MathHelper.intersectPlaneWithPlane(bottom, front);
+		Line temp = front.intersectWithPlane(bottom);
 		//calculating the startingPoint
 		newColBox.startingPoint = left.intersectWithLine(temp);
 		//Calculating the rest points
 		newColBox.points[0] = newColBox.startingPoint;
 		newColBox.points[1] = right.intersectWithLine(temp);
-		temp = MathHelper.intersectPlaneWithPlane(bottom, back);
+		temp = back.intersectWithPlane(bottom);
 		newColBox.points[2] = left.intersectWithLine(temp);
 		newColBox.points[3] = right.intersectWithLine(temp);
-		temp = MathHelper.intersectPlaneWithPlane(top, front);
+		temp = front.intersectWithPlane(top);
 		newColBox.points[4] = left.intersectWithLine(temp);
 		newColBox.points[5] = right.intersectWithLine(temp);
-		temp = MathHelper.intersectPlaneWithPlane(top, back);
+		temp = back.intersectWithPlane(top);
 		newColBox.points[6] = left.intersectWithLine(temp);
 		newColBox.points[7] = right.intersectWithLine(temp);
 		//Calculating the width

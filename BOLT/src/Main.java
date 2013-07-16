@@ -38,17 +38,6 @@ public class Main
 	{
 		// TODO: Catch arguments for Console
 
-	/*	try
-		{
-			Display.setDisplayMode(new DisplayMode(640, 480));
-			//Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-			Display.create();
-		}
-		catch (LWJGLException e)
-		{
-			e.printStackTrace();
-		}*/
-
 		try
 		{
 			m = OBJLoader.loadModel("test/", "crystal.obj");
@@ -68,7 +57,7 @@ public class Main
 		} catch(LWJGLException e){
 			e.printStackTrace();
 		}
-		initGLSettings();		
+		initGLSettings();
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
@@ -85,6 +74,7 @@ public class Main
 			Display.setFullscreen(true);
 			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
+			initGLSettings();
 			fullscreen = true;
 			return;
 		}
@@ -96,6 +86,7 @@ public class Main
 			Display.setFullscreen(true);
 			Display.setDisplayMode(new DisplayMode(resX, resY));
 			Display.create();
+			initGLSettings();
 			fullscreen = false;
 		}
 	}
@@ -206,6 +197,7 @@ public class Main
 				if (line.startsWith("resX")) resX = Integer.valueOf(line.split("=")[1]);
 				if (line.startsWith("resY")) resY = Integer.valueOf(line.split("=")[1]);
 			}
+			reader.close();
 		}
 		catch (FileNotFoundException e1)
 		{

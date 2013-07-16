@@ -1,7 +1,44 @@
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_SHININESS;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColorMaterial;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLightModel;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMaterialf;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotated;
+import static org.lwjgl.opengl.GL11.glShadeModel;
+import static org.lwjgl.opengl.GL11.glTranslated;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 import game.Camera;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.lwjgl.LWJGLException;
@@ -22,6 +59,8 @@ public class Main
 
 	static int i = 0;
 	static Camera camera = new Camera();
+	
+	public static int cameraSpeed;
 
 	public static void main(String[] args)
 	{
@@ -30,14 +69,13 @@ public class Main
 		try
 		{
 			Display.setDisplayMode(new DisplayMode(640, 480));
-//			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
 		}
 		catch (LWJGLException e)
 		{
 			e.printStackTrace();
 		}
-		
 
 		try
 		{
@@ -47,6 +85,8 @@ public class Main
 		{
 			e.printStackTrace();
 		}
+		
+		loadOptions();
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -82,8 +122,8 @@ public class Main
 	{
 		i++;
 		
-		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float)Display.getWidth()) * 180;
-		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float)Display.getHeight()) * 180;
+		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float)Display.getWidth()) * cameraSpeed;
+		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float)Display.getHeight()) * cameraSpeed;
 		
 		camera.rotation.x = MathHelper.clamp(camera.rotation.x, -90, 90);
 		
@@ -133,5 +173,35 @@ public class Main
 		Display.sync(50);
 
 		glPopMatrix();
+	}
+	
+	public static void loadOptions()
+	{
+		File OBJFile = new File("nonsync/options.txt");
+		String line;
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
+			while((line = reader.readLine()) != null)
+			{
+				if(line.startsWith("cameraSpeed"))
+					cameraSpeed = Integer.valueOf(line.split("=")[1]);
+			}
+		}
+		catch (FileNotFoundException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		catch (NumberFormatException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

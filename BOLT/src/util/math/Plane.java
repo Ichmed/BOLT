@@ -60,12 +60,20 @@ public class Plane
 		return line.getPoint(factor);
 	}
 	
+	/**
+	 * gives back an array of 2 vectors with the intersectionPoints of the parabola with the plane
+	 * @param par the parabola
+	 * @return a Vector3f[2]-array of the 2 intersectionPoints: both null if no solution, second null if one solution, none null if 2 solutions
+	 */
 	public Vector3f[] intersectWithParabola(Parabola par)
 	{
 		float discriminant = Vector3f.dot(normal, par.dir) * Vector3f.dot(normal, par.dir) - 4 * Vector3f.dot(normal, par.inf) *
 							(Vector3f.dot(normal, par.startpoint) - Vector3f.dot(normal, startingPoint));
 		if(discriminant < 0)
-			return null;
+		{
+			Vector3f[] ret = {null, null};
+			return ret;
+		}
 		else if(discriminant == 0)
 		{
 			float factor = -Vector3f.dot(normal, par.dir) / (2 * Vector3f.dot(normal, par.inf));

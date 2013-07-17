@@ -1,28 +1,30 @@
+# all unassigned values will be read from the parent-file instead
+# set null if there is no parent-file
+# MUST BE THE FIRST FIELD
+parent null
+
 # a unique identifier for this entity
 # no spaces
+# MUST BE THE SECOND FIELD
 name testObject
-
-# all unasigned values will be read from the parent-file instead
-# set null if there is no parent-file
-parent null
 
 # the display name of the entity (two or more entities may have the same 'fullName' but never the same 'name'
 # spaces are allowed
 fullName Test Object
 
-# how the entity reacts to physikal force applied to it
+# how the entity reacts to physical force applied to it
 # types:
-#     phys(ical)
-#     static
-physType phys 
+#     1 physical
+#     2 static
+physType 1 
 
 # types:
-#     solid (all objects will collide with this object)
-#     gameSolid (only object marked as gamePlay objects will collide with the object (players, projectiles, etc.) but not particles etc.
-#     nSolid (everything will pass through this entity)
-collType solid
+#     1 solid (all objects will collide with this object)
+#     2 gameSolid (only object marked as gamePlay objects will collide with the object (players, projectiles, etc.) but not particles etc.
+#     3 not Solid (everything will pass through this entity)
+collType 1
 
-# if true the entity won't be rendered ingame
+# if true the entity won't be rendered in-game
 invis false
 
 # should the entity be affected by gravity
@@ -35,11 +37,11 @@ class null
 # the display model for this entity
 model testObject.obj
 
-# the rough collission box to check for a possible collision before complex handeling
+# the rough collision box to check for a possible collision before complex handling
 # types:
 #     block x, y, z
 #     sphere radius
-#     ell(ipsoid) x y z
+#     ellipsoid x y z
 #     pyramid x, y, height
 #     cone r, h
 collisionBox block 5.0 7.5 1.25
@@ -48,15 +50,15 @@ collisionBox block 5.0 7.5 1.25
 collisionModel testObject.obj
 
 ###### INDIVIDUAL VARIABLES ######
-# these will be read in and stored in a HashMap for ingame acces
+# these will be read in and stored in a HashMap for in-game access
 # types:
-#     b(yte)
-#     f(loat)
-#     i(nteger)
-#     bool(ean)
-#     s(tring)
+#     byte
+#     float
+#     integer
+#     boolean
+#     string
 
-bool isThisATest true
-i randomInteger 5
+boolean isThisATest true
+integer randomInteger 5
 # everything after a string's name will be read in
-s testString this is only a test it doesn't matter what this text says
+string testString this is only a test it doesn't matter what this text says

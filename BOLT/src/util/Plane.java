@@ -59,6 +59,11 @@ public class Plane
 		return line.getPoint(factor);
 	}
 	
+	public Vector3f[] intersectWithParabola(Parabola par)
+	{
+		return new Vector3f[2];
+	}
+	
 	/**
 	 * intersects a plane with another one
 	 * @param plane the intersectionPlane plane

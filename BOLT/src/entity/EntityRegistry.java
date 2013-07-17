@@ -22,13 +22,8 @@ public class EntityRegistry
 		return true;
 	}
 
-<<<<<<< HEAD
 	public static Entity createEntity(String name)
 	{ 
-=======
-	public Entity createEntity(String name)
-	{
->>>>>>> updated Entities
 		try
 		{
 			if(!entries.containsKey(name))

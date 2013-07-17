@@ -47,12 +47,12 @@ public class ShaderLoader
 		glShaderSource(vertex, vertexSource);
 		glCompileShader(vertex);
 		if(glGetShaderi(vertex, GL_COMPILE_STATUS) == GL_FALSE)
-			ErrorHandler.logError(vertexName + "_vertex", "Vertex-Shader " + vertexName + " could not be compiled \n Error log:\n" + glGetShaderInfoLog(vertex, 1024));
+			ErrorHandler.logError(vertexName + "_vertex", "Vertex-Shader '" + vertexName + "' could not be compiled \n Error log:\n" + glGetShaderInfoLog(vertex, 1024));
 		
 		glShaderSource(fragment, fragmentSource);
 		glCompileShader(fragment);
 		if(glGetShaderi(fragment, GL_COMPILE_STATUS) == GL_FALSE)
-			ErrorHandler.logError(fragmentName + "_fragment", "Fragment-Shader " + fragmentName + " could not be compiled \n Error log:\n" + glGetShaderInfoLog(fragment, 1024));
+			ErrorHandler.logError(fragmentName + "_fragment", "Fragment-Shader '" + fragmentName + "' could not be compiled \n Error log:\n" + glGetShaderInfoLog(fragment, 1024));
 		
 		glAttachShader(program, vertex);
 		glAttachShader(program, fragment);

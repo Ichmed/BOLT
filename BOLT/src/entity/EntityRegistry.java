@@ -18,4 +18,27 @@ public class EntityRegistry
 		entries.put(builder.name, builder);
 		return true;
 	}
+
+	public Entity createEntity(String name)
+	{ 
+		try
+		{
+			if(entries.containsKey(name))
+			return entries.get(name).createEntity();
+			else return null;
+		}
+		catch (ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (InstantiationException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

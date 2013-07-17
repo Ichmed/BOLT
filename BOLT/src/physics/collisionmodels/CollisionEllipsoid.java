@@ -107,7 +107,7 @@ public class CollisionEllipsoid {
 			for(int roty = 1; roty < 180; roty++){
 				for(int rotz = 1; rotz < 180; rotz++){
 					for(int a = 0; a < points.length; a++){
-						abstaende[a] = abstandPunktPunkt( res.middle, points[a]);
+						abstaende[a] = MathHelper.calculateDistancePointToPoint( res.middle, points[a]);
 						float b = ((points[a].getX() * points[a].getX()) / (res.length * res.length)) + ((points[a].getY() * points[a].getY()) / (res.width * res.width)) + ((points[a].getZ() * points[a].getZ()) / (res.height * res.height));
 						if(b < 0){
 							// punkt liegt im Ellipsoid und somit muss der Ellipsoid verkleinert werden
@@ -116,15 +116,6 @@ public class CollisionEllipsoid {
 				}
 			}
 		}
-		
 		return res;
-	}
-	
-	private static float abstandPunktPunkt(Vector3f point1, Vector3f point2){
-		float abstand = 0;
-		Vector3f temp = new Vector3f();
-		Vector3f.sub(point1, point2, temp);
-		abstand = (float) Math.sqrt(temp.getX()*temp.getX()+temp.getY()*temp.getY()+temp.getZ()*temp.getZ());
-		return abstand;
 	}
 }

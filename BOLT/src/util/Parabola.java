@@ -7,9 +7,17 @@ import org.lwjgl.util.vector.Vector3f;
  * @author marcel
  */
 public class Parabola {
-
+	/**
+	 * the starting point of the graph
+	 */
 	Vector3f startpoint = null;
+	/**
+	 * the basic direction
+	 */
 	Vector3f dir = null;
+	/**
+	 * the influence on the basic direction
+	 */
 	Vector3f inf = null;
 	
 	/**

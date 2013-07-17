@@ -119,4 +119,9 @@ public class Model
 		}
 		return l;		
 	}
+	
+	public Vector3f[] getVerteciesAsArray()
+	{
+		return (Vector3f[]) this.vertices.toArray();
+	}
 }

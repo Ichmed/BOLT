@@ -49,12 +49,6 @@ public class Main
 
 		loadOptions();
 		System.out.printf("fullscreen: %b\nresolution: %dx%d\ncameraspeed: %d\n", fullscreen, resX, resY, cameraSpeed);
-		/*try {
-			Display.create();
-		} catch (LWJGLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
 		try{
 			if(fullscreen){
 				enterFullscreen();
@@ -64,7 +58,6 @@ public class Main
 		} catch(LWJGLException e){
 			e.printStackTrace();
 		}
-		System.out.printf("hallo\n");
 		initGLSettings();
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
@@ -83,7 +76,7 @@ public class Main
 	//	Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32, 60));
 		Display.create();
 		fullscreen = true;
-		System.out.printf("laeuft\n");
+		System.out.printf("fullscreen entered\n");
 		return;
 	}
 
@@ -93,7 +86,7 @@ public class Main
 		Display.setDisplayMode(new DisplayMode(resX, resY));
 		Display.create();
 		fullscreen = false;
-		System.out.printf("laeuft\n");
+		System.out.printf("fullscreen left\n");
 	}
 
 	public static void toggleFullscreen(){

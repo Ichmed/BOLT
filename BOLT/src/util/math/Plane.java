@@ -62,7 +62,23 @@ public class Plane
 	
 	public Vector3f[] intersectWithParabola(Parabola par)
 	{
-		return new Vector3f[2];
+		float discriminant = Vector3f.dot(normal, par.dir) * Vector3f.dot(normal, par.dir) - 4 * Vector3f.dot(normal, par.inf) *
+							(Vector3f.dot(normal, par.startpoint) - Vector3f.dot(normal, startingPoint));
+		if(discriminant < 0)
+			return null;
+		else if(discriminant == 0)
+		{
+			float factor = -Vector3f.dot(normal, par.dir) / (2 * Vector3f.dot(normal, par.inf));
+			Vector3f[] ret = {par.getPoint(factor), null};
+			return ret;
+		}
+		else
+		{
+			float factor1 = (-Vector3f.dot(normal, par.dir) + (float)Math.sqrt(discriminant))/ (2 * Vector3f.dot(normal, par.inf));
+			float factor2 = (-Vector3f.dot(normal, par.dir) - (float)Math.sqrt(discriminant))/ (2 * Vector3f.dot(normal, par.inf));
+			Vector3f[] ret = {par.getPoint(factor1), par.getPoint(factor2)};
+			return ret;
+		}
 	}
 	
 	/**

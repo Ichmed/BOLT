@@ -113,19 +113,16 @@ public class CollisionSphere extends org.lwjgl.util.glu.Sphere
 	public static CollisionSphere createCollisionSphere (Vector3f... points)
 	{
 		CollisionSphere temp = new CollisionSphere();
-		float middleX = 0;
-		float middleY = 0;
-		float middleZ = 0;
+		Vector3f middle = new Vector3f();
 		for(Vector3f point : points)
-			middleX += point.x;
-		middleX = middleX/points.length;
+			middle.setX(middle.getX() + point.getX());
+		middle.setX(middle.getX() / points.length);
 		for(Vector3f point : points)
-			middleY += point.y;
-		middleY = middleY/points.length;
+			middle.setX(middle.getY() + point.getY());
+		middle.setY(middle.getY() / points.length);
 		for(Vector3f point : points)
-			middleZ += point.z;
-		middleZ = middleZ/points.length;
-		temp.middle = new Vector3f(middleX, middleY, middleZ);
+			middle.setX(middle.getZ() + point.getZ());
+		middle.setZ(middle.getZ() / points.length);
 		float biggestRadius = 0;
 		for(Vector3f point : points)
 		{

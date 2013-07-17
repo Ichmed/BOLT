@@ -19,7 +19,7 @@ public class EntityRegistry
 		return true;
 	}
 
-	public Entity createEntity(String name)
+	public static Entity createEntity(String name)
 	{ 
 		try
 		{

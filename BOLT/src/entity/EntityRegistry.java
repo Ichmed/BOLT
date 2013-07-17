@@ -1,6 +1,9 @@
 package entity;
 
+import java.io.IOException;
 import java.util.HashMap;
+
+import entity.util.EntityLoader;
 
 public class EntityRegistry
 {
@@ -19,10 +22,22 @@ public class EntityRegistry
 		return true;
 	}
 
+<<<<<<< HEAD
 	public static Entity createEntity(String name)
 	{ 
+=======
+	public Entity createEntity(String name)
+	{
+>>>>>>> updated Entities
 		try
 		{
+			if(!entries.containsKey(name))
+			{
+				EntityBuilder e = EntityLoader.loadEntity(name);
+				if(e == null) return null;
+				registerEntityBuilder(e);
+			}
+			
 			if(entries.containsKey(name))
 			return entries.get(name).createEntity();
 			else return null;
@@ -36,6 +51,10 @@ public class EntityRegistry
 			e.printStackTrace();
 		}
 		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}

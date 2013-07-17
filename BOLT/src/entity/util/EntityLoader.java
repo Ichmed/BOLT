@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -12,9 +14,8 @@ import entity.EntityBuilder;
 import entity.EntityRegistry;
 
 public class EntityLoader
-{
-	public static ArrayList<String> firstParsingFiles = new ArrayList<>();
-	public static ArrayList<String> secondParsingFiles = new ArrayList<>();
+{	
+	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
 
 	/**
 	 * 
@@ -23,8 +24,16 @@ public class EntityLoader
 	 * @return Returns an instance of EntityBuilder if successful and null if not
 	 * @throws IOException
 	 */
-	private static EntityBuilder loadEntity(String path, boolean secondParsing) throws IOException
+	public static EntityBuilder loadEntity(String name) throws IOException
 	{
+		String path = "";
+		if(doesEntityExist(name))
+		{
+			if(isParentValid(entitiesFound.get(name).getParent())) path = entitiesFound.get(name).getPath();
+			else return null;			
+		}		
+		else return null;
+		
 		File OBJFile = new File(path);
 		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
 		EntityBuilder e = new EntityBuilder();
@@ -37,22 +46,11 @@ public class EntityLoader
 			else if (line.startsWith("parent "))
 			{
 				String parent = line.split(" ")[1];
-				if (EntityRegistry.entries.containsKey(parent))
+				if (EntityLoader.doesEntityExist(parent))
 				{
 					e = EntityRegistry.entries.get(parent).clone();
 					e.parent = parent;
 					parentFound = true;
-				}
-				else
-				{
-					secondParsingFiles.add(path);
-					if (!secondParsing) System.err.println(path + " has no parent, will be parsed a second time");
-					else
-					{
-						System.err.println(path + " has no parent, will be parsed a second time using default values");
-						e = EntityBuilder.defaultEntityBuilder.clone();
-					}
-					break;
 				}
 			}
 			else if (!parentFound)
@@ -130,46 +128,73 @@ public class EntityLoader
 		}
 		reader.close();
 		return e;
-	}
+	}	
 	
-	/**
-	 * 
-	 * @param path The path of the .entlist file to read in
-	 * @throws IOException
-	 */
-	public static void loadEntities(String path) throws IOException
+	private static boolean isParentValid(String parent)
+	{
+		if(parent.equals("null")) return true;
+		else if(doesEntityExist(parent))return isParentValid(entitiesFound.get(parent).getParent());		
+		return false;
+	}
+
+	private static boolean doesEntityExist(String name)
+	{
+		return entitiesFound.containsKey(name);
+	}
+
+	public static void findEntities(String path) throws IOException
 	{
 		File OBJFile = new File(path);
 		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
 		String line;
+		List<String> filesToParse = new ArrayList<>();
 		while ((line = reader.readLine()) != null)
 		{
-			firstParsingFiles.add(line);
+			filesToParse.add(line);
 		}
 		reader.close();
 
-		for (String s : firstParsingFiles)
-			try
+		for (String s : filesToParse)
+		{
+			File file = new File(s);
+			reader = new BufferedReader(new FileReader(file));
+			String name = "", parent = "";
+			while((line = reader.readLine()) != null)
 			{
-				EntityBuilder b = loadEntity(s, false);
-				if(b != null) EntityRegistry.registerEntityBuilder(b);
+				if(line.startsWith("#"));
+				else if(line.startsWith("parent ")) parent = line.split(" ")[1];
+				else if(line.startsWith("name ")) name = line.split(" ")[1];
 			}
-			catch (IOException e1)
-			{
-				System.err.println("Could not read " + s);
-				e1.printStackTrace();
-			}
-		for (String s : secondParsingFiles)
-			try
-			{
-				EntityBuilder b = loadEntity(s, true);
-				if(b != null) EntityRegistry.registerEntityBuilder(b);
-			}
-			catch (IOException e1)
-			{
-				System.err.println("Could not read " + s);
-				e1.printStackTrace();
-			}
+			if(name != "" && parent != "")entitiesFound.put(name, new EntityFound(parent, name, s));
+			else System.err.println(s +" could not be read properly");
+		}
+	}
+	
+	private static class EntityFound
+	{
+		private final String parent, name, path;
 
+		public EntityFound(String parent, String name, String path)
+		{
+			super();
+			this.parent = parent;
+			this.name = name;
+			this.path = path;
+		}
+
+		public String getParent()
+		{
+			return parent;
+		}
+
+		public String getName()
+		{
+			return name;
+		}
+
+		public String getPath()
+		{
+			return path;
+		}
 	}
 }

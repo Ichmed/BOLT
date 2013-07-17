@@ -32,11 +32,11 @@ public class EntityBuilder
 	public EntityBuilder clone()
 	{
 		EntityBuilder e = new EntityBuilder();
-		
+
 		e.parent = this.parent;
 		e.name = this.name;
 		e.fullName = this.fullName;
-		
+
 		e.physicsType = this.physicsType;
 		e.collisionType = this.collisionType;
 		e.invisible = this.invisible;
@@ -55,7 +55,8 @@ public class EntityBuilder
 
 	/**
 	 * 
-	 * @return creates and returns an instance of Entity specified in this EntityBuilder
+	 * @return creates and returns an instance of Entity specified in this
+	 *         EntityBuilder
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException

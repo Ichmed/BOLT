@@ -19,7 +19,7 @@ import render.Model;
 import render.util.Misc;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
-import util.MathHelper;
+import util.math.MathHelper;
 
 public class Main
 {

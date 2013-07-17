@@ -1,7 +1,8 @@
-package util;
+package util.math;
 
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
+
 
 /**
  * 

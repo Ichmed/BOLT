@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import util.Line;
-import util.MathHelper;
-import util.Plane;
+import util.math.Line;
+import util.math.MathHelper;
+import util.math.Plane;
 
 /**
  * a Box shaped CollisionBox

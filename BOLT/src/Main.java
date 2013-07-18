@@ -14,6 +14,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.vector.Vector3f;
+
+import physics.collisionmodels.CollisionBox;
 import render.Model;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
@@ -30,6 +33,7 @@ public class Main
 	public static boolean fullscreen;
 	public static int resX = 0;
 	public static int resY = 0;
+	public static CollisionBox c;
 
 	public static void main(String[] args)
 	{
@@ -71,7 +75,8 @@ public class Main
 			e.printStackTrace();
 		}
 		initGLSettings();
-
+		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
+		
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
 
@@ -191,7 +196,15 @@ public class Main
 		// glRotated(i, 0, 1, 0);
 		m.renderModel();
 		
-//		CollisionBox c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
+		glColor4d(1, 1, 1, 1);
+		glBegin(GL_POINT);
+		for(Vector3f v : c.points)	
+		{
+		    glVertex3f(v.x, v.y, v.z);
+		    System.out.println(v);			
+		}
+		glEnd();
+		
 
 		Display.update();
 		Display.sync(50);

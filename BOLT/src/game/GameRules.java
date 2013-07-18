@@ -23,6 +23,8 @@ public class GameRules
 	 * Developer-mode on/off
 	 */
 	public static boolean devMode = false;
+
+	public static double cameraSpeed = 0.1;
 	
 	/**
 	 * load game.rules to static variables

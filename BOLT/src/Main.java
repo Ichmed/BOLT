@@ -1,6 +1,7 @@
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 import game.Camera;
+import game.GameRules;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +17,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
 import render.Model;
-import render.util.Misc;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
 import util.math.MathHelper;
@@ -24,8 +24,7 @@ import util.math.MathHelper;
 public class Main
 {
 	public static Model m;
-	
-	
+
 	static int i = 0;
 	static Camera camera = new Camera();
 
@@ -36,7 +35,16 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		// TODO: Catch arguments for Console
+		try
+		{
+			Display.setDisplayMode(new DisplayMode(640, 480));
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			Display.create();
+		}
+		catch (LWJGLException e1)
+		{
+			e1.printStackTrace();
+		}
 
 		try
 		{
@@ -49,13 +57,19 @@ public class Main
 
 		loadOptions();
 		System.out.printf("fullscreen: %b\nresolution: %dx%d\ncameraspeed: %d\n", fullscreen, resX, resY, cameraSpeed);
-		try{
-			if(fullscreen){
+		try
+		{
+			if (fullscreen)
+			{
 				enterFullscreen();
-			}else{
+			}
+			else
+			{
 				leaveFullscreen();
 			}
-		} catch(LWJGLException e){
+		}
+		catch (LWJGLException e)
+		{
 			e.printStackTrace();
 		}
 		initGLSettings();
@@ -69,38 +83,43 @@ public class Main
 		Display.destroy();
 	}
 
-	public static void enterFullscreen() throws LWJGLException{
-		Display.destroy();
-		Display.setFullscreen(true);
+	public static void enterFullscreen() throws LWJGLException
+	{
+//		Display.setFullscreen(true);
 		Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-	//	Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32, 60));
-		Display.create();
-		fullscreen = true;
-		System.out.printf("fullscreen entered\n");
-		return;
+//		 Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32,
+		// 60));
+//		fullscreen = true;
+//		System.out.printf("fullscreen entered\n");
 	}
 
-	public static void leaveFullscreen() throws LWJGLException{
-		Display.destroy();
-		Display.setFullscreen(false);
+	public static void leaveFullscreen() throws LWJGLException
+	{
 		Display.setDisplayMode(new DisplayMode(resX, resY));
-		Display.create();
-		fullscreen = false;
-		System.out.printf("fullscreen left\n");
+		Display.setFullscreen(false);
+//		fullscreen = false;
+//		System.out.printf("fullscreen left\n");
 	}
 
-	public static void toggleFullscreen(){
-		try{
-			if(Display.isFullscreen()){
+	public static void toggleFullscreen()
+	{
+		try
+		{
+			if (Display.isFullscreen())
+			{
 				leaveFullscreen();
-			} else {
+			}
+			else
+			{
 				enterFullscreen();
 			}
-		} catch(LWJGLException e){
+		}
+		catch (LWJGLException e)
+		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void gameLoop()
 	{
 		i++;
@@ -112,15 +131,42 @@ public class Main
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 
-		Vector3f rot = new Vector3f((float) Math.cos(camera.rotation.x), (float) Math.cos(camera.rotation.y), (float) Math.cos(camera.rotation.z));
-
 		// TODO camera movement
-		if (Keyboard.isKeyDown(Keyboard.KEY_F11))
+//		if (Keyboard.isKeyDown(Keyboard.KEY_F11))
+//		{
+//			toggleFullscreen();
+//			initGLSettings();
+//			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+//		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_W))
 		{
-			toggleFullscreen();
-			initGLSettings();
-			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+			camera.position.y -= Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_S))
+		{
+			camera.position.x -= Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+			camera.position.y += Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
+			camera.position.z += Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_A))
+		{
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_D))
+		{
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_E))
+		{
+			glLight(GL_LIGHT0, GL_POSITION,
+					MathHelper.asFloatBuffer(new float[] { camera.position.x,  camera.position.y,  camera.position.z, 1 }));
+
+		}
+		
 
 		glPushMatrix();
 
@@ -134,21 +180,12 @@ public class Main
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glLight(GL_LIGHT0, GL_POSITION,
-				Misc.asFloatBuffer(new float[] { 5 * (float) Math.sin((double) i / 100d), 5 * (float) Math.sin((double) i / 100d), 5 * (float) Math.cos((double) i / 100d), 1 }));
+//		glLight(GL_LIGHT0, GL_POSITION,
+//				MathHelper.asFloatBuffer(new float[] { 5 * (float) Math.sin((double) i / 100d), 5 * (float) Math.sin((double) i / 100d), 5 * (float) Math.cos((double) i / 100d), 1 }));
 
 		glEnable(GL_TEXTURE_2D);
 		glTranslated(0, 0, -9);
 		// glRotated(i, 0, 1, 0);
-		m.renderModel();
-		glTranslated(0, 0, 4);
-		glTranslated(0, (Math.sin(i / 100d) * 2) - 1, 0);
-
-		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		m.renderModel();
-		glRotated(i, 0, 1, 0);
-		glTranslated(0, 0, 2);
-		// glTranslated(0, (Math.sin(i / 100d) * 2) - 1, 0);
 		m.renderModel();
 
 		Display.update();
@@ -156,7 +193,7 @@ public class Main
 
 		glPopMatrix();
 	}
-	
+
 	public static void initGLSettings()
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -170,14 +207,14 @@ public class Main
 
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1f }));
-		glLight(GL_LIGHT0, GL_DIFFUSE, Misc.asFloatBuffer(new float[] { 1.5f, 1.5f, 1.5f, 1 }));
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, MathHelper.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1f }));
+		glLight(GL_LIGHT0, GL_DIFFUSE, MathHelper.asFloatBuffer(new float[] { 1.5f, 1.5f, 1.5f, 1 }));
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
 
-		glLightModel(GL_LIGHT_MODEL_AMBIENT, Misc.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1 }));
-		
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, MathHelper.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1 }));
+
 		ShaderLoader.useProgram("test/", "shader");
 	}
 

@@ -1,5 +1,8 @@
 package util.math;
 
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -84,5 +87,13 @@ public abstract class MathHelper
 		Vector3f.sub(point1, point2, temp);
 		abstand = (float) Math.sqrt(temp.getX()*temp.getX()+temp.getY()*temp.getY()+temp.getZ()*temp.getZ());
 		return abstand;
+	}
+
+	public static FloatBuffer asFloatBuffer(float[] fs)
+	{
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(fs.length);
+		buffer.put(fs);
+		buffer.flip();
+		return buffer;
 	}
 }

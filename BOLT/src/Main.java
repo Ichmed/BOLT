@@ -14,8 +14,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.vector.Vector3f;
-
 import render.Model;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
@@ -187,6 +185,8 @@ public class Main
 		glTranslated(0, 0, -9);
 		// glRotated(i, 0, 1, 0);
 		m.renderModel();
+		
+//		CollisionBox c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
 
 		Display.update();
 		Display.sync(50);

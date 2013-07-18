@@ -122,6 +122,12 @@ public class Model
 	
 	public Vector3f[] getVerteciesAsArray()
 	{
-		return (Vector3f[]) this.vertices.toArray();
+		Vector3f[] v = new Vector3f[this.vertices.size()];
+		for(int i = 0; i < this.vertices.size(); i++)
+		{
+			Vector3f w = this.vertices.get(i);
+			v[i] = new Vector3f(w.x, w.y, w.z);
+		}
+		return v;
 	}
 }

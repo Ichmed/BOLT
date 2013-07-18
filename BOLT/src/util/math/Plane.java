@@ -104,7 +104,6 @@ public class Plane
 		Vector3f direction = new Vector3f();
 		Vector3f.cross(this.normal, plane.normal, direction);
 		direction.normalise();
-		Vector3f.cross(plane.normal, this.normal, direction);
 		//checks if plane1 is parallel to the x-axis
 		if(plane.normal.x == 0)
 		{

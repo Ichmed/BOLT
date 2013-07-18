@@ -85,20 +85,20 @@ public class Main
 
 	public static void enterFullscreen() throws LWJGLException
 	{
-//		Display.setFullscreen(true);
+		// Display.setFullscreen(true);
 		Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-//		 Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32,
+		// Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32,
 		// 60));
-//		fullscreen = true;
-//		System.out.printf("fullscreen entered\n");
+		// fullscreen = true;
+		// System.out.printf("fullscreen entered\n");
 	}
 
 	public static void leaveFullscreen() throws LWJGLException
 	{
 		Display.setDisplayMode(new DisplayMode(resX, resY));
 		Display.setFullscreen(false);
-//		fullscreen = false;
-//		System.out.printf("fullscreen left\n");
+		// fullscreen = false;
+		// System.out.printf("fullscreen left\n");
 	}
 
 	public static void toggleFullscreen()
@@ -132,42 +132,40 @@ public class Main
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 
 		// TODO camera movement
-//		if (Keyboard.isKeyDown(Keyboard.KEY_F11))
-//		{
-//			toggleFullscreen();
-//			initGLSettings();
-//			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
-//		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_W))
+		// if (Keyboard.isKeyDown(Keyboard.KEY_F11))
+		// {
+		// toggleFullscreen();
+		// initGLSettings();
+		// Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() /
+		// 2);
+		// }
+		if (Keyboard.isKeyDown(Keyboard.KEY_W))
 		{
 			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 			camera.position.y -= Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
 			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_S))
+		if (Keyboard.isKeyDown(Keyboard.KEY_S))
 		{
 			camera.position.x -= Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 			camera.position.y += Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
 			camera.position.z += Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_A))
+		if (Keyboard.isKeyDown(Keyboard.KEY_A))
 		{
 			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
 			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_D))
+		if (Keyboard.isKeyDown(Keyboard.KEY_D))
 		{
 			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
 			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_E))
+		if (Keyboard.isKeyDown(Keyboard.KEY_E))
 		{
-			glLight(GL_LIGHT0, GL_POSITION,
-					MathHelper.asFloatBuffer(new float[] { camera.position.x,  camera.position.y,  camera.position.z, 1 }));
+			glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { camera.position.x, camera.position.y, camera.position.z, 1 }));
 
 		}
-		
-
 		glPushMatrix();
 
 		glRotated(camera.rotation.x, 1f, 0f, 0f);
@@ -180,8 +178,10 @@ public class Main
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//		glLight(GL_LIGHT0, GL_POSITION,
-//				MathHelper.asFloatBuffer(new float[] { 5 * (float) Math.sin((double) i / 100d), 5 * (float) Math.sin((double) i / 100d), 5 * (float) Math.cos((double) i / 100d), 1 }));
+		// glLight(GL_LIGHT0, GL_POSITION,
+		// MathHelper.asFloatBuffer(new float[] { 5 * (float) Math.sin((double)
+		// i / 100d), 5 * (float) Math.sin((double) i / 100d), 5 * (float)
+		// Math.cos((double) i / 100d), 1 }));
 
 		glEnable(GL_TEXTURE_2D);
 		glTranslated(0, 0, -9);

@@ -45,6 +45,7 @@ public abstract class MathHelper
 	 */
 	public static void rotateVector(Vector3f vector, float degree, Plane rotationPlane)
 	{
+		degree = (float)Math.toRadians(degree);
 		//Creating a Matrix for rotating the Vector
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.m00 = (float)(rotationPlane.normal.x * rotationPlane.normal.x * (1 - Math.cos (degree)) + Math.cos (degree));

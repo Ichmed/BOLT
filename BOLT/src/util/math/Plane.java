@@ -102,6 +102,7 @@ public class Plane
 		if(plane.normal.x == this.normal.x && plane.normal.y == this.normal.y && plane.normal.z == this.normal.z)
 			return new Line (0, 0, 0, new Vector3f(0,0,0));
 		Vector3f direction = new Vector3f();
+		Vector3f.cross(this.normal, plane.normal, direction);
 		direction.normalise();
 		Vector3f.cross(plane.normal, this.normal, direction);
 		//checks if plane1 is parallel to the x-axis

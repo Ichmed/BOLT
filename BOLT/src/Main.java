@@ -137,17 +137,22 @@ public class Main
 		// Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() /
 		// 2);
 		// }
+		
+		double x = Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+		double y = -Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
+		double z = -Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+		
 		if (Keyboard.isKeyDown(Keyboard.KEY_W))
 		{
-			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
-			camera.position.y -= Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
-			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+			camera.position.x += x * Math.cos(Math.toRadians(camera.rotation.x));
+			camera.position.y += y;
+			camera.position.z += z * Math.cos(Math.toRadians(camera.rotation.x));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S))
 		{
-			camera.position.x -= Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
-			camera.position.y += Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
-			camera.position.z += Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+			camera.position.x -= x * Math.cos(Math.toRadians(camera.rotation.x));
+			camera.position.y -= y;
+			camera.position.z -= z * Math.cos(Math.toRadians(camera.rotation.x));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A))
 		{
@@ -211,7 +216,7 @@ public class Main
 		glLight(GL_LIGHT0, GL_DIFFUSE, MathHelper.asFloatBuffer(new float[] { 1.5f, 1.5f, 1.5f, 1 }));
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
-		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
+		glMaterialf(GL_FRONT, GL_SHININESS, 1000f);
 
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, MathHelper.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1 }));
 

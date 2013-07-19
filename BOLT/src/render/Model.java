@@ -58,47 +58,25 @@ public class Model
 				
 				glMaterialf(GL_FRONT, GL_SHININESS, m.shininess);							
 			}
-			glBegin(GL_TRIANGLES);
+			glBegin(GL_FAN);
 			for (Face face : this.faces.get(i))
 			{
-				if (this.hasNormals)
+				for(int i = 1; i < face.pointCount + 1; i++)
 				{
-					Vector3f n1 = this.normals.get((int) face.normal.x - 1);
-					glNormal3f(n1.x, n1.y, n1.z);
+					if (this.hasNormals)
+					{
+						Vector3f n1 = this.normals.get((int) face.points[i].z);
+						glNormal3f(n1.x, n1.y, n1.z);
+					}
+					if (this.hasTextures)
+					{
+						Vector2f t1 = this.tetxures.get((int) face.points[i].y);
+						glTexCoord2f(t1.x, 1 - t1.y);
+					}
+					Vector3f v1 = this.vertices.get((int)  face.points[i].x);
+					glVertex3f(v1.x, v1.y, v1.z);
 				}
-				if (this.hasTextures)
-				{
-					Vector2f t1 = this.tetxures.get((int) face.texture.x - 1);
-					glTexCoord2f(t1.x, 1 - t1.y);
-				}
-				Vector3f v1 = this.vertices.get((int) face.vertex.x - 1);
-				glVertex3f(v1.x, v1.y, v1.z);
-
-				if (this.hasNormals)
-				{
-					Vector3f n2 = this.normals.get((int) face.normal.y - 1);
-					glNormal3f(n2.x, n2.y, n2.z);
-				}
-				if (this.hasTextures)
-				{
-					Vector2f t2 = this.tetxures.get((int) face.texture.y - 1);
-					glTexCoord2f(t2.x, 1 - t2.y);
-				}
-				Vector3f v2 = this.vertices.get((int) face.vertex.y - 1);
-				glVertex3f(v2.x, v2.y, v2.z);
-
-				if (this.hasNormals)
-				{
-					Vector3f n3 = this.normals.get((int) face.normal.z - 1);
-					glNormal3f(n3.x, n3.y, n3.z);
-				}
-				if (this.hasTextures)
-				{
-					Vector2f t3 = this.tetxures.get((int) face.texture.z - 1);
-					glTexCoord2f(t3.x, 1 - t3.y);
-				}
-				Vector3f v3 = this.vertices.get((int) face.vertex.z - 1);
-				glVertex3f(v3.x, v3.y, v3.z);
+				
 			}
 			glEnd();
 		}

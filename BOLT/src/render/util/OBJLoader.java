@@ -63,7 +63,8 @@ public class OBJLoader
 			}
 			else if (line.startsWith("f "))
 			{
-				Vector3f[] indices = new Vector3f[line.split(" ").length - 1];
+				Vector3f[] indices = new Vector3f[line.split(" ").length - 1]; // <-- Das ist keine List deshalb funktioniert add() nicht
+				// TODO: entweder aus indices eine List machen oder das Array mit einer for-Schleife durchlaufen
 				
 				for(int i = 0; i < line.split(" ").length - 1; i++)
 				{
@@ -72,7 +73,7 @@ public class OBJLoader
 					float t = Float.valueOf(s.split("/")[1]);
 					float n = Float.valueOf(s.split("/")[2]);
 					
-					indices.add(new Vector3f(v, t, n)
+					indices.add(new Vector3f(v, t, n);
 				}
 				faces.add(new Face(indices));
 			}

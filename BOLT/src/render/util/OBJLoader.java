@@ -73,7 +73,7 @@ public class OBJLoader
 					float t = Float.valueOf(s.split("/")[1]);
 					float n = Float.valueOf(s.split("/")[2]);
 					
-					indices[i] = new Vector3f(v, t, n);
+					indices.add(new Vector3f(v, t, n);
 				}
 				faces.add(new Face(indices));
 			}

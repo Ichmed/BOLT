@@ -9,14 +9,13 @@ Todo:
 - Collissions
 - Test Entities + Maps
 
-
-
 Stretch Goals
 - Scripts
 - Ai
 - blablabla
 
-options.txt commands
+
+options.txt commands:
 
 cameraSpeed=int
 fullscreen=boolean

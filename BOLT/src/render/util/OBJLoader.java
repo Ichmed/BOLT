@@ -63,44 +63,18 @@ public class OBJLoader
 			}
 			else if (line.startsWith("f "))
 			{
-				String s1 = line.split(" ")[1], s2 = line.split(" ")[2], s3 = line.split(" ")[3];
-
-				float x = Float.valueOf(s1.split("/")[0]);
-				float y = Float.valueOf(s2.split("/")[0]);
-				float z = Float.valueOf(s3.split("/")[0]);
-
-				Vector3f vertexIndices = new Vector3f(x, y, z);
-				Vector3f normalIndices = new Vector3f(0, 0, 0);
-				Vector3f textureIndices = new Vector3f(0, 0, 0);
-
-				try
+				Vector3f[] indices = new Vector3f[line.split(" ").length - 1];
+				
+				for(int i = 0; i < line.split(" ").length - 1; i++)
 				{
-
-					x = Float.valueOf(s1.split("/")[1]);
-					y = Float.valueOf(s2.split("/")[1]);
-					z = Float.valueOf(s3.split("/")[1]);
-
-					textureIndices = new Vector3f(x, y, z);
-					m.hasTextures = true;
+					String s = line.split(" ")[i + 1];
+					float v = Float.valueOf(s.split("/")[0]);
+					float t = Float.valueOf(s.split("/")[1]);
+					float n = Float.valueOf(s.split("/")[2]);
+					
+					indices.add(new Vector3f(v, t, n)
 				}
-				catch (Exception e)
-				{
-				}
-
-				try
-				{
-					x = Float.valueOf(s1.split("/")[2]);
-					y = Float.valueOf(s2.split("/")[2]);
-					z = Float.valueOf(s3.split("/")[2]);
-
-					normalIndices = new Vector3f(x, y, z);
-					m.hasNormals = true;
-				}
-				catch (Exception e)
-				{
-				}
-
-				faces.add(new Face(vertexIndices, normalIndices, textureIndices));
+				faces.add(new Face(indices));
 			}
 			else if (line.startsWith("usemtl"))
 			{

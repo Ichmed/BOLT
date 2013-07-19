@@ -30,4 +30,16 @@ public class Entity
 	public void onTick()
 	{
 	}
+	
+	public void setPosition(float x, float y, float z)
+	{
+		this.position = new Vector3f(x, y, z);
+	}
+	
+	public void applySaveData(HashMap<String, Object> map)
+	{
+		List<String> l = map.getKeys();
+		for(String s : l)
+			this.customValues.put(map.get(s));
+	}
 }

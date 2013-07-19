@@ -58,22 +58,22 @@ public class Model
 				
 				glMaterialf(GL_FRONT, GL_SHININESS, m.shininess);							
 			}
-			glBegin(GL_FAN);
+			glBegin(GL_TRIANGLE_FAN);
 			for (Face face : this.faces.get(i))
 			{
-				for(int i = 1; i < face.pointCount + 1; i++)
+				for(int j = 0; j < face.points.length; j++)
 				{
 					if (this.hasNormals)
 					{
-						Vector3f n1 = this.normals.get((int) face.points[i].z);
+						Vector3f n1 = this.normals.get((int) face.points[j].z - 1);
 						glNormal3f(n1.x, n1.y, n1.z);
 					}
 					if (this.hasTextures)
 					{
-						Vector2f t1 = this.tetxures.get((int) face.points[i].y);
+						Vector2f t1 = this.tetxures.get((int) face.points[j].y - 1);
 						glTexCoord2f(t1.x, 1 - t1.y);
 					}
-					Vector3f v1 = this.vertices.get((int)  face.points[i].x);
+					Vector3f v1 = this.vertices.get((int) face.points[j].x - 1);
 					glVertex3f(v1.x, v1.y, v1.z);
 				}
 				

@@ -3,6 +3,7 @@ package entity;
 import game.World;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -38,8 +39,7 @@ public class Entity
 	
 	public void applySaveData(HashMap<String, Object> map)
 	{
-		List<String> l = map.getKeys();
-		for(String s : l)
-			this.customValues.put(map.get(s));
+		for(String s : map.keySet())
+			this.customValues.put(s, map.get(s));
 	}
 }

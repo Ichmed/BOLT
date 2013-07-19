@@ -58,7 +58,7 @@ public class Model
 				
 				glMaterialf(GL_FRONT, GL_SHININESS, m.shininess);							
 			}
-			glBegin(GL_TRIANGLE_FAN);
+			glBegin(GL_TRIANGLES);
 			for (Face face : this.faces.get(i))
 			{
 				for(int j = 0; j < face.points.length; j++)

@@ -34,11 +34,13 @@ public class Main
 	public static int resX = 0;
 	public static int resY = 0;
 	public static CollisionBox c;
+	private static DisplayMode[] fullscreenmodes;
 
 	public static void main(String[] args)
 	{
 		try
 		{
+			fullscreenmodes = Display.getAvailableDisplayModes();
 			Display.setDisplayMode(new DisplayMode(640, 480));
 			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 			Display.create();
@@ -89,7 +91,15 @@ public class Main
 	public static void enterFullscreen() throws LWJGLException
 	{
 		// Display.setFullscreen(true);
-		Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+		for(DisplayMode akt: fullscreenmodes){
+			if( akt.getWidth() == resX && akt.getHeight() == resY ){
+				Display.setDisplayModeAndFullscreen(akt);
+			} else {
+				System.out.printf("can not find matching resolution - falling back to desktop resolution");
+				Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			}
+		}
+		// Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 		// Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32,
 		// 60));
 		// fullscreen = true;

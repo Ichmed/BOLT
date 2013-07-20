@@ -5,8 +5,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Plane
 {
-	Vector3f normal = new Vector3f();
-	Vector3f startingPoint = new Vector3f();
+	public Vector3f normal = new Vector3f();
+	public Vector3f startingPoint = new Vector3f();
 	
 	public Plane() { }
 	

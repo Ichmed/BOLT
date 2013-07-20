@@ -1,6 +1,9 @@
 package physics.collisionmodels;
 
+import game.Main;
+
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -301,8 +304,13 @@ public class CollisionBox
 			pointBack = maxBackPoint;
 		}
 		//setting the final best front/back planes
-		front = new Plane(bestNormalFront, bestPointBack);
-		back = new Plane(bestNormalFront, bestPointFront);
+		front = new Plane(bestNormalFront, bestPointFront);
+		back = new Plane(bestNormalFront, bestPointBack);
+		front.transformToHesseNormalForm();
+		back.transformToHesseNormalForm();
+		Main.log.log(Level.INFO, "front/back: normal[" + front.normal.x + ", " + front.normal.y + ", " + front.normal.z + "]\n");
+		Main.log.log(Level.INFO, "front: startingPoint[" + front.startingPoint.x + ", " + front.startingPoint.y + ", " + front.startingPoint.z + "]\n");
+		Main.log.log(Level.INFO, "back: startingPoint[" + back.startingPoint.x + ", " + back.startingPoint.y + ", " + back.startingPoint.z + "]\n");
 		//
 		//Adjusting left/right-Plane
 		//
@@ -410,6 +418,8 @@ public class CollisionBox
 		//setting the final best left/right planes
 		left = new Plane(bestNormalLeft, bestPointLeft);
 		right = new Plane(bestNormalLeft, bestPointRight);
+		left.transformToHesseNormalForm();
+		right.transformToHesseNormalForm();
 		//
 		//Adjusting topPlane
 		//

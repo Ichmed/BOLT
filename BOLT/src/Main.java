@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -38,6 +40,8 @@ public class Main
 	
 	public static Vector3f lightPos = new Vector3f();
 
+	public static final Logger log = Logger.getLogger("BOLT");
+	
 	// TODO: logger einrichten
 
 	public static void main(String[] args)

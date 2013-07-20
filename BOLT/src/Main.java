@@ -35,6 +35,7 @@ public class Main
 	public static int resY = 0;
 	public static CollisionBox c;
 	private static DisplayMode[] fullscreenmodes;
+
 	// TODO: logger einrichten
 
 	public static void main(String[] args)
@@ -45,14 +46,16 @@ public class Main
 		{
 			fullscreenmodes = Display.getAvailableDisplayModes();
 			System.out.printf("available fullscreen-modes:\n");
-			for(DisplayMode akt: fullscreenmodes){
+			for (DisplayMode akt : fullscreenmodes)
+			{
 				System.out.printf("%dx%d,%dbpp,%dHz\n", akt.getWidth(), akt.getHeight(), akt.getBitsPerPixel(), akt.getFrequency());
 			}
-		//	Display.setDisplayMode(new DisplayMode(640, 480));
-		//	Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-			if(fullscreen){
+			if (fullscreen)
+			{
 				enterFullscreen();
-			}else{
+			}
+			else
+			{
 				leaveFullscreen();
 			}
 			Display.create();
@@ -73,7 +76,7 @@ public class Main
 
 		initGLSettings();
 		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
-		
+
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
 
@@ -87,29 +90,25 @@ public class Main
 	{
 		// Display.setFullscreen(true);
 		boolean found = false;
-		for(DisplayMode akt: fullscreenmodes){
-			if( akt.getWidth() == resX && akt.getHeight() == resY ){
+		for (DisplayMode akt : fullscreenmodes)
+		{
+			if (akt.getWidth() == resX && akt.getHeight() == resY)
+			{
 				Display.setDisplayModeAndFullscreen(akt);
 				found = true;
 			}
 		}
-		if(!found){
+		if (!found)
+		{
 			System.out.printf("can not find matching resolution - falling back to desktop resolution\n");
 			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 		}
-		// Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-		// Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32,
-		// 60));
-		// fullscreen = true;
-		// System.out.printf("fullscreen entered\n");
 	}
 
 	public static void leaveFullscreen() throws LWJGLException
 	{
 		Display.setDisplayMode(new DisplayMode(resX, resY));
 		Display.setFullscreen(false);
-		// fullscreen = false;
-		// System.out.printf("fullscreen left\n");
 	}
 
 	public static void toggleFullscreen()
@@ -142,19 +141,10 @@ public class Main
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 
-		// TODO camera movement
-		// if (Keyboard.isKeyDown(Keyboard.KEY_F11))
-		// {
-		// toggleFullscreen();
-		// initGLSettings();
-		// Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() /
-		// 2);
-		// }
-		
 		double x = Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 		double y = -Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
 		double z = -Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
-		
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_W))
 		{
 			camera.position.x += x * Math.cos(Math.toRadians(camera.rotation.x));
@@ -194,25 +184,18 @@ public class Main
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		// glLight(GL_LIGHT0, GL_POSITION,
-		// MathHelper.asFloatBuffer(new float[] { 5 * (float) Math.sin((double)
-		// i / 100d), 5 * (float) Math.sin((double) i / 100d), 5 * (float)
-		// Math.cos((double) i / 100d), 1 }));
-
 		glEnable(GL_TEXTURE_2D);
 		glTranslated(0, 0, -9);
-		// glRotated(i, 0, 1, 0);
 		m.renderModel();
-		
+
 		glColor4d(1, 1, 1, 1);
 		glBegin(GL_POINT);
-		for(Vector3f v : c.points)	
+		for (Vector3f v : c.points)
 		{
-		    glVertex3f(v.x, v.y, v.z);
-		    System.out.println(v);			
+			glVertex3f(v.x, v.y, v.z);
+//			System.out.println(v);
 		}
 		glEnd();
-		
 
 		Display.update();
 		Display.sync(50);

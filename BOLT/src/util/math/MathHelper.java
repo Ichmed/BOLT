@@ -45,18 +45,18 @@ public abstract class MathHelper
 	 */
 	public static void rotateVector(Vector3f vector, float degree, Plane rotationPlane)
 	{
-		degree = (float)Math.toRadians(degree);
+		float tempDegree = (float)Math.toRadians(degree);
 		//Creating a Matrix for rotating the Vector
 		Matrix3f rotationMatrix = new Matrix3f();
-		rotationMatrix.m00 = (float)(rotationPlane.normal.x * rotationPlane.normal.x * (1 - Math.cos (degree)) + Math.cos (degree));
-		rotationMatrix.m01 = (float)(rotationPlane.normal.x * rotationPlane.normal.y * (1 - Math.cos (degree)) - rotationPlane.normal.z * Math.sin (degree));
-		rotationMatrix.m02 = (float)(rotationPlane.normal.x * rotationPlane.normal.z * (1 - Math.cos (degree)) + rotationPlane.normal.y * Math.cos (degree));
-		rotationMatrix.m10 = (float)(rotationPlane.normal.x * rotationPlane.normal.y * (1 - Math.cos (degree)) + rotationPlane.normal.z * Math.cos (degree));
-		rotationMatrix.m11 = (float)(rotationPlane.normal.y * rotationPlane.normal.y * (1 - Math.cos (degree)) + Math.cos (degree));
-		rotationMatrix.m12 = (float)(rotationPlane.normal.y * rotationPlane.normal.z * (1 - Math.cos (degree)) + rotationPlane.normal.x * Math.cos (degree));
-		rotationMatrix.m20 = (float)(rotationPlane.normal.x * rotationPlane.normal.z * (1 - Math.cos (degree)) + rotationPlane.normal.y * Math.cos (degree));
-		rotationMatrix.m21 = (float)(rotationPlane.normal.z * rotationPlane.normal.y * (1 - Math.cos (degree)) + rotationPlane.normal.x * Math.cos (degree));
-		rotationMatrix.m22 = (float)(rotationPlane.normal.z * rotationPlane.normal.z * (1 - Math.cos (degree)) + Math.cos (degree));
+		rotationMatrix.m00 = (float)(rotationPlane.normal.x * rotationPlane.normal.x * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
+		rotationMatrix.m01 = (float)(rotationPlane.normal.x * rotationPlane.normal.y * (1 - Math.cos (tempDegree)) - rotationPlane.normal.z * Math.sin (tempDegree));
+		rotationMatrix.m02 = (float)(rotationPlane.normal.x * rotationPlane.normal.z * (1 - Math.cos (tempDegree)) + rotationPlane.normal.y * Math.cos (tempDegree));
+		rotationMatrix.m10 = (float)(rotationPlane.normal.x * rotationPlane.normal.y * (1 - Math.cos (tempDegree)) + rotationPlane.normal.z * Math.cos (tempDegree));
+		rotationMatrix.m11 = (float)(rotationPlane.normal.y * rotationPlane.normal.y * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
+		rotationMatrix.m12 = (float)(rotationPlane.normal.y * rotationPlane.normal.z * (1 - Math.cos (tempDegree)) + rotationPlane.normal.x * Math.cos (tempDegree));
+		rotationMatrix.m20 = (float)(rotationPlane.normal.x * rotationPlane.normal.z * (1 - Math.cos (tempDegree)) + rotationPlane.normal.y * Math.cos (tempDegree));
+		rotationMatrix.m21 = (float)(rotationPlane.normal.z * rotationPlane.normal.y * (1 - Math.cos (tempDegree)) + rotationPlane.normal.x * Math.cos (tempDegree));
+		rotationMatrix.m22 = (float)(rotationPlane.normal.z * rotationPlane.normal.z * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
 		//adopt rotatoinMatrix on vector
 		Matrix3f.transform (rotationMatrix, vector, vector);
 	}

@@ -20,7 +20,7 @@ void main()
     if(diffuseLightIntensity != 0.0)
     {
         float fspecular = pow(specular, gl_FrontMaterial.shininess);
-        color.rgb += (gl_FrontMaterial.specular.rgb * fspecular);
+        //color.rgb += (gl_FrontMaterial.specular.rgb * fspecular);
     }
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

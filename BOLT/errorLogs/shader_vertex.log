@@ -1,3 +1,19 @@
-Vertex-Shader shader could not be compiled 
+Vertex-Shader 'shader' could not be compiled 
  Error log:
-0(25) : error C1008: undefined variable "gl_osition"
+0(8) : error C1101: ambiguous overloaded function reference "mul(mat4, vec3)"
+    (0) : gp5 superp mat3x4 mul(superp mat3x1, superp mat1x4)
+    (0) : gp5 superp mat3 mul(superp mat3x1, superp mat1x3)
+    (0) : gp5 superp mat3x2 mul(superp mat3x1, superp mat1x2)
+    (0) : gp5 superp mat3x1 mul(superp mat3x1, superp mat1)
+    (0) : gp5 superp mat2x4 mul(superp mat2x1, superp mat1x4)
+    (0) : gp5 superp mat2x3 mul(superp mat2x1, superp mat1x3)
+    (0) : gp5 superp mat2 mul(superp mat2x1, superp mat1x2)
+    (0) : gp5 superp mat2x1 mul(superp mat2x1, superp mat1)
+    (0) : gp5 superp mat1x4 mul(superp mat1x3, superp mat3x4)
+    (0) : gp5 superp mat1x3 mul(superp mat1x3, superp mat3)
+    (0) : gp5 superp mat1x2 mul(superp mat1x3, superp mat3x2)
+    (0) : gp5 superp mat1 mul(superp mat1x3, superp mat3x1)
+    (0) : gp5 superp mat1x4 mul(superp mat1x2, superp mat2x4)
+    (0) : gp5 superp mat1x3 mul(superp mat1x2, superp mat2x3)
+    (0) : gp5 superp mat1x2 mul(superp mat1x2, superp mat2)
+    (0) : gp5 superp mat1 mul

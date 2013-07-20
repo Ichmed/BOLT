@@ -35,6 +35,8 @@ public class Main
 	public static int resY = 0;
 	public static CollisionBox c;
 	private static DisplayMode[] fullscreenmodes;
+	
+	public static Vector3f lightPos = new Vector3f();
 
 	// TODO: logger einrichten
 
@@ -76,6 +78,11 @@ public class Main
 
 		initGLSettings();
 		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
+		
+		for (Vector3f v : c.points)
+		{
+			System.out.println(v);
+		}
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
@@ -169,15 +176,18 @@ public class Main
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_E))
 		{
-			glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { camera.position.x, camera.position.y, camera.position.z, 1 }));
-
+			lightPos.x = camera.position.x;
+			lightPos.y = camera.position.y;
+			lightPos.z = camera.position.z;
 		}
 		glPushMatrix();
 
 		glRotated(camera.rotation.x, 1f, 0f, 0f);
 		glRotated(camera.rotation.y, 0f, 1f, 0f);
 		glRotated(camera.rotation.z, 0f, 0f, 1f);
+		
 		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
+		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] {-camera.position.x, -camera.position.y, -camera.position.z, 1}));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -24,6 +24,7 @@ public class Plane
 	public void transformToHesseNormalForm()
 	{
 		normal.normalise ();
+		//last factor of the coordinate-form
 		float lastFactor = normal.x * (-startingPoint.x) + normal.y * (-startingPoint.y) + normal.z * (-startingPoint.z);
 		if(lastFactor > 0)
 			normal.negate ();

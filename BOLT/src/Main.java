@@ -35,14 +35,26 @@ public class Main
 	public static int resY = 0;
 	public static CollisionBox c;
 	private static DisplayMode[] fullscreenmodes;
+	// TODO: logger einrichten
 
 	public static void main(String[] args)
 	{
+		loadOptions();
+		System.out.printf("fullscreen: %b\nresolution: %dx%d\ncameraspeed: %d\n", fullscreen, resX, resY, cameraSpeed);
 		try
 		{
 			fullscreenmodes = Display.getAvailableDisplayModes();
-			Display.setDisplayMode(new DisplayMode(640, 480));
-			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			System.out.printf("available fullscreen-modes:\n");
+			for(DisplayMode akt: fullscreenmodes){
+				System.out.printf("%dx%d,%dbpp,%dHz\n", akt.getWidth(), akt.getHeight(), akt.getBitsPerPixel(), akt.getFrequency());
+			}
+		//	Display.setDisplayMode(new DisplayMode(640, 480));
+		//	Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			if(fullscreen){
+				enterFullscreen();
+			}else{
+				leaveFullscreen();
+			}
 			Display.create();
 		}
 		catch (LWJGLException e1)
@@ -59,23 +71,6 @@ public class Main
 			e.printStackTrace();
 		}
 
-		loadOptions();
-		System.out.printf("fullscreen: %b\nresolution: %dx%d\ncameraspeed: %d\n", fullscreen, resX, resY, cameraSpeed);
-		try
-		{
-			if (fullscreen)
-			{
-				enterFullscreen();
-			}
-			else
-			{
-				leaveFullscreen();
-			}
-		}
-		catch (LWJGLException e)
-		{
-			e.printStackTrace();
-		}
 		initGLSettings();
 		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
 		
@@ -214,7 +209,7 @@ public class Main
 		for(Vector3f v : c.points)	
 		{
 		    glVertex3f(v.x, v.y, v.z);
-		 //   System.out.println(v);			
+		    System.out.println(v);			
 		}
 		glEnd();
 		

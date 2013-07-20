@@ -46,6 +46,7 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		log.setLevel(Level.ALL);
 		loadOptions();
 		System.out.printf("fullscreen: %b\nresolution: %dx%d\ncameraspeed: %d\n", fullscreen, resX, resY, cameraSpeed);
 		try

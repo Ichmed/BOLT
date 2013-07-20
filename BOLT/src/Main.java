@@ -91,13 +91,16 @@ public class Main
 	public static void enterFullscreen() throws LWJGLException
 	{
 		// Display.setFullscreen(true);
+		boolean found = false;
 		for(DisplayMode akt: fullscreenmodes){
 			if( akt.getWidth() == resX && akt.getHeight() == resY ){
 				Display.setDisplayModeAndFullscreen(akt);
-			} else {
-				System.out.printf("can not find matching resolution - falling back to desktop resolution");
-				Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+				found = true;
 			}
+		}
+		if(!found){
+			System.out.printf("can not find matching resolution - falling back to desktop resolution\n");
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 		}
 		// Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 		// Display.setDisplayModeAndFullscreen(new DisplayMode(resX, resY, 32,
@@ -211,7 +214,7 @@ public class Main
 		for(Vector3f v : c.points)	
 		{
 		    glVertex3f(v.x, v.y, v.z);
-		    System.out.println(v);			
+		 //   System.out.println(v);			
 		}
 		glEnd();
 		

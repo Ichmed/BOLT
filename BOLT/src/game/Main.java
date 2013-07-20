@@ -1,7 +1,7 @@
+package game;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
-import game.Camera;
-import game.GameRules;
 
 import java.io.BufferedReader;
 import java.io.File;

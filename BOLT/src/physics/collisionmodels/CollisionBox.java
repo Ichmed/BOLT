@@ -195,6 +195,7 @@ public class CollisionBox
 				pointTop =points[a];
 			}
 		}
+		System.out.printf("minX: %f\nminY: %f\nminZ: %f\nmaxX: %f\nmaxY: %f\nmaxZ: %f\n", minX, minY, minZ, maxX, maxY, maxZ);
 		//
 		//Adjusting front/back-Plane
 		//
@@ -239,14 +240,14 @@ public class CollisionBox
 				//Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(front.calculateDistancePoint(points[i])));
+					distances.add(Float.valueOf(Math.abs(front.calculateDistancePoint(points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
-					if(distances.get(i) < mindistance)
+					if(distances.get(i).floatValue() < mindistance)
 					{
 						maxFrontPoint = points[i];
-						mindistance = distances.get(i);
+						mindistance = distances.get(i).floatValue();
 					}
 			}
 			//setting the temporary bestFrontPlane and normalize it
@@ -275,14 +276,14 @@ public class CollisionBox
 			{
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(back.calculateDistancePoint(points[i])));
+					distances.add(Float.valueOf(Math.abs(back.calculateDistancePoint(points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
-					if(distances.get(i) < mindistance)
+					if(distances.get(i).floatValue() < mindistance)
 					{
 						maxBackPoint = points[i];
-						mindistance = distances.get(i);
+						mindistance = distances.get(i).floatValue();
 					}
 			}
 			//setting the round-best-Values (for the next rotation as compareValues)
@@ -346,14 +347,14 @@ public class CollisionBox
 				//Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(left.calculateDistancePoint(points[i])));
+					distances.add(Float.valueOf(Math.abs(left.calculateDistancePoint(points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
-					if(distances.get(i) < mindistance)
+					if(distances.get(i).floatValue() < mindistance)
 					{
 						maxLeftPoint = points[i];
-						mindistance = distances.get(i);
+						mindistance = distances.get(i).floatValue();
 					}
 			}
 			//setting the temporary bestLeftPlane and normalize it
@@ -382,14 +383,14 @@ public class CollisionBox
 			{
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Math.abs(right.calculateDistancePoint(points[i])));
+					distances.add(Float.valueOf(Math.abs(right.calculateDistancePoint(points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
-					if(distances.get(i) < mindistance)
+					if(distances.get(i).floatValue() < mindistance)
 					{
 						maxRightPoint = points[i];
-						mindistance = distances.get(i);
+						mindistance = distances.get(i).floatValue();
 					}
 			}
 			//setting the round-best-Values (for the next rotation as compareValues)
@@ -437,14 +438,14 @@ public class CollisionBox
 		{
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for(int i = 0; i < points.length; i++)
-				distances.add(Math.abs(top.calculateDistancePoint(points[i])));
+				distances.add(Float.valueOf(Math.abs(top.calculateDistancePoint(points[i]))));
 			//Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for(int i = 0; i < distances.size(); i++)
-				if(distances.get(i) < mindistance)
+				if(distances.get(i).floatValue() < mindistance)
 				{
 					maxPointTop = points[i];
-					mindistance = distances.get(i);
+					mindistance = distances.get(i).floatValue();
 				}
 		}
 		top = new Plane(bestNormalTop, maxPointTop);
@@ -473,14 +474,14 @@ public class CollisionBox
 		{
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for(int i = 0; i < points.length; i++)
-				distances.add(Math.abs(bottom.calculateDistancePoint(points[i])));
+				distances.add(Float.valueOf(Math.abs(bottom.calculateDistancePoint(points[i]))));
 			//Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for(int i = 0; i < distances.size(); i++)
-				if(distances.get(i) < mindistance)
+				if(distances.get(i).floatValue() < mindistance)
 				{
 					maxPointBottom = points[i];
-					mindistance = distances.get(i);
+					mindistance = distances.get(i).floatValue();
 				}
 		}
 		bottom = new Plane(bestNormalTop, maxPointBottom);

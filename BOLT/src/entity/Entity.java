@@ -5,6 +5,8 @@ import game.World;
 import java.util.HashMap;
 import org.lwjgl.util.vector.Vector3f;
 
+import util.math.MathHelper;
+
 public class Entity
 {
 	public String parent;
@@ -37,6 +39,22 @@ public class Entity
 	{
 		this.position = new Vector3f(x, y, z);
 	}
+	
+	public void setPosition(Vector3f v)
+	{
+		this.position = MathHelper.copyVector(v);
+	}
+	
+	public void setRotation(float x, float y, float z)
+	{
+		this.rotation = new Vector3f(x, y, z);
+	}
+	
+	public void setRotation(Vector3f v)
+	{
+		this.rotation = MathHelper.copyVector(v);
+	}
+	
 	
 	public void applySaveData(HashMap<String, Object> map)
 	{

@@ -5,8 +5,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Plane
 {
-	private Vector3f normal = new Vector3f();
-	private Vector3f startingPoint = new Vector3f();
+	public Vector3f normal = new Vector3f();
+	public Vector3f startingPoint = new Vector3f();
 	
 	public Plane() { }
 	
@@ -21,19 +21,9 @@ public class Plane
 		return new Vector3f(normal.x, normal.y, normal.z);
 	}
 	
-	public Vector3f getReferenceToNormal()
-	{
-		return normal;
-	}
-	
 	public Vector3f getStartingPoint()
 	{
 		return new Vector3f(startingPoint.x, startingPoint.y, startingPoint.z);
-	}
-	
-	public Vector3f getReferenceToStartingPoint()
-	{
-		return startingPoint;
 	}
 	
 	public void setNormal(Vector3f newNormal)

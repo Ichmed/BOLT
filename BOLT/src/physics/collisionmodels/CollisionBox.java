@@ -149,9 +149,6 @@ public class CollisionBox
 	 */
 	public static CollisionBox createCollisionBox(Vector3f... points)
 	{
-		Plane test = new Plane(new Vector3f(1,1,1), new Vector3f(2,3,4));
-		test.getNormal().negate();
-		Main.log.log(Level.INFO, test.getNormal().toString());
 		//
 		//!!!VARIABLENAMES + COMMENTATION FOR AXIS IS FULLY BULLSHIT!!!
 		//
@@ -320,8 +317,6 @@ public class CollisionBox
 		back = new Plane(bestNormalFront, bestPointBack);
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
-		Main.log.log(Level.INFO, "front: " + front.getNormal().toString() + front.getStartingPoint().toString());
-		Main.log.log(Level.INFO, "back: " + back.getNormal().toString() + back.getStartingPoint().toString());
 		//
 		//Adjusting left/right-Plane
 		//

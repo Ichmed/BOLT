@@ -114,7 +114,7 @@ public class Entity
 	
 	public void setPosition(Vector3f v)
 	{
-		this.position = MathHelper.copyVector(v);
+		this.position = MathHelper.cloneVector(v);
 	}
 	
 	public void setRotation(float x, float y, float z)
@@ -124,17 +124,17 @@ public class Entity
 	
 	public void setRotation(Vector3f v)
 	{
-		this.rotation = MathHelper.copyVector(v);
+		this.rotation = MathHelper.cloneVector(v);
 	}
 	
 	public Vector3f getPosition()
 	{
-		return MathHelper.copyVector(this.position);
+		return MathHelper.cloneVector(this.position);
 	}
 	
 	public Vector3f getRotation()
 	{
-		return MathHelper.copyVector(this.rotation);
+		return MathHelper.cloneVector(this.rotation);
 	}
 	
 	/**

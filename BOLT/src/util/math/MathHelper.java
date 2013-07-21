@@ -42,7 +42,7 @@ public abstract class MathHelper
 	 * @param vector
 	 * @return A copy of the vector
 	 */
-	public static Vector3f copyVector(Vector3f vector)
+	public static Vector3f cloneVector(Vector3f vector)
 	{
 		return new Vector3f(vector.x, vector.y, vector.z);
 	}

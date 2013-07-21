@@ -67,12 +67,12 @@ public class CollisionBox
 	 */
 	public CollisionBox (Vector3f startingPoint, Vector3f depth, Vector3f width, Vector3f height)
 	{
-		this.startingPoint = startingPoint;
-		this.depth = depth;
-		this.width = width;
-		this.height = height;
+		this.startingPoint = MathHelper.cloneVector(startingPoint);
+		this.depth = MathHelper.cloneVector(depth);
+		this.width = MathHelper.cloneVector(width);
+		this.height = MathHelper.cloneVector(height);
 		//setting the edges
-		points[0] = startingPoint;
+		points[0] = MathHelper.cloneVector(startingPoint);
 		Vector3f.add(startingPoint, width, points[1]);
 		Vector3f.add(points[1], depth, points[2]);
 		Vector3f.add(startingPoint, depth, points[3]);
@@ -81,8 +81,8 @@ public class CollisionBox
 		Vector3f.add(points[5], depth, points[6]);
 		Vector3f.add(points[4], depth, points[7]);
 		//Setting the middle
-		Vector3f.add ((Vector3f)depth.scale (0.5f), (Vector3f)width.scale (0.5f), middle);
-		Vector3f.add ((Vector3f)middle, (Vector3f)height.scale (0.5f), middle);
+		Vector3f.add ((Vector3f)MathHelper.cloneVector(depth).scale (0.5f), (Vector3f)MathHelper.cloneVector(width).scale (0.5f), middle);
+		Vector3f.add ((Vector3f)middle, (Vector3f)MathHelper.cloneVector(height).scale (0.5f), middle);
 	}
 	
 	/**
@@ -108,8 +108,9 @@ public class CollisionBox
 	{
 		if(completeCollisionBox == true)
 		{
-			this.points = points;
-			startingPoint = points[0];
+			for (int i = 0; i < points.length; i++)
+				this.points[i] = MathHelper.cloneVector(points[i]);
+			startingPoint = MathHelper.cloneVector(points[0]);
 			Vector3f.sub(points[1], points[0], width);
 			Vector3f.sub(points[3], points[0], depth);
 			Vector3f.sub(points[4], points[0], height);

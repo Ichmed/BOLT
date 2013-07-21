@@ -24,8 +24,8 @@ public class CameraMounted extends Camera
 	@Override
 	public Vector3f getPosition()
 	{
-		if (parent instanceof ICameraMount) return MathHelper.copyVector(((ICameraMount) parent).getCameraPosition());
-		return MathHelper.copyVector(parent.position);
+		if (parent instanceof ICameraMount) return MathHelper.cloneVector(((ICameraMount) parent).getCameraPosition());
+		return MathHelper.cloneVector(parent.position);
 	}
 	
 	/**
@@ -39,8 +39,8 @@ public class CameraMounted extends Camera
 	@Override
 	public Vector3f getRotation()
 	{
-		if (parent instanceof ICameraMount) return MathHelper.copyVector(((ICameraMount) parent).getCameraRotation());
-		return MathHelper.copyVector(parent.rotation);
+		if (parent instanceof ICameraMount) return MathHelper.cloneVector(((ICameraMount) parent).getCameraRotation());
+		return MathHelper.cloneVector(parent.rotation);
 	}
 	
 	/**

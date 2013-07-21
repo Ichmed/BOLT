@@ -38,6 +38,16 @@ public abstract class MathHelper
 	}
 	
 	/**
+	 * This method copies a vector and returns the copy. The copy contains no references to the original vector
+	 * @param vector
+	 * @return A copy of the vector
+	 */
+	public static Vector3f copyVector(Vector3f vector)
+	{
+		return new Vector3f(vector.x, vector.y, vector.z);
+	}
+	
+	/**
 	 * A method for rotating a vector in a plane (around its normal vector) about degree degree
 	 * @param vector the vector which should be rotated
 	 * @param degree the degree about which the vector should be rotated

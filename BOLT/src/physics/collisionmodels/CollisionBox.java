@@ -270,7 +270,7 @@ public class CollisionBox
 			back = new Plane(normalFront, pointBack);
 			back.transformToHesseNormalForm();
 			if(front.normal == back.normal)
-				back.normal.negate();
+				back.negateNormal();
 			Main.log.log(Level.INFO, "front: " + front.normal.toString() + "," + front.startingPoint.toString());
 			Main.log.log(Level.INFO, "back: " + back.normal.toString() + "," + back.startingPoint.toString());
 			//Initializing temporary maximum values
@@ -305,7 +305,7 @@ public class CollisionBox
 			back = new Plane(normalFront, maxBackPoint);
 			back.transformToHesseNormalForm();
 			if(front.normal == back.normal)
-				back.normal.negate();
+				back.negateNormal();
 			distanceFrontBack = Math.abs(front.calculateDistancePoint(false, maxBackPoint));
 			if(distanceFrontBack < minDistanceFrontBack)
 			{
@@ -389,7 +389,7 @@ public class CollisionBox
 			right = new Plane(normalLeft, pointRight);
 			right.transformToHesseNormalForm();
 			if(left.normal == right.normal)
-				right.normal.negate();
+				right.negateNormal();
 			//Initializing temporary maximum values
 			Vector3f maxRightPoint = new Vector3f (0, 0, 0);
 			float maxRightDis = 0;
@@ -422,7 +422,7 @@ public class CollisionBox
 			right = new Plane(normalLeft, maxRightPoint);
 			right.transformToHesseNormalForm();
 			if(left.normal == right.normal)
-				right.normal.negate();
+				right.negateNormal();
 			distanceLeftRight = Math.abs(left.calculateDistancePoint(false, maxRightPoint));
 			if(distanceLeftRight < minDistanceLeftRight)
 			{
@@ -488,7 +488,7 @@ public class CollisionBox
 		Plane bottom = new Plane(bestNormalTop, pointBottom);
 		bottom.transformToHesseNormalForm();
 		if(top.normal == bottom.normal)
-			bottom.normal.negate();
+			bottom.negateNormal();
 		float maxBottomDis = 0;
 		//calculating if the bottomPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
@@ -518,7 +518,7 @@ public class CollisionBox
 		bottom = new Plane(bestNormalTop, maxPointBottom);
 		bottom.transformToHesseNormalForm();
 		if(top.normal == bottom.normal)
-			bottom.normal.negate();
+			bottom.negateNormal();
 		//
 		//Calculating the edgePoints of the collisionBox
 		//

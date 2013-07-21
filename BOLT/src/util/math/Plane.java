@@ -16,6 +16,13 @@ public class Plane
 		this.startingPoint = startingPoint;
 	}
 	
+	public void negateNormal()
+	{
+		normal.x = - normal.x;
+		normal.y = - normal.y;
+		normal.z = - normal.z;
+	}
+	
 	public Vector3f getPoint(float x, float y)
 	{
 		return new Vector3f (x, y, (Vector3f.dot(normal, startingPoint) - normal.x * x - normal.y * y) / normal.z);

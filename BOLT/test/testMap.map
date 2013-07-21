@@ -3,7 +3,8 @@
   [
   {
     "pos": [3.4, 5.1, 1.8],
-    "custom": 
+    "rot": [0.0, 0.0, 0.0],
+    "custom":
     {
    	  "isThisATest": true,
       "description": "Foo Bar"

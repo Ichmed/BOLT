@@ -93,11 +93,11 @@ public abstract class MathHelper
 	}
 	
 	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2){
-		float abstand = 0;
+		float distance = 0;
 		Vector3f temp = new Vector3f();
 		Vector3f.sub(point1, point2, temp);
-		abstand = (float) Math.sqrt(temp.getX()*temp.getX()+temp.getY()*temp.getY()+temp.getZ()*temp.getZ());
-		return abstand;
+		distance = (float) Math.sqrt(temp.getX()*temp.getX()+temp.getY()*temp.getY()+temp.getZ()*temp.getZ());
+		return distance;
 	}
 
 	public static FloatBuffer asFloatBuffer(float[] fs)

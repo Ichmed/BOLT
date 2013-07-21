@@ -141,7 +141,65 @@ public class CollisionBox
 		this.mass = mass;
 	}
 	
+	public Vector3f getStartingPoint()
+	{
+		return MathHelper.cloneVector(startingPoint);
+	}
 	
+	public Vector3f[] getPoints()
+	{
+		return MathHelper.cloneVectorArray(points);
+	}
+	
+	public Vector3f getMiddle()
+	{
+		return MathHelper.cloneVector(middle);
+	}
+	
+	public Vector3f getDepth()
+	{
+		return MathHelper.cloneVector(depth);
+	}
+	
+	public Vector3f getHeight()
+	{
+		return MathHelper.cloneVector(height);
+	}
+	
+	public Vector3f getWidth()
+	{
+		return MathHelper.cloneVector(width);
+	}
+	
+	public void setStartingPoint(Vector3f startingPoint)
+	{
+		this.startingPoint = MathHelper.cloneVector(startingPoint);
+	}
+	
+	public void setPoints(Vector3f[] points)
+	{
+		this.points = MathHelper.cloneVectorArray(points);
+	}
+	
+	public void setMiddle(Vector3f middle)
+	{
+		this.middle = MathHelper.cloneVector(middle);
+	}
+	
+	public void setDepth(Vector3f depth)
+	{
+		this.depth = MathHelper.cloneVector(depth);
+	}
+	
+	public void setHeight(Vector3f height)
+	{
+		this.height = MathHelper.cloneVector(height);
+	}
+	
+	public void setWidth(Vector3f width)
+	{
+		this.width = MathHelper.cloneVector(width);
+	}
 	
 	/**
 	 * creates the best CollisionBox from an object given with points

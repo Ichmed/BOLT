@@ -92,19 +92,12 @@ public abstract class MathHelper
 	 */
 	public static Vector3f createPerpendicularVector(Vector3f startingVector)
 	{
-		Vector3f temp = cloneVector(startingVector);
-		Plane rotPlane = null;
-		if(startingVector.z == 0 && startingVector.x == 0)
-			rotPlane = new Plane(new Vector3f(0, 0, 1), new Vector3f());
-		else
-			rotPlane = new Plane(new Vector3f(0, 1, 0), new Vector3f());
-		rotateVector(temp, 90, rotPlane);
-		temp.normalise();
-		Main.log.log(Level.INFO, "Degree: " + Math.toDegrees(Math.acos(Vector3f.dot(startingVector, temp)/(startingVector.length() * temp.length()))));
-		Vector3f temp2 = new Vector3f();
-		Vector3f.cross(startingVector, temp, temp2);
-		temp2.normalise();
-		return temp2;
+		Vector3f temp = new Vector3f(1, 1, 1);
+		if(startingVector == temp)
+			temp = new Vector3f(1, -2, 3);
+		Vector3f ret = Vector3f.cross(startingVector, temp, null);
+		Main.log.log(Level.INFO, "Degree: " + Math.toDegrees(Math.acos(Vector3f.dot(startingVector, ret)/(startingVector.length() * ret.length()))));
+		return ret;
 	}
 	
 	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2){

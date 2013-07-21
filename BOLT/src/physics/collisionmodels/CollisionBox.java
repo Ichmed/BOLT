@@ -146,10 +146,6 @@ public class CollisionBox
 	 * @param points the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
-	/**
-	 * @param points
-	 * @return
-	 */
 	public static CollisionBox createCollisionBox(Vector3f... points)
 	{
 		//
@@ -220,7 +216,7 @@ public class CollisionBox
 		Plane back = new Plane(normalFront, pointFront);
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
-		//Rotating Planes around the object to a max value of 180° where the planes are just swapped versions of the starting planes
+		//Rotating Planes around the object to a max value of 180ï¿½ where the planes are just swapped versions of the starting planes
 		Plane rotationPlane = new Plane(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
 		//Planes will rotate around the y-axis
 		for(int degree = 1; degree < 180; degree++)
@@ -269,7 +265,7 @@ public class CollisionBox
 			//
 			back = new Plane(normalFront, pointBack);
 			back.transformToHesseNormalForm();
-			if(front.normal == back.normal)
+			if((front.normal.getX() == back.normal.getX()) && ( front.normal.getY() == back.normal.getY()) && (front.normal.getZ() == back.normal.getZ()))
 				back.negateNormal();
 			Main.log.log(Level.INFO, "front: " + front.normal.toString() + "," + front.startingPoint.toString());
 			Main.log.log(Level.INFO, "back: " + back.normal.toString() + "," + back.startingPoint.toString());
@@ -339,7 +335,7 @@ public class CollisionBox
 		Plane right = new Plane(normalLeft, pointRight);
 		left.transformToHesseNormalForm();
 		right.transformToHesseNormalForm();
-		//Rotating Planes around the object to a max value of 180° where the planes are just swapped versions of the starting planes
+		//Rotating Planes around the object to a max value of 180ï¿½ where the planes are just swapped versions of the starting planes
 		rotationPlane = front;
 		//Planes will rotate around the normalVector of the left/right-Plane
 		for(int degree = 1; degree < 180; degree++)

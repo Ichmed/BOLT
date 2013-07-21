@@ -179,33 +179,41 @@ public class CollisionBox
 			{
 				minX = points[a].x;
 				pointLeft =points[a];
+				Main.log.log(Level.INFO, "pointLeft" + pointLeft.toString() + "\npoints[a]" + points[a]);
 			}
 			else if(points[a].x > maxX)
 			{
 				maxX = points[a].x;
 				pointRight =points[a];
+				Main.log.log(Level.INFO, "pointRight" + pointRight.toString() + "\npoints[a]" + points[a]);
 			}
 			if(points[a].y < minY)
 			{
 				minY = points[a].y;
 				pointBack =points[a];
+				Main.log.log(Level.INFO, "pointBack" + pointBack.toString() + "\npoints[a]" + points[a]);
 			}
 			else if(points[a].y > maxY)
 			{
 				maxY = points[a].y;
 				pointFront =points[a];
+				Main.log.log(Level.INFO, "pointFront" + pointFront.toString() + "\npoints[a]" + points[a]);
 			}
 			if(points[a].z < minZ)
 			{
 				minZ = points[a].z;
 				pointBottom =points[a];
+				Main.log.log(Level.INFO, "pointBottom" + pointBottom.toString() + "\npoints[a]" + points[a]);
 			}
 			else if(points[a].z > maxZ)
 			{
 				maxZ = points[a].z;
 				pointTop =points[a];
+				Main.log.log(Level.INFO, "pointTop" + pointTop.toString() + "\npoints[a]" + points[a]);
 			}
 		}
+		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");
+		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");
 		//
 		//Adjusting front/back-Plane
 		//
@@ -217,12 +225,11 @@ public class CollisionBox
 		Vector3f normalFront = new Vector3f(0, 1, 0);
 		//working values for Planes and distances
 		float distanceFrontBack = Math.abs(maxY - minY);
-		Main.log.log(Level.INFO, "\n\n\n\n");
 		if(pointBack.x == pointFront.x && pointBack.y == pointFront.y && pointBack.z == pointFront.z)
 			Main.log.log(Level.SEVERE, "POINTS THE SAME!!!");
 		Main.log.log(Level.SEVERE, "front: " + pointFront.toString());
 		Main.log.log(Level.SEVERE, "back:  " + pointBack.toString());
-		Main.log.log(Level.INFO, "\n\n\n\n");
+		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");
 		Plane front = new Plane(normalFront, pointBack);
 		Plane back = new Plane(normalFront, pointFront);
 		//Rotating Planes around the object to a max value of 180° where the planes are just swapped versions of the starting planes
@@ -321,11 +328,10 @@ public class CollisionBox
 		back = new Plane(bestNormalFront, bestPointBack);
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
-		Main.log.log(Level.INFO, "\n\n\n\n");
-		Main.log.log(Level.INFO, "front/back: normal[" + front.normal.x + ", " + front.normal.y + ", " + front.normal.z + "]\n");
-		Main.log.log(Level.INFO, "front: startingPoint[" + front.startingPoint.x + ", " + front.startingPoint.y + ", " + front.startingPoint.z + "]\n");
-		Main.log.log(Level.INFO, "back: startingPoint[" + back.startingPoint.x + ", " + back.startingPoint.y + ", " + back.startingPoint.z + "]\n");
-		Main.log.log(Level.INFO, "\n\n\n\n");
+		Main.log.log(Level.INFO, "front/back: normal[" + front.normal.x + ", " + front.normal.y + ", " + front.normal.z + "]");
+		Main.log.log(Level.INFO, "front: startingPoint[" + front.startingPoint.x + ", " + front.startingPoint.y + ", " + front.startingPoint.z + "]");
+		Main.log.log(Level.INFO, "back: startingPoint[" + back.startingPoint.x + ", " + back.startingPoint.y + ", " + back.startingPoint.z + "]");
+		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");
 		//
 		//Adjusting left/right-Plane
 		//

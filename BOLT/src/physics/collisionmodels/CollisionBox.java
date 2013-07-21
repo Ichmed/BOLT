@@ -25,7 +25,8 @@ public class CollisionBox
 	/**
 	 * a array which contains all 8 edges of the box
 	 */
-	public Vector3f[] points = new Vector3f[8];
+	public Vector3f[] points = {new Vector3f (0, 0, 0), new Vector3f (0, 0, 0), new Vector3f (0, 0, 0), new Vector3f (0, 0, 0), new Vector3f (0, 0, 0),
+			new Vector3f (0, 0, 0),	new Vector3f (0, 0, 0), new Vector3f (0, 0, 0)};
 	
 	/**
 	 * the middle of the box

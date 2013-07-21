@@ -575,6 +575,10 @@ public class CollisionBox
 		Main.log.log(Level.INFO, "front:\n" + front.toString() + "\nback:\n" + back.toString()  + "\nleft:\n" +
 					left.toString() + "\nright:\n" + right.toString() + "\ntop:\n" + top.toString() + "\nbottom:\n" +
 					bottom.toString());
+		Main.log.log(Level.INFO, "------------------------------------------------------------------------------------------------------------");
+		Main.log.log(Level.INFO, "front * right = " + Vector3f.dot(front.getNormal(), right.getNormal()));
+		Main.log.log(Level.INFO, "front * top = " + Vector3f.dot(front.getNormal(), top.getNormal()));
+		Main.log.log(Level.INFO, "top * right = " + Vector3f.dot(top.getNormal(), right.getNormal()));
 		//
 		//Calculating the edgePoints of the collisionBox
 		//

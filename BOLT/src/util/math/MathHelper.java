@@ -1,7 +1,10 @@
 package util.math;
 
+import game.Main;
+
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix3f;
@@ -65,19 +68,21 @@ public abstract class MathHelper
 	public static void rotateVector(Vector3f vector, float degree, Plane rotationPlane)
 	{
 		float tempDegree = (float)Math.toRadians(degree);
+		rotationPlane.transformToHesseNormalForm();
 		//Creating a Matrix for rotating the Vector
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.m00 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
 		rotationMatrix.m01 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().z * Math.sin (tempDegree));
 		rotationMatrix.m02 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().y * Math.cos (tempDegree));
-		rotationMatrix.m10 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().z * Math.cos (tempDegree));
+		rotationMatrix.m10 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().z * Math.cos (tempDegree));
 		rotationMatrix.m11 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
 		rotationMatrix.m12 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().x * Math.cos (tempDegree));
-		rotationMatrix.m20 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().y * Math.cos (tempDegree));
+		rotationMatrix.m20 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().y * Math.cos (tempDegree));
 		rotationMatrix.m21 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().x * Math.cos (tempDegree));
 		rotationMatrix.m22 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
+		Vector3f temp = cloneVector(vector);
 		//adopt rotatoinMatrix on vector
-		Matrix3f.transform (rotationMatrix, vector, vector);
+		Matrix3f.transform (rotationMatrix, temp, vector);
 	}
 	
 	/**
@@ -95,7 +100,11 @@ public abstract class MathHelper
 			rotPlane = new Plane(new Vector3f(0, 1, 0), new Vector3f());
 		rotateVector(temp, 90, rotPlane);
 		temp.normalise();
-		return temp;
+		Main.log.log(Level.INFO, "Degree: " + Math.toDegrees(Math.acos(Vector3f.dot(startingVector, temp)/(startingVector.length() * temp.length()))));
+		Vector3f temp2 = new Vector3f();
+		Vector3f.cross(startingVector, temp, temp2);
+		temp2.normalise();
+		return temp2;
 	}
 	
 	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2){

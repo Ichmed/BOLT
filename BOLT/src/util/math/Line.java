@@ -11,8 +11,8 @@ public class Line
 	
 	public Line(Vector3f startingPoint, Vector3f direction)
 	{
-		this.startingPoint = startingPoint;
-		this.direction = direction;
+		this.startingPoint.set(startingPoint.getX(), startingPoint.getY(), startingPoint.getZ());
+		this.direction.set(direction.getX(), direction.getY(), direction.getZ());
 	}
 	
 	public Line(float x, float y, float z, Vector3f direction)

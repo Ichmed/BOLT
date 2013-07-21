@@ -2,6 +2,8 @@ package physics.collisionmodels;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import util.math.MathHelper;
+
 /**
  * /**
  * a Sphere shaped CollisionBox
@@ -103,6 +105,16 @@ public class CollisionSphere extends org.lwjgl.util.glu.Sphere
 	{
 		this(points);
 		this.mass = mass;
+	}
+	
+	public Vector3f getMiddle()
+	{
+		return MathHelper.cloneVector(middle);
+	}
+	
+	public void setMiddle(Vector3f middle)
+	{
+		this.middle = MathHelper.cloneVector(middle);
 	}
 	
 	/**

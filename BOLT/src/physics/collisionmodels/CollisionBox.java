@@ -321,6 +321,8 @@ public class CollisionBox
 		back = new Plane(bestNormalFront, bestPointBack);
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
+		Main.log.log(Level.INFO, "front: " + front.normal.toString() + front.startingPoint.toString());
+		Main.log.log(Level.INFO, "back: " + back.normal.toString() + back.startingPoint.toString());
 		//
 		//Adjusting left/right-Plane
 		//

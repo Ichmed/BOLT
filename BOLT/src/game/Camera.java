@@ -12,12 +12,12 @@ public class Camera
 	/**
 	 * The position of the camera
 	 */
-	private Vector3f position = new Vector3f(0, 0, 0);	
+	public Vector3f position = new Vector3f(0, 0, 0);	
 
 	/**
 	 * The rotation of the camera in degrees
 	 */
-	private Vector3f rotation = new Vector3f(0, 0, 0);	
+	public Vector3f rotation = new Vector3f(0, 0, 0);	
 
 	/**
 	 * @return The position of the camera, the returned Vector3f is a new object and has no reference to the original vector

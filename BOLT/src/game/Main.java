@@ -146,53 +146,55 @@ public class Main
 	{
 		i++;
 
-		camera.getRotation().y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float) Display.getWidth()) * cameraSpeed;
-		camera.getRotation().x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float) Display.getHeight()) * cameraSpeed;
+		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float) Display.getWidth()) * cameraSpeed;
+		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float) Display.getHeight()) * cameraSpeed;
 
-		camera.getRotation().x = MathHelper.clamp(camera.getRotation().x, -90, 90);
+		camera.rotation.x = MathHelper.clamp(camera.rotation.x, -90, 90);
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 
-		double x = Math.sin(Math.toRadians(camera.getRotation().y)) * GameRules.cameraSpeed;
-		double y = -Math.sin(Math.toRadians(camera.getRotation().x)) * GameRules.cameraSpeed;
-		double z = -Math.cos(Math.toRadians(camera.getRotation().y)) * GameRules.cameraSpeed;
+		double x = Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+		double y = -Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
+		double z = -Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W))
 		{
-			camera.getPosition().x += x * Math.cos(Math.toRadians(camera.getRotation().x));
-			camera.getPosition().y += y;
-			camera.getPosition().z += z * Math.cos(Math.toRadians(camera.getRotation().x));
+			camera.position.x += x * Math.cos(Math.toRadians(camera.rotation.x));
+			camera.position.y += y;
+			camera.position.z += z * Math.cos(Math.toRadians(camera.rotation.x));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S))
 		{
-			camera.getPosition().x -= x * Math.cos(Math.toRadians(camera.getRotation().x));
-			camera.getPosition().y -= y;
-			camera.getPosition().z -= z * Math.cos(Math.toRadians(camera.getRotation().x));
+			camera.position.x -= x * Math.cos(Math.toRadians(camera.rotation.x));
+			camera.position.y -= y;
+			camera.position.z -= z * Math.cos(Math.toRadians(camera.rotation.x));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A))
 		{
-			camera.getPosition().x += Math.sin(Math.toRadians(camera.getRotation().y - 90)) * GameRules.cameraSpeed;
-			camera.getPosition().z -= Math.cos(Math.toRadians(camera.getRotation().y - 90)) * GameRules.cameraSpeed;
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D))
 		{
-			camera.getPosition().x += Math.sin(Math.toRadians(camera.getRotation().y + 90)) * GameRules.cameraSpeed;
-			camera.getPosition().z -= Math.cos(Math.toRadians(camera.getRotation().y + 90)) * GameRules.cameraSpeed;
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_E))
 		{
-			lightPos.x = camera.getPosition().x;
-			lightPos.y = camera.getPosition().y;
-			lightPos.z = camera.getPosition().z;
+			lightPos.x = camera.position.x;
+			lightPos.y = camera.position.y;
+			lightPos.z = camera.position.z;
 		}
 		glPushMatrix();
 
-		glRotated(camera.getRotation().x, 1f, 0f, 0f);
-		glRotated(camera.getRotation().y, 0f, 1f, 0f);
-		glRotated(camera.getRotation().z, 0f, 0f, 1f);
+		glRotated(camera.rotation.x, 1f, 0f, 0f);
+		glRotated(camera.rotation.y, 0f, 1f, 0f);
+		glRotated(camera.rotation.z, 0f, 0f, 1f);
 
-		glTranslatef(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
-		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { -camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z, 1 }));
+		System.out.println(camera.getRotation().z);
+
+		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
+		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { -camera.position.x, -camera.position.y, -camera.position.z, 1 }));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

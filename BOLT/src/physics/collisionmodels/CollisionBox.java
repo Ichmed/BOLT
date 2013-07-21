@@ -147,10 +147,17 @@ public class CollisionBox
 	 * @param points the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
+	/**
+	 * @param points
+	 * @return
+	 */
 	public static CollisionBox createCollisionBox(Vector3f... points)
 	{
+		//
+		//!!!VARIABLENAMES + COMMENTATION FOR AXIS IS FULLY BULLSHIT!!!
+		//
 		//in this code names are changed:
-		//form:	x-axis is right-left-axis, y-axis is front-back-axis, z-axis is height-axis
+		//from:	x-axis is right-left-axis, y-axis is front-back-axis, z-axis is height-axis
 		//to:	x-axis is right-left-axis, y-axis is height-axis, z-axis is front-back-axis
 		//Initializing standards to start with
 		float minX = points[0].x;
@@ -199,14 +206,13 @@ public class CollisionBox
 				pointTop =points[a];
 			}
 		}
-		System.out.printf("minX: %f\nminY: %f\nminZ: %f\nmaxX: %f\nmaxY: %f\nmaxZ: %f\n", minX, minY, minZ, maxX, maxY, maxZ);
 		//
 		//Adjusting front/back-Plane
 		//
 		//Initializing "best values" for front and back Points and distances
 		Vector3f bestPointBack = new Vector3f();
 		Vector3f bestPointFront = new Vector3f();
-		Vector3f bestNormalFront = new Vector3f(0, 1, 0);
+		Vector3f bestNormalFront = new Vector3f();
 		float minDistanceFrontBack = Math.abs(maxY - minY);
 		Vector3f normalFront = new Vector3f(0, 1, 0);
 		//working values for Planes and distances
@@ -309,6 +315,7 @@ public class CollisionBox
 		back = new Plane(bestNormalFront, bestPointBack);
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
+		Main.log.log(Level.INFO, "\n\n\n\n");
 		String log = "";
 		for(Vector3f point : points)
 		{
@@ -317,9 +324,11 @@ public class CollisionBox
 				Main.log.log(Level.INFO, point.toString());
 		}
 		Main.log.log(Level.INFO, log);
+		Main.log.log(Level.INFO, "\n\n\n\n");
 		Main.log.log(Level.INFO, "front/back: normal[" + front.normal.x + ", " + front.normal.y + ", " + front.normal.z + "]\n");
 		Main.log.log(Level.INFO, "front: startingPoint[" + front.startingPoint.x + ", " + front.startingPoint.y + ", " + front.startingPoint.z + "]\n");
 		Main.log.log(Level.INFO, "back: startingPoint[" + back.startingPoint.x + ", " + back.startingPoint.y + ", " + back.startingPoint.z + "]\n");
+		Main.log.log(Level.INFO, "\n\n\n\n");
 		//
 		//Adjusting left/right-Plane
 		//

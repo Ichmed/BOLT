@@ -322,15 +322,6 @@ public class CollisionBox
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
 		Main.log.log(Level.INFO, "\n\n\n\n");
-		String log = "";
-		for(Vector3f point : points)
-		{
-			log = log + "\n" + point.toString();
-			if(point.x == front.startingPoint.x && point.y == front.startingPoint.y && point.z == front.startingPoint.z)
-				Main.log.log(Level.INFO, point.toString());
-		}
-		Main.log.log(Level.INFO, log);
-		Main.log.log(Level.INFO, "\n\n\n\n");
 		Main.log.log(Level.INFO, "front/back: normal[" + front.normal.x + ", " + front.normal.y + ", " + front.normal.z + "]\n");
 		Main.log.log(Level.INFO, "front: startingPoint[" + front.startingPoint.x + ", " + front.startingPoint.y + ", " + front.startingPoint.z + "]\n");
 		Main.log.log(Level.INFO, "back: startingPoint[" + back.startingPoint.x + ", " + back.startingPoint.y + ", " + back.startingPoint.z + "]\n");

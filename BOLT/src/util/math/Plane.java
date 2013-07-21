@@ -33,7 +33,6 @@ public class Plane
 	/**
 	 * calculates the distance between a point and a plane
 	 * @param point the point
-	 * @param plane the plane
 	 * @return the distance
 	 */
 	public float calculateDistancePoint(Vector3f point)
@@ -44,8 +43,8 @@ public class Plane
 	
 	/**
 	 * calculates the distance between a point and a plane
+	 * @param transformToHesseNormalForm if this plane should be transformed
 	 * @param point the point
-	 * @param plane the plane
 	 * @return the distance
 	 */
 	public float calculateDistancePoint(boolean transformToHesseNormalForm, Vector3f point)

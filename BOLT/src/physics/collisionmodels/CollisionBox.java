@@ -217,6 +217,12 @@ public class CollisionBox
 		Vector3f normalFront = new Vector3f(0, 1, 0);
 		//working values for Planes and distances
 		float distanceFrontBack = Math.abs(maxY - minY);
+		Main.log.log(Level.INFO, "\n\n\n\n");
+		if(pointBack.x == pointFront.x && pointBack.y == pointFront.y && pointBack.z == pointFront.z)
+			Main.log.log(Level.SEVERE, "POINTS THE SAME!!!");
+		Main.log.log(Level.SEVERE, "front: " + pointFront.toString());
+		Main.log.log(Level.SEVERE, "back:  " + pointBack.toString());
+		Main.log.log(Level.INFO, "\n\n\n\n");
 		Plane front = new Plane(normalFront, pointBack);
 		Plane back = new Plane(normalFront, pointFront);
 		//Rotating Planes around the object to a max value of 180° where the planes are just swapped versions of the starting planes

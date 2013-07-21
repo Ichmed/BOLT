@@ -10,6 +10,12 @@ public class Plane
 	
 	public Plane() { }
 	
+	public Plane(float normalx, float normaly, float normalz, Vector3f startingPoint)
+	{
+		this.normal = new Vector3f(normalx, normaly, normalz);
+		this.startingPoint = startingPoint;
+	}
+	
 	public Plane(Vector3f normal, Vector3f startingPoint)
 	{
 		this.normal = normal;
@@ -18,9 +24,9 @@ public class Plane
 	
 	public void negateNormal()
 	{
-		normal.x = - normal.x;
-		normal.y = - normal.y;
-		normal.z = - normal.z;
+		this.normal.setX(this.normal.getX() * -1);
+		this.normal.setY(this.normal.getY() * -1);
+		this.normal.setZ(this.normal.getZ() * -1);
 	}
 	
 	public Vector3f getPoint(float x, float y)

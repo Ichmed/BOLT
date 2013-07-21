@@ -303,6 +303,8 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			back = new Plane(normalFront, maxBackPoint);
 			back.transformToHesseNormalForm();
+			if(front.normal == back.normal)
+				back.normal.negate();
 			distanceFrontBack = Math.abs(front.calculateDistancePoint(maxBackPoint));
 			if(distanceFrontBack < minDistanceFrontBack)
 			{
@@ -416,6 +418,8 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			right = new Plane(normalLeft, maxRightPoint);
 			right.transformToHesseNormalForm();
+			if(left.normal == right.normal)
+				right.normal.negate();
 			distanceLeftRight = Math.abs(left.calculateDistancePoint(maxRightPoint));
 			if(distanceLeftRight < minDistanceLeftRight)
 			{
@@ -510,6 +514,8 @@ public class CollisionBox
 		}
 		bottom = new Plane(bestNormalTop, maxPointBottom);
 		bottom.transformToHesseNormalForm();
+		if(top.normal == bottom.normal)
+			bottom.normal.negate();
 		//
 		//Calculating the edgePoints of the collisionBox
 		//

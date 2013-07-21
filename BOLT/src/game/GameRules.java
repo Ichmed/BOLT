@@ -27,7 +27,7 @@ public class GameRules
 	public static double cameraSpeed = 0.1;
 	
 	/**
-	 * load game.rules to static variables
+	 * Loads game.rules to static variables
 	 */
 	public static void loadRules()
 	{

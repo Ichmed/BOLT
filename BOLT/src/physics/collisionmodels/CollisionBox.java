@@ -166,12 +166,12 @@ public class CollisionBox
 		float maxX = points[0].x;
 		float maxY = points[0].y;
 		float maxZ = points[0].z;
-		Vector3f pointBack = new Vector3f();
-		Vector3f pointFront = new Vector3f();
-		Vector3f pointLeft = new Vector3f();
-		Vector3f pointRight = new Vector3f();
-		Vector3f pointTop = new Vector3f();
-		Vector3f pointBottom = new Vector3f();
+		Vector3f pointBack = points[0];
+		Vector3f pointFront = points[0];
+		Vector3f pointLeft = points[0];
+		Vector3f pointRight = points[0];
+		Vector3f pointTop = points[0];
+		Vector3f pointBottom = points[0];
 		//setting the standards to a start value
 		for(int a = 0; a < points.length; a++)
 		{
@@ -179,41 +179,33 @@ public class CollisionBox
 			{
 				minX = points[a].x;
 				pointLeft =points[a];
-				Main.log.log(Level.INFO, "pointLeft" + pointLeft.toString() + "\npoints[a]" + points[a]);
 			}
 			else if(points[a].x > maxX)
 			{
 				maxX = points[a].x;
 				pointRight =points[a];
-				Main.log.log(Level.INFO, "pointRight" + pointRight.toString() + "\npoints[a]" + points[a]);
 			}
 			if(points[a].y < minY)
 			{
 				minY = points[a].y;
 				pointBack =points[a];
-				Main.log.log(Level.INFO, "pointBack" + pointBack.toString() + "\npoints[a]" + points[a]);
 			}
 			else if(points[a].y > maxY)
 			{
 				maxY = points[a].y;
 				pointFront =points[a];
-				Main.log.log(Level.INFO, "pointFront" + pointFront.toString() + "\npoints[a]" + points[a]);
 			}
 			if(points[a].z < minZ)
 			{
 				minZ = points[a].z;
 				pointBottom =points[a];
-				Main.log.log(Level.INFO, "pointBottom" + pointBottom.toString() + "\npoints[a]" + points[a]);
 			}
 			else if(points[a].z > maxZ)
 			{
 				maxZ = points[a].z;
 				pointTop =points[a];
-				Main.log.log(Level.INFO, "pointTop" + pointTop.toString() + "\npoints[a]" + points[a]);
 			}
 		}
-		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");
-		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");
 		//
 		//Adjusting front/back-Plane
 		//
@@ -225,8 +217,6 @@ public class CollisionBox
 		Vector3f normalFront = new Vector3f(0, 1, 0);
 		//working values for Planes and distances
 		float distanceFrontBack = Math.abs(maxY - minY);
-		if(pointBack.x == pointFront.x && pointBack.y == pointFront.y && pointBack.z == pointFront.z)
-			Main.log.log(Level.SEVERE, "POINTS THE SAME!!!");
 		Main.log.log(Level.SEVERE, "front: " + pointFront.toString());
 		Main.log.log(Level.SEVERE, "back:  " + pointBack.toString());
 		Main.log.log(Level.INFO, "-------------------------------------------------------------------------------------------------------------------------------------");

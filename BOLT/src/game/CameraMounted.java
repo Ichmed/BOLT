@@ -3,6 +3,7 @@ package game;
 import org.lwjgl.util.vector.Vector3f;
 
 import entity.Entity;
+import entity.ICameraMount;
 
 public class CameraMounted extends Camera
 {
@@ -11,6 +12,7 @@ public class CameraMounted extends Camera
 	@Override
 	public Vector3f getPosition()
 	{
+		if (parent instanceof ICameraMount) return ((ICameraMount) parent).getCameraPosition();
 		return parent.position;
 	}
 
@@ -22,7 +24,8 @@ public class CameraMounted extends Camera
 	@Override
 	public Vector3f getRotation()
 	{
-		 return parent.rotation;
+		if (parent instanceof ICameraMount) return ((ICameraMount) parent).getCameraRotation();
+		return parent.rotation;
 	}
 
 	@Override
@@ -39,5 +42,5 @@ public class CameraMounted extends Camera
 	{
 		this.parent = parent;
 	}
-	
+
 }

@@ -37,11 +37,11 @@ public class Main
 	public static int resY = 0;
 	public static CollisionBox c;
 	private static DisplayMode[] fullscreenmodes;
-	
+
 	public static Vector3f lightPos = new Vector3f();
 
 	public static final Logger log = Logger.getLogger("BOLT");
-	
+
 	// TODO: logger einrichten
 
 	public static void main(String[] args)
@@ -83,7 +83,7 @@ public class Main
 
 		initGLSettings();
 		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
-		
+
 		for (Vector3f v : c.points)
 		{
 			System.out.println(v);
@@ -190,9 +190,9 @@ public class Main
 		glRotated(camera.getRotation().x, 1f, 0f, 0f);
 		glRotated(camera.getRotation().y, 0f, 1f, 0f);
 		glRotated(camera.getRotation().z, 0f, 0f, 1f);
-		
+
 		glTranslatef(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
-		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] {-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z, 1}));
+		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { -camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z, 1 }));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -208,7 +208,7 @@ public class Main
 		for (Vector3f v : c.points)
 		{
 			glVertex3f(v.x, v.y, v.z);
-//			System.out.println(v);
+			// System.out.println(v);
 		}
 		glEnd();
 

@@ -386,7 +386,6 @@ public class CollisionBox
 		Vector3f bestNormalLeft = MathHelper.createPerpendicularVector(bestNormalFront);
 		float minDistanceLeftRight = Math.abs(maxX - minX);
 		Vector3f normalLeft = MathHelper.cloneVector(bestNormalLeft);
-		Main.log.log(Level.INFO, normalFront.toString());
 		//working values for Planes and distances
 		float distanceLeftRight = Math.abs(maxX - minX);
 		Plane left = new Plane(normalLeft, pointLeft);

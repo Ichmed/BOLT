@@ -149,6 +149,9 @@ public class CollisionBox
 	 */
 	public static CollisionBox createCollisionBox(Vector3f... points)
 	{
+		Plane test = new Plane(new Vector3f(1,1,1), new Vector3f(2,3,4));
+		test.getNormal().negate();
+		Main.log.log(Level.INFO, test.getNormal().toString());
 		//
 		//!!!VARIABLENAMES + COMMENTATION FOR AXIS IS FULLY BULLSHIT!!!
 		//
@@ -162,44 +165,44 @@ public class CollisionBox
 		float maxX = points[0].x;
 		float maxY = points[0].y;
 		float maxZ = points[0].z;
-		Vector3f pointBack = points[0];
-		Vector3f pointFront = points[0];
-		Vector3f pointLeft = points[0];
-		Vector3f pointRight = points[0];
-		Vector3f pointTop = points[0];
-		Vector3f pointBottom = points[0];
+		Vector3f pointBack = MathHelper.cloneVector(points[0]);
+		Vector3f pointFront = MathHelper.cloneVector(points[0]);
+		Vector3f pointLeft = MathHelper.cloneVector(points[0]);
+		Vector3f pointRight = MathHelper.cloneVector(points[0]);
+		Vector3f pointTop = MathHelper.cloneVector(points[0]);
+		Vector3f pointBottom = MathHelper.cloneVector(points[0]);
 		//setting the standards to a start value
 		for(int a = 0; a < points.length; a++)
 		{
 			if(points[a].x < minX)
 			{
 				minX = points[a].x;
-				pointLeft =points[a];
+				pointLeft = MathHelper.cloneVector(points[a]);
 			}
 			else if(points[a].x > maxX)
 			{
 				maxX = points[a].x;
-				pointRight =points[a];
+				pointRight = MathHelper.cloneVector(points[a]);
 			}
 			if(points[a].y < minY)
 			{
 				minY = points[a].y;
-				pointBack =points[a];
+				pointBack = MathHelper.cloneVector(points[a]);
 			}
 			else if(points[a].y > maxY)
 			{
 				maxY = points[a].y;
-				pointFront =points[a];
+				pointFront = MathHelper.cloneVector(points[a]);
 			}
 			if(points[a].z < minZ)
 			{
 				minZ = points[a].z;
-				pointBottom =points[a];
+				pointBottom = MathHelper.cloneVector(points[a]);
 			}
 			else if(points[a].z > maxZ)
 			{
 				maxZ = points[a].z;
-				pointTop =points[a];
+				pointTop = MathHelper.cloneVector(points[a]);
 			}
 		}
 		//
@@ -266,7 +269,7 @@ public class CollisionBox
 			//
 			back = new Plane(normalFront, pointBack);
 			back.transformToHesseNormalForm();
-			if((front.normal.getX() == back.normal.getX()) && ( front.normal.getY() == back.normal.getY()) && (front.normal.getZ() == back.normal.getZ()))
+			if((front.getNormal().getX() == back.getNormal().getX()) && ( front.getNormal().getY() == back.getNormal().getY()) && (front.getNormal().getZ() == back.getNormal().getZ()))
 				back.negateNormal();
 			//Initializing temporary maximum values
 			Vector3f maxBackPoint = new Vector3f (0, 0, 0);
@@ -299,7 +302,7 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			back = new Plane(normalFront, maxBackPoint);
 			back.transformToHesseNormalForm();
-			if(front.normal == back.normal)
+			if(front.getNormal() == back.getNormal())
 				back.negateNormal();
 			distanceFrontBack = Math.abs(front.calculateDistancePoint(false, maxBackPoint));
 			if(distanceFrontBack < minDistanceFrontBack)
@@ -317,8 +320,8 @@ public class CollisionBox
 		back = new Plane(bestNormalFront, bestPointBack);
 		front.transformToHesseNormalForm();
 		back.transformToHesseNormalForm();
-		Main.log.log(Level.INFO, "front: " + front.normal.toString() + front.startingPoint.toString());
-		Main.log.log(Level.INFO, "back: " + back.normal.toString() + back.startingPoint.toString());
+		Main.log.log(Level.INFO, "front: " + front.getNormal().toString() + front.getStartingPoint().toString());
+		Main.log.log(Level.INFO, "back: " + back.getNormal().toString() + back.getStartingPoint().toString());
 		//
 		//Adjusting left/right-Plane
 		//
@@ -383,7 +386,7 @@ public class CollisionBox
 			//
 			right = new Plane(normalLeft, pointRight);
 			right.transformToHesseNormalForm();
-			if(left.normal == right.normal)
+			if(left.getNormal() == right.getNormal())
 				right.negateNormal();
 			//Initializing temporary maximum values
 			Vector3f maxRightPoint = new Vector3f (0, 0, 0);
@@ -416,7 +419,7 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			right = new Plane(normalLeft, maxRightPoint);
 			right.transformToHesseNormalForm();
-			if(left.normal == right.normal)
+			if(left.getNormal() == right.getNormal())
 				right.negateNormal();
 			distanceLeftRight = Math.abs(left.calculateDistancePoint(false, maxRightPoint));
 			if(distanceLeftRight < minDistanceLeftRight)
@@ -482,7 +485,7 @@ public class CollisionBox
 		//working values for Planes
 		Plane bottom = new Plane(bestNormalTop, pointBottom);
 		bottom.transformToHesseNormalForm();
-		if(top.normal == bottom.normal)
+		if(top.getNormal() == bottom.getNormal())
 			bottom.negateNormal();
 		float maxBottomDis = 0;
 		//calculating if the bottomPlane has to be moved outwards
@@ -512,7 +515,7 @@ public class CollisionBox
 		}
 		bottom = new Plane(bestNormalTop, maxPointBottom);
 		bottom.transformToHesseNormalForm();
-		if(top.normal == bottom.normal)
+		if(top.getNormal() == bottom.getNormal())
 			bottom.negateNormal();
 		//
 		//Calculating the edgePoints of the collisionBox
@@ -543,6 +546,19 @@ public class CollisionBox
 		Vector3f.add(newColBox.width, newColBox.depth, newColBox.middle);
 		Vector3f.add(newColBox.middle, newColBox.height, newColBox.middle);
 		newColBox.middle.scale(0.5f);
+		return newColBox;
+	}
+	
+	/**
+	 * creates the best CollisionBox from an object given with points
+	 * @param mass the mass of the surrounded object
+	 * @param points the points which represent the object
+	 * @return returns the best CollisionBox of the object
+	 */
+	public static CollisionBox createCollisionBox(float mass, Vector3f... points)
+	{
+		CollisionBox newColBox = createCollisionBox(points);
+		newColBox.mass = mass;
 		return newColBox;
 	}
 }

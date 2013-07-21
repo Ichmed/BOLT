@@ -3,8 +3,6 @@ package entity;
 import game.World;
 
 import java.util.HashMap;
-import java.util.List;
-
 import org.lwjgl.util.vector.Vector3f;
 
 public class Entity
@@ -27,6 +25,9 @@ public class Entity
 	public World worldObj;
 	
 	public Vector3f position;
+	public Vector3f rotation;
+	
+	public int key;
 	
 	public void onTick()
 	{

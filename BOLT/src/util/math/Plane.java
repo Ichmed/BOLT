@@ -39,8 +39,20 @@ public class Plane
 	public float calculateDistancePoint(Vector3f point)
 	{
 		this.transformToHesseNormalForm();
-		return (this.normal.x * point.x + this.normal.y * point.y + this.normal.z * point.z - this.startingPoint.x * this.normal.x -
-				this.startingPoint.y * this.normal.y - this.startingPoint.z * this.normal.z);
+		return (Vector3f.dot(this.normal, point) - Vector3f.dot(this.startingPoint, this.normal));
+	}
+	
+	/**
+	 * calculates the distance between a point and a plane
+	 * @param point the point
+	 * @param plane the plane
+	 * @return the distance
+	 */
+	public float calculateDistancePoint(boolean transformToHesseNormalForm, Vector3f point)
+	{
+		if(transformToHesseNormalForm)
+			this.transformToHesseNormalForm();
+		return (Vector3f.dot(this.normal, point) - Vector3f.dot(this.startingPoint, this.normal));
 	}
 	
 	/**

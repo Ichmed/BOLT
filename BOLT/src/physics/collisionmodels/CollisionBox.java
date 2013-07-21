@@ -239,7 +239,7 @@ public class CollisionBox
 			//calculating if the frontPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float frontDis = front.calculateDistancePoint(points[i]);
+				float frontDis = front.calculateDistancePoint(false, points[i]);
 				if(frontDis > maxFrontDis)
 				{
 					maxFrontDis = frontDis;
@@ -252,7 +252,7 @@ public class CollisionBox
 				//Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Float.valueOf(Math.abs(front.calculateDistancePoint(points[i]))));
+					distances.add(Float.valueOf(Math.abs(front.calculateDistancePoint(false, points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -278,7 +278,7 @@ public class CollisionBox
 			//calculating if the backPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float backDis = back.calculateDistancePoint(points[i]);
+				float backDis = back.calculateDistancePoint(false, points[i]);
 				if(backDis > maxBackDis)
 				{
 					maxBackDis = backDis;
@@ -290,7 +290,7 @@ public class CollisionBox
 			{
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Float.valueOf(Math.abs(back.calculateDistancePoint(points[i]))));
+					distances.add(Float.valueOf(Math.abs(back.calculateDistancePoint(false, points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -305,7 +305,7 @@ public class CollisionBox
 			back.transformToHesseNormalForm();
 			if(front.normal == back.normal)
 				back.normal.negate();
-			distanceFrontBack = Math.abs(front.calculateDistancePoint(maxBackPoint));
+			distanceFrontBack = Math.abs(front.calculateDistancePoint(false, maxBackPoint));
 			if(distanceFrontBack < minDistanceFrontBack)
 			{
 				minDistanceFrontBack = distanceFrontBack;
@@ -356,7 +356,7 @@ public class CollisionBox
 			//calculating if the leftPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float leftDis = left.calculateDistancePoint(points[i]);
+				float leftDis = left.calculateDistancePoint(false, points[i]);
 				if(leftDis > maxLeftDis)
 				{
 					maxLeftDis = leftDis;
@@ -369,7 +369,7 @@ public class CollisionBox
 				//Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Float.valueOf(Math.abs(left.calculateDistancePoint(points[i]))));
+					distances.add(Float.valueOf(Math.abs(left.calculateDistancePoint(false, points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -395,7 +395,7 @@ public class CollisionBox
 			//calculating if the leftPlane has to be moved outwards
 			for(int i = 0; i < points.length; i++)
 			{
-				float rightDis = right.calculateDistancePoint(points[i]);
+				float rightDis = right.calculateDistancePoint(false, points[i]);
 				if(rightDis > maxRightDis)
 				{
 					maxRightDis = rightDis;
@@ -407,7 +407,7 @@ public class CollisionBox
 			{
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for(int i = 0; i < points.length; i++)
-					distances.add(Float.valueOf(Math.abs(right.calculateDistancePoint(points[i]))));
+					distances.add(Float.valueOf(Math.abs(right.calculateDistancePoint(false, points[i]))));
 				//Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for(int i = 0; i < distances.size(); i++)
@@ -422,7 +422,7 @@ public class CollisionBox
 			right.transformToHesseNormalForm();
 			if(left.normal == right.normal)
 				right.normal.negate();
-			distanceLeftRight = Math.abs(left.calculateDistancePoint(maxRightPoint));
+			distanceLeftRight = Math.abs(left.calculateDistancePoint(false, maxRightPoint));
 			if(distanceLeftRight < minDistanceLeftRight)
 			{
 				minDistanceLeftRight = distanceLeftRight;
@@ -454,7 +454,7 @@ public class CollisionBox
 		//calculating if the topPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
 		{
-			float topDis = top.calculateDistancePoint(points[i]);
+			float topDis = top.calculateDistancePoint(false, points[i]);
 			if(topDis > maxTopDis)
 			{
 				maxTopDis = topDis;
@@ -466,7 +466,7 @@ public class CollisionBox
 		{
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for(int i = 0; i < points.length; i++)
-				distances.add(Float.valueOf(Math.abs(top.calculateDistancePoint(points[i]))));
+				distances.add(Float.valueOf(Math.abs(top.calculateDistancePoint(false, points[i]))));
 			//Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for(int i = 0; i < distances.size(); i++)
@@ -492,7 +492,7 @@ public class CollisionBox
 		//calculating if the bottomPlane has to be moved outwards
 		for(int i = 0; i < points.length; i++)
 		{
-			float bottomDis = bottom.calculateDistancePoint(points[i]);
+			float bottomDis = bottom.calculateDistancePoint(false, points[i]);
 			if(bottomDis > maxBottomDis)
 			{
 				maxBottomDis = bottomDis;
@@ -504,7 +504,7 @@ public class CollisionBox
 		{
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for(int i = 0; i < points.length; i++)
-				distances.add(Float.valueOf(Math.abs(bottom.calculateDistancePoint(points[i]))));
+				distances.add(Float.valueOf(Math.abs(bottom.calculateDistancePoint(false, points[i]))));
 			//Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for(int i = 0; i < distances.size(); i++)

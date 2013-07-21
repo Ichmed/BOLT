@@ -39,7 +39,6 @@ public class Camera
 	}
 
 	/**
-	 * 
 	 * @return The rotation of the camera, the returned Vector3f is a new object and has no reference to the original vector
 	 */
 	public Vector3f getRotation()

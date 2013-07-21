@@ -191,8 +191,6 @@ public class Main
 		glRotated(camera.rotation.y, 0f, 1f, 0f);
 		glRotated(camera.rotation.z, 0f, 0f, 1f);
 
-		System.out.println(camera.getRotation().z);
-
 		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
 		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { -camera.position.x, -camera.position.y, -camera.position.z, 1 }));
 

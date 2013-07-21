@@ -16,6 +16,10 @@ public class World
 		entity.worldObj = this;
 	}
 	
+	/**	
+	 * @param key the Entitity's unique identifier
+	 * @return The Entity with this identifier
+	 */
 	public Entity getEntity(int key)
 	{
 		return this.entityMap.get(key);

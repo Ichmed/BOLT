@@ -4,7 +4,6 @@ import game.Main;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -272,6 +271,8 @@ public class CollisionBox
 			back.transformToHesseNormalForm();
 			if(front.normal == back.normal)
 				back.normal.negate();
+			Main.log.log(Level.INFO, "front: " + front.normal.toString() + "," + front.startingPoint.toString());
+			Main.log.log(Level.INFO, "back: " + back.normal.toString() + "," + back.startingPoint.toString());
 			//Initializing temporary maximum values
 			Vector3f maxBackPoint = new Vector3f (0, 0, 0);
 			float maxBackDis = 0;

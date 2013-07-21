@@ -267,8 +267,6 @@ public class CollisionBox
 			back.transformToHesseNormalForm();
 			if((front.normal.getX() == back.normal.getX()) && ( front.normal.getY() == back.normal.getY()) && (front.normal.getZ() == back.normal.getZ()))
 				back.negateNormal();
-			Main.log.log(Level.INFO, "front: " + front.normal.toString() + "," + front.startingPoint.toString());
-			Main.log.log(Level.INFO, "back: " + back.normal.toString() + "," + back.startingPoint.toString());
 			//Initializing temporary maximum values
 			Vector3f maxBackPoint = new Vector3f (0, 0, 0);
 			float maxBackDis = 0;

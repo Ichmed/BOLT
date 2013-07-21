@@ -10,15 +10,15 @@ public class Parabola {
 	/**
 	 * the starting point of the graph
 	 */
-	Vector3f startpoint = null;
+	public Vector3f startingPoint = null;
 	/**
 	 * the basic direction
 	 */
-	Vector3f dir = null;
+	public Vector3f dir = null;
 	/**
 	 * the influence on the basic direction
 	 */
-	Vector3f inf = null;
+	public Vector3f inf = null;
 	
 	/**
 	 * creates a parabola based on 2 vectors
@@ -27,9 +27,39 @@ public class Parabola {
 	 * @param c the vector multiplied with u²
 	 */
 	public Parabola(Vector3f a, Vector3f b, Vector3f c) {
-		 this.startpoint = a;
-		 this.dir = b;
-		 this.inf = c;
+		 this.startingPoint = MathHelper.cloneVector(a);
+		 this.dir = MathHelper.cloneVector(b);
+		 this.inf = MathHelper.cloneVector(c);
+	}
+	
+	public Vector3f getStartingPoint()
+	{
+		return MathHelper.cloneVector(startingPoint);
+	}
+	
+	public Vector3f getDirection()
+	{
+		return MathHelper.cloneVector(dir);
+	}
+	
+	public Vector3f getInfluence()
+	{
+		return MathHelper.cloneVector(inf);
+	}
+	
+	public void setStartingPoint(Vector3f startingPoint)
+	{
+		this.startingPoint = MathHelper.cloneVector(startingPoint);
+	}
+	
+	public void setDirection(Vector3f dir)
+	{
+		this.dir = MathHelper.cloneVector(dir);
+	}
+	
+	public void setInfluence(Vector3f inf)
+	{
+		this.inf = MathHelper.cloneVector(inf);
 	}
 
 	/**
@@ -39,9 +69,9 @@ public class Parabola {
 	 */
 	public Vector3f getPoint(float u){
 		Vector3f result = new Vector3f();
-		result.setX(startpoint.getX() + u * dir.getX() + u * u * inf.getX());
-		result.setY(startpoint.getY() + u * dir.getY() + u * u * inf.getY());
-		result.setZ(startpoint.getZ() + u * dir.getZ() + u * u * inf.getZ());
+		result.setX(startingPoint.getX() + u * dir.getX() + u * u * inf.getX());
+		result.setY(startingPoint.getY() + u * dir.getY() + u * u * inf.getY());
+		result.setZ(startingPoint.getZ() + u * dir.getZ() + u * u * inf.getZ());
 		return result;
 	}
 }

@@ -70,13 +70,13 @@ public class Plane
 	
 	/**
 	 * calculates the distance between a point and a plane
-	 * @param transformToHesseNormalForm if this plane should be transformed
+	 * @param transformToHesseNormalFormFirst if this plane should be transformed
 	 * @param point the point
 	 * @return the distance
 	 */
-	public float calculateDistancePoint(boolean transformToHesseNormalForm, Vector3f point)
+	public float calculateDistancePoint(boolean transformToHesseNormalFormFirst, Vector3f point)
 	{
-		if(transformToHesseNormalForm)
+		if(transformToHesseNormalFormFirst)
 			this.transformToHesseNormalForm();
 		return (Vector3f.dot(this.normal, point) - Vector3f.dot(this.startingPoint, this.normal));
 	}
@@ -89,13 +89,13 @@ public class Plane
 	 */
 	public Vector3f intersectWithLine(Line line)
 	{
-		//Checks weather the line is parallel to this
-		if(Vector3f.dot(line.direction, this.normal) == 0)
-			return new Vector3f(0, 0, 0);
+		//Checks weather the line is parallel to the plane
+		if(Vector3f.dot(line.getDirection(), this.normal) == 0)
+			return null;
 		this.transformToHesseNormalForm();
 		//Calculates the factor for the direction-vector of the line
-		float factor = (Vector3f.dot(this.normal, this.startingPoint)-Vector3f.dot(line.direction, line.startingPoint))/
-						Vector3f.dot(line.direction, this.normal);
+		float factor = (Vector3f.dot(this.normal, this.startingPoint)-Vector3f.dot(line.getDirection(), line.getStartingPoint()))/
+						Vector3f.dot(line.getDirection(), this.normal);
 		return line.getPoint(factor);
 	}
 	
@@ -106,8 +106,10 @@ public class Plane
 	 */
 	public Vector3f[] intersectWithParabola(Parabola par)
 	{
-		float discriminant = Vector3f.dot(normal, par.dir) * Vector3f.dot(normal, par.dir) - 4 * Vector3f.dot(normal, par.inf) *
-							(Vector3f.dot(normal, par.startpoint) - Vector3f.dot(normal, startingPoint));
+		this.transformToHesseNormalForm();
+		float discriminant = Vector3f.dot(normal, par.getDirection()) * Vector3f.dot(normal, par.getDirection()) - 4 *
+								Vector3f.dot(normal, par.getInfluence()) * (Vector3f.dot(normal, par.getStartingPoint()) -
+								Vector3f.dot(normal, startingPoint));
 		if(discriminant < 0)
 		{
 			Vector3f[] ret = {null, null};
@@ -115,14 +117,14 @@ public class Plane
 		}
 		else if(discriminant == 0)
 		{
-			float factor = -Vector3f.dot(normal, par.dir) / (2 * Vector3f.dot(normal, par.inf));
+			float factor = -Vector3f.dot(normal, par.getDirection()) / (2 * Vector3f.dot(normal, par.getInfluence()));
 			Vector3f[] ret = {par.getPoint(factor), null};
 			return ret;
 		}
 		else
 		{
-			float factor1 = (-Vector3f.dot(normal, par.dir) + (float)Math.sqrt(discriminant))/ (2 * Vector3f.dot(normal, par.inf));
-			float factor2 = (-Vector3f.dot(normal, par.dir) - (float)Math.sqrt(discriminant))/ (2 * Vector3f.dot(normal, par.inf));
+			float factor1 = (-Vector3f.dot(normal, par.getDirection()) + (float)Math.sqrt(discriminant))/ (2 * Vector3f.dot(normal, par.getInfluence()));
+			float factor2 = (-Vector3f.dot(normal, par.getDirection()) - (float)Math.sqrt(discriminant))/ (2 * Vector3f.dot(normal, par.getInfluence()));
 			Vector3f[] ret = {par.getPoint(factor1), par.getPoint(factor2)};
 			return ret;
 		}
@@ -131,27 +133,27 @@ public class Plane
 	/**
 	 * intersects a plane with another one
 	 * @param plane the intersectionPlane plane
-	 * @return the intersectionLine of the 2 planes if parallel a Line with 0-initialization will be returned
+	 * @return the intersectionLine of the 2 planes if parallel null will be returned
 	 */
 	public Line intersectWithPlane(Plane plane)
 	{
 		plane.transformToHesseNormalForm();
 		this.transformToHesseNormalForm();
 		//Checks weather the planes are parallel
-		if(plane.normal.x == this.normal.x && plane.normal.y == this.normal.y && plane.normal.z == this.normal.z)
-			return new Line (0, 0, 0, new Vector3f(0,0,0));
+		if(plane.getNormal().x == this.getNormal().x && plane.getNormal().y == this.getNormal().y && plane.getNormal().z == this.getNormal().z)
+			return null;
 		Vector3f direction = new Vector3f();
-		Vector3f.cross(this.normal, plane.normal, direction);
+		Vector3f.cross(this.getNormal(), plane.getNormal(), direction);
 		direction.normalise();
 		//checks if plane1 is parallel to the x-axis
-		if(plane.normal.x == 0)
+		if(plane.getNormal().x == 0)
 		{
 			//If plane1 is parallel to the xy-plane
-			if(plane.normal.y == 0)
+			if(plane.getNormal().y == 0)
 			{
 				float z = plane.startingPoint.z;
 				//Check if this is parallel to the x-axis
-				 if(this.normal.x == 0)
+				 if(this.getNormal().x == 0)
 				{
 					 //set x value to 0 and calculate the other values
 					float y = (Vector3f.dot(this.normal, this.startingPoint) - this.normal.z * z) / this.normal.y;

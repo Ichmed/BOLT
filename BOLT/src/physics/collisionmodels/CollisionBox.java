@@ -384,7 +384,8 @@ public class CollisionBox
 		Vector3f bestPointRight = new Vector3f();
 		Vector3f bestNormalLeft = MathHelper.createPerpendicularVector(bestNormalFront);
 		float minDistanceLeftRight = Math.abs(maxX - minX);
-		Vector3f normalLeft = bestNormalLeft;
+		Vector3f normalLeft = MathHelper.cloneVector(bestNormalLeft);
+		Main.log.log(Level.INFO, normalFront.toString());
 		//working values for Planes and distances
 		float distanceLeftRight = Math.abs(maxX - minX);
 		Plane left = new Plane(normalLeft, pointLeft);
@@ -571,6 +572,9 @@ public class CollisionBox
 		bottom.transformToHesseNormalForm();
 		if(top.getNormal() == bottom.getNormal())
 			bottom.negateNormal();
+		Main.log.log(Level.INFO, "front:\n" + front.toString() + "\nback:\n" + back.toString()  + "\nleft:\n" +
+					left.toString() + "\nright:\n" + right.toString() + "\ntop:\n" + top.toString() + "\nbottom:\n" +
+					bottom.toString());
 		//
 		//Calculating the edgePoints of the collisionBox
 		//
@@ -614,5 +618,13 @@ public class CollisionBox
 		CollisionBox newColBox = createCollisionBox(points);
 		newColBox.mass = mass;
 		return newColBox;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "points:\n" + points.toString() + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() +
+				"\nwidth: " + width.toString() + "\nheight: " + height.toString() + "\nstartingPoint: " +
+				startingPoint.toString() + "\nmass: " + mass;
 	}
 }

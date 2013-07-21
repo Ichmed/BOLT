@@ -171,4 +171,10 @@ public class CollisionSphere extends org.lwjgl.util.glu.Sphere
 		Vector3f.sub(point, middle, temp);
 		return (float)Math.sqrt(Vector3f.dot(temp, temp)) - radius;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "radius: " + radius + "\nmiddle: " + middle.toString() + "\nmass: " + mass;
+	}
 }

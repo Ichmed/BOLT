@@ -74,4 +74,10 @@ public class Parabola {
 		result.setZ(startingPoint.getZ() + u * dir.getZ() + u * u * inf.getZ());
 		return result;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "direction: " + dir.toString() + "\ninfluence: " + inf.toString() + "\nstartingPoint: " + startingPoint.toString();
+	}
 }

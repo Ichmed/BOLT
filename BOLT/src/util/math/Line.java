@@ -46,4 +46,10 @@ public class Line
 		Vector3f.add((Vector3f)MathHelper.cloneVector(direction).scale(factor), startingPoint, temp);
 		return temp;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "direction: " + direction.toString() + "\nstartingPoint: " + startingPoint.toString();
+	}
 }

@@ -726,4 +726,10 @@ public class Plane
 			}
 		}
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "normal: " + normal.toString() + "\nstartingPoint: " + startingPoint.toString();
+	}
 }

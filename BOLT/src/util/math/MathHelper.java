@@ -87,18 +87,15 @@ public abstract class MathHelper
 	 */
 	public static Vector3f createPerpendicularVector(Vector3f startingVector)
 	{
-		if(!(startingVector.x == 1 && startingVector.y == 1))
-		{
-			Vector3f perpendicularVector = new Vector3f(1,1,((-startingVector.x-startingVector.y)/startingVector.z));
-			perpendicularVector.normalise();
-			return perpendicularVector;
-		}
+		Vector3f temp = cloneVector(startingVector);
+		Plane rotPlane = null;
+		if(startingVector.z == 0 && startingVector.x == 0)
+			rotPlane = new Plane(new Vector3f(0, 0, 1), new Vector3f());
 		else
-		{
-			Vector3f perpendicularVector = new Vector3f(2,-3,((-startingVector.x-startingVector.y)/startingVector.z));
-			perpendicularVector.normalise();
-			return perpendicularVector;
-		}
+			rotPlane = new Plane(new Vector3f(0, 1, 0), new Vector3f());
+		rotateVector(temp, 90, rotPlane);
+		temp.normalise();
+		return temp;
 	}
 	
 	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2){

@@ -1,10 +1,10 @@
 package util.math;
 
 import game.Main;
+import java.util.logging.Level;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix3f;
@@ -95,9 +95,7 @@ public abstract class MathHelper
 		Vector3f temp = new Vector3f(1, 1, 1);
 		if(startingVector == temp)
 			temp = new Vector3f(1, -2, 3);
-		Vector3f ret = Vector3f.cross(startingVector, temp, null);
-		Main.log.log(Level.INFO, "Degree: " + Math.toDegrees(Math.acos(Vector3f.dot(startingVector, ret)/(startingVector.length() * ret.length()))));
-		return ret;
+		return Vector3f.cross(startingVector, temp, null);
 	}
 	
 	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2){

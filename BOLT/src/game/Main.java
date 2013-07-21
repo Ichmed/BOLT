@@ -82,8 +82,8 @@ public class Main
 		}
 
 		initGLSettings();
-		//m.getVerteciesAsArray()
-		c = new CollisionBox(new Vector3f(-2, -2, -2), new Vector3f(0, 0, 1), new Vector3f(1, 0, 0), new Vector3f(0, 1, 0));
+		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
+		//c = new CollisionBox(new Vector3f(-2, -2, -2), new Vector3f(0, 0, 1), new Vector3f(1, 0, 0), new Vector3f(0, 1, 0));
 		c.toString();
 
 		for (Vector3f v : c.points)

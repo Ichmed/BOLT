@@ -108,8 +108,7 @@ public class CollisionBox
 	{
 		if(completeCollisionBox == true)
 		{
-			for (int i = 0; i < points.length; i++)
-				this.points[i] = MathHelper.cloneVector(points[i]);
+			this.points = MathHelper.cloneVectorArray(points);
 			startingPoint = MathHelper.cloneVector(points[0]);
 			Vector3f.sub(points[1], points[0], width);
 			Vector3f.sub(points[3], points[0], depth);
@@ -141,6 +140,8 @@ public class CollisionBox
 		this(completeCollisionBox, points);
 		this.mass = mass;
 	}
+	
+	
 	
 	/**
 	 * creates the best CollisionBox from an object given with points

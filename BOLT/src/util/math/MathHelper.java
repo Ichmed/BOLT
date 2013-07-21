@@ -1,6 +1,7 @@
 package util.math;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix3f;
@@ -45,6 +46,14 @@ public abstract class MathHelper
 	public static Vector3f cloneVector(Vector3f vector)
 	{
 		return new Vector3f(vector.x, vector.y, vector.z);
+	}
+	
+	public static Vector3f[] cloneVectorArray(Vector3f[] vArr)
+	{
+		ArrayList<Vector3f> newArr = new ArrayList<Vector3f>();
+		for(Vector3f v : vArr)
+			newArr.add(cloneVector(v));
+		return (Vector3f[])newArr.toArray();
 	}
 	
 	/**

@@ -1,8 +1,5 @@
 package util.math;
 
-import game.Main;
-import java.util.logging.Level;
-
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 

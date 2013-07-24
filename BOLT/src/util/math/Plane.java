@@ -52,7 +52,7 @@ public class Plane
 	{
 		normal.normalise ();
 		//last factor of the coordinate-form
-		float lastFactor = Vector3f.dot(normal, MathHelper.cloneVector(startingPoint).negate(null));
+		float lastFactor = Vector3f.dot(normal, (Vector3f) MathHelper.cloneVector(startingPoint).negate());
 		if(lastFactor > 0)
 			normal.negate ();
 	}

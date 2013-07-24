@@ -93,9 +93,9 @@ public abstract class MathHelper
 	 */
 	public static Vector3f createPerpendicularVector(Vector3f startingVector)
 	{
-		Vector3f temp = new Vector3f(1, 1, 1);
-		if(startingVector == temp)
-			temp = new Vector3f(1, -2, 3);
+		Vector3f temp = new Vector3f(1, 0, 0);
+		if(startingVector.y == 0 && startingVector.z == 0)
+			temp = new Vector3f(0, 1, 0);
 		return Vector3f.cross(startingVector, temp, null);
 	}
 	

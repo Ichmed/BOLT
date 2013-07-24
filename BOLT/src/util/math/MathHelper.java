@@ -72,13 +72,13 @@ public abstract class MathHelper
 		//Creating a Matrix for rotating the Vector
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.m00 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
-		rotationMatrix.m01 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().z * Math.sin (tempDegree));
-		rotationMatrix.m02 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().y * Math.sin (tempDegree));
-		rotationMatrix.m10 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().z * Math.sin (tempDegree));
+		rotationMatrix.m01 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().z * Math.sin (tempDegree));
+		rotationMatrix.m02 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().y * Math.sin (tempDegree));
+		rotationMatrix.m10 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().z * Math.sin (tempDegree));
 		rotationMatrix.m11 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
-		rotationMatrix.m12 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().x * Math.sin (tempDegree));
-		rotationMatrix.m20 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().x * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().y * Math.sin (tempDegree));
-		rotationMatrix.m21 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().x * Math.sin (tempDegree));
+		rotationMatrix.m12 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().y * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().x * Math.sin (tempDegree));
+		rotationMatrix.m20 = (float)(rotationPlane.getNormal().x * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + rotationPlane.getNormal().y * Math.sin (tempDegree));
+		rotationMatrix.m21 = (float)(rotationPlane.getNormal().y * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) - rotationPlane.getNormal().x * Math.sin (tempDegree));
 		rotationMatrix.m22 = (float)(rotationPlane.getNormal().z * rotationPlane.getNormal().z * (1 - Math.cos (tempDegree)) + Math.cos (tempDegree));
 		Vector3f temp = cloneVector(vector);
 		//adopt rotatoinMatrix on vector

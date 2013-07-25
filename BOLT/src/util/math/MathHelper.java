@@ -83,7 +83,6 @@ public abstract class MathHelper
 		Vector3f temp = cloneVector(vector);
 		//adopt rotatoinMatrix on vector
 		Matrix3f.transform (rotationMatrix, temp, vector);
-		Main.log.log(Level.INFO, "" + Math.acos(Vector3f.dot(temp, vector)/(temp.length()*vector.length())));
 	}
 	
 	/**

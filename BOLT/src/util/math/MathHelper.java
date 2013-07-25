@@ -67,7 +67,7 @@ public abstract class MathHelper
 	 */
 	public static void rotateVector(Vector3f vector, float degree, Plane rotationPlane)
 	{
-		float tempDegree = (float)Math.toRadians(degree);
+		double tempDegree = Math.toRadians(degree);
 		rotationPlane.transformToHesseNormalForm();
 		//Creating a Matrix for rotating the Vector
 		Matrix3f rotationMatrix = new Matrix3f();

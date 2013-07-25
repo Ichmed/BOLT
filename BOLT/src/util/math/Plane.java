@@ -13,7 +13,7 @@ public class Plane
 	public Plane(Vector3f normal, Vector3f startingPoint)
 	{
 		this.normal.set(normal.getX(), normal.getY(), normal.getZ());
-		this.startingPoint.set(normal.getX(), normal.getY(), normal.getZ());
+		this.startingPoint.set(startingPoint.getX(), startingPoint.getY(), startingPoint.getZ());
 	}
 	
 	public Vector3f getNormal()

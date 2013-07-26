@@ -5,10 +5,13 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.lwjgl.LWJGLException;
@@ -37,6 +40,7 @@ public class Main
 	public static int resY = 0;
 	public static CollisionBox c;
 	private static DisplayMode[] fullscreenmodes;
+	public static final LogManager logmanager = LogManager.getLogManager();
 
 	public static Vector3f lightPos = new Vector3f();
 
@@ -46,6 +50,18 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		try {
+			logmanager.readConfiguration(new FileInputStream(new File("./nonsync/logging.properties")));
+		} catch (SecurityException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		log.setLevel(Level.ALL);
 		loadOptions();
 		System.out.printf("fullscreen: %b\nresolution: %dx%d\ncameraspeed: %d\n", fullscreen, resX, resY, cameraSpeed);

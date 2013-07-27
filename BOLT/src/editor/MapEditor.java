@@ -306,15 +306,15 @@ public class MapEditor extends JFrame implements TreeSelectionListener
         uiP.add(panel);
         
         uiP.add(new JLabel("Custom Values:"));
-
-        EntityBuilder builder = EntityLoader.loadEntity(entity.getString("name"));
-//        if(builder.customValues){
-//          
-//        }
-        System.out.println(builder == null);
         
-        entityCustomValues = new JTable(new DefaultTableModel(new String[] { "Name (Type)", "Value" }, 0));
-        
+        EntityBuilder builder = EntityLoader.loadEntity(entity.getString("name"));       
+        String[][] data = new String[builder.customValues.size()][2];
+        ArrayList<String> keys = new ArrayList<>(builder.customValues.keySet());
+        for (int i = 0; i < data.length; i++)
+        {
+          data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")" };
+        }
+        entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }));
         JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         entityCustomValues.setFillsViewportHeight(true);
         jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));

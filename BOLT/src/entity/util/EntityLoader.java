@@ -49,6 +49,7 @@ public class EntityLoader
 				if(parent.equals("null"))parentFound = true;
 				else if (EntityLoader.doesEntityExist(parent))
 				{
+				  EntityRegistry.registerEntityBuilder(EntityLoader.loadEntity(parent));
 					e = EntityRegistry.entries.get(parent).clone();
 					e.parent = parent;
 					parentFound = true;

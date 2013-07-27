@@ -46,7 +46,8 @@ public class EntityLoader
 			else if (line.startsWith("parent "))
 			{
 				String parent = line.split(" ")[1];
-				if (EntityLoader.doesEntityExist(parent))
+				if(parent.equals("null"))parentFound = true;
+				else if (EntityLoader.doesEntityExist(parent))
 				{
 					e = EntityRegistry.entries.get(parent).clone();
 					e.parent = parent;

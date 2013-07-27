@@ -1,0 +1,7 @@
+parent staticProb
+name cube
+fullName cube
+
+byte red 255
+byte blue 255
+byte green 255

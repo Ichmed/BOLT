@@ -1,0 +1,17 @@
+parent null
+name staticProb
+
+fullName Static Prob
+
+physType 2
+collType 1
+
+invis false
+
+grav true
+
+class null
+
+model testObject.obj
+
+collisionModel testObject.obj

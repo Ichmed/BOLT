@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -76,10 +77,8 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 	public MapEditor()
 	{
 		super("BOLT MapEditor");
-
 		try
 		{
-			EntityLoader.findEntities("test/entities/testList.entlist");
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e)
@@ -109,6 +108,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 				newMap();
 			}
 		});
+		newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
 		file.add(newFile);
 		JMenuItem openFile = new JMenuItem(new AbstractAction("Open...")
 		{
@@ -250,16 +250,13 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
 				for (int i = 0; i < entities.length(); i++)
 				{
-					EntityBuilder builder = EntityLoader.loadEntity(entities.getJSONObject(i).getString("name"));
-					EntityRegistry.registerEntityBuilder(builder);
 					dtm.insertNodeInto(new DefaultMutableTreeNode("Entity" + i), (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent(), i);
 				}
 				tree.expandRow(1);
 				refresh();
 			}
-			catch (Exception e)
+			catch (JSONException e)
 			{
-				e.printStackTrace();
 				JOptionPane.showMessageDialog(MapEditor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
 				mapFile = null;
 				return;
@@ -317,9 +314,8 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 		ArrayList<String> list = new ArrayList<>();
 		list.add("-- Choose an Entity --");
 
-		for (String key : EntityLoader.entitiesFound.keySet())
+		try
 		{
-<<<<<<< HEAD
 			EntityLoader.findEntities(Game.getCurrentGame().entListFilePath);
 			for (String key : EntityLoader.entitiesFound.keySet())
 			{
@@ -329,9 +325,6 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 		catch (IOException e)
 		{
 			e.printStackTrace();
-=======
-			list.add(key);
->>>>>>> 6f6dfdac903f97c49d6d1d653c7fe49cc82c7b25
 		}
 
 		return list.toArray(new String[] {});

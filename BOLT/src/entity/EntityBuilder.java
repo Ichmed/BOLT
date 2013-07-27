@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import util.math.MathHelper;
+
 public class EntityBuilder
 {
 	public static EntityBuilder defaultEntityBuilder;
@@ -19,7 +21,7 @@ public class EntityBuilder
 	public String model;
 	public String collisionModel;
 	public Float weight;
-	public Vector3f balancePoint;
+	public Vector3f balancePoint = new Vector3f();
 
 	public String classPath;
 
@@ -44,7 +46,7 @@ public class EntityBuilder
 		e.model = this.model;
 		e.collisionModel = this.collisionModel;
 		e.weight = this.weight;
-		e.balancePoint = new Vector3f(this.balancePoint);
+		e.balancePoint = MathHelper.cloneVector(this.balancePoint);
 
 		e.classPath = this.classPath;
 

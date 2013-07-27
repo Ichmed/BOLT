@@ -2,6 +2,6 @@ parent staticProb
 name cube
 fullName cube
 
-byte red 255
-byte blue 255
-byte green 255
+integer red 100
+integer green 100
+integer blue 100

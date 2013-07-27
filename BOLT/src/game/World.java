@@ -5,6 +5,7 @@ import entity.Entity;
 
 public class World
 {
+	private Map currentMap;
 	/**
 	 * A HashMap containing every Entity in this World. Access them using 'getEntity(int key)'.
 	 */
@@ -23,5 +24,10 @@ public class World
 	public Entity getEntity(int key)
 	{
 		return this.entityMap.get(key);
+	}
+
+	public Map getCurrentMap()
+	{
+		return currentMap;
 	}
 }

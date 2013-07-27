@@ -2,6 +2,8 @@ parent staticProb
 name cube
 fullName cube
 
+model test/cube.obj
+
 integer red 100
 integer green 100
 integer blue 100

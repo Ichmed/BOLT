@@ -49,6 +49,7 @@ import util.SpringUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 import entity.util.EntityLoader;
+import game.Game;
 
 public class MapEditor extends JFrame implements TreeSelectionListener
 {
@@ -315,7 +316,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 
 		try
 		{
-			EntityLoader.findEntities("test/entities/testList.entlist");
+			EntityLoader.findEntities(Game.getCurrentGame().entListFilePath);
 			for (String key : EntityLoader.entitiesFound.keySet())
 			{
 				list.add(key);

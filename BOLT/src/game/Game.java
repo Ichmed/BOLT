@@ -2,6 +2,9 @@ package game;
 
 public abstract class Game
 {
+	protected static Game currentGame;
+	private World currentWorld;
+	
 	/**
 	 * The path to an .entList file containing the paths to all entities this game might need
 	 */
@@ -30,5 +33,33 @@ public abstract class Game
 	 */
 	protected void initGame()
 	{
+	}
+
+	/**
+	 * 
+	 * @return The current Game World
+	 */
+	public World getCurrentWorld()
+	{
+		return currentWorld;
+	}
+
+	/**
+	 * 
+	 * @return The currently running Game
+	 */
+	public static Game getCurrentGame()
+	{
+		return currentGame;
+	}
+
+	/**
+	 * Sets the currently running Game <br>
+	 * (Should be called only once)
+	 * @param currentGame
+	 */
+	public static void setCurrentGame(Game currentGame)
+	{
+		Game.currentGame = currentGame;
 	}
 }

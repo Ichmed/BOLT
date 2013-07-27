@@ -108,7 +108,6 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 				newMap();
 			}
 		});
-		newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
 		file.add(newFile);
 		JMenuItem openFile = new JMenuItem(new AbstractAction("Open...")
 		{

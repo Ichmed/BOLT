@@ -4,7 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.util.Vector;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -31,7 +34,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import util.SpringUtilities;
+import entity.EntityBuilder;
+import entity.util.EntityLoader;
 
 public class MapEditor extends JFrame implements TreeSelectionListener
 {
@@ -42,6 +51,9 @@ public class MapEditor extends JFrame implements TreeSelectionListener
   
   // -- components -- //
   JPanel                    uiPanel;
+  
+  JSONArray                 entities;
+  
   JTextField                entityName;
   JSpinner[]                entityPos;
   JSpinner[]                entityRot;
@@ -160,6 +172,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
     saveFile.setEnabled(true);
     saveUFile.setEnabled(true);
     tree.setEnabled(true);
+    entities = new JSONArray();
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
     DefaultMutableTreeNode entities = new DefaultMutableTreeNode("Entities");
     root.add(entities);
@@ -183,6 +196,27 @@ public class MapEditor extends JFrame implements TreeSelectionListener
     repaint();
   }
   
+  private String[] loadEntityList()
+  {
+    ArrayList<String> list = new ArrayList<>();
+    list.add("-- Choose an Entity --");
+    
+    try
+    {
+      EntityLoader.findEntities("test/entities/testList.entlist");
+      for (String key : EntityLoader.entitiesFound.keySet())
+      {
+        list.add(key);
+      }
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    
+    return list.toArray(new String[] {});
+  }
+  
   @Override
   public void valueChanged(TreeSelectionEvent e)
   {
@@ -194,7 +228,25 @@ public class MapEditor extends JFrame implements TreeSelectionListener
     
     if (tree.getRowForPath(e.getPath()) == 1) // Entities
     {
-      JButton newEntity = new JButton(new AbstractAction("New Entity")
+      final JButton newEntity = new JButton();
+      
+      final JComboBox<String> entities = new JComboBox<>(loadEntityList());
+      entities.setSelectedIndex(0);
+      entities.addItemListener(new ItemListener()
+      {
+        @Override
+        public void itemStateChanged(ItemEvent e)
+        {
+          if (e.getStateChange() == ItemEvent.SELECTED)
+          {
+            newEntity.setEnabled(entities.getSelectedIndex() > 0);
+          }
+        }
+      });
+      uiPanel.add(entities);
+      
+      
+      newEntity.setAction(new AbstractAction("New Entity")
       {
         private static final long serialVersionUID = 1L;
         
@@ -203,67 +255,81 @@ public class MapEditor extends JFrame implements TreeSelectionListener
         {
           DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
           dtm.insertNodeInto(new DefaultMutableTreeNode("Entity" + (s.getChildCount())), s, s.getChildCount());
-          tree.expandRow(1); // Entities
+          tree.expandRow(1);
+          
+          try
+          {
+            JSONObject object = new JSONObject();
+            object.put("name", entities.getSelectedItem().toString().replace(".entity", ""));
+            MapEditor.this.entities.put(object);
+          }
+          catch (JSONException e1)
+          {
+            e1.printStackTrace();
+          }
         }
       });
-      newEntity.setPreferredSize(new Dimension(uiPanel.getWidth() - 30, 35));
+      newEntity.setEnabled(false);
+      newEntity.setPreferredSize(new Dimension(300, 24));
       uiPanel.add(newEntity);
       refresh();
     }
     
     if (s.toString().startsWith("Entity")) // Entity1, Entity2, ...
     {
-      JPanel uiP = new JPanel(new SpringLayout());
-      uiP.add(new JLabel("Name:"));
-      entityName = new JTextField(s.toString());
-      uiP.add(entityName);
-      
-      uiP.add(new JLabel("Position:"));
-      JPanel panel = new JPanel();
-      entityPos = new JSpinner[3];
-      entityPos[0] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
-      panel.add(entityPos[0]);
-      entityPos[1] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
-      panel.add(entityPos[1]);
-      entityPos[2] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
-      panel.add(entityPos[2]);
-      uiP.add(panel);
-      
-      uiP.add(new JLabel("Rotation:"));
-      panel = new JPanel();
-      entityRot = new JSpinner[3];
-      entityRot[0] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
-      panel.add(entityRot[0]);
-      entityRot[1] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
-      panel.add(entityRot[1]);
-      entityRot[2] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
-      panel.add(entityRot[2]);
-      uiP.add(panel);
-      
-      uiP.add(new JLabel("Custom Values:"));
-      entityCustomValues = new JTable(new DefaultTableModel(new String[] { "Type", "Value" }, 0));
-      JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-      entityCustomValues.setFillsViewportHeight(true);
-      jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
-      uiP.add(jsp);
-      
-      uiP.add(new JLabel());
-      uiP.add(new JButton(new AbstractAction("Add custom Value")
+      try
       {
-        private static final long serialVersionUID = 1L;
+        JSONObject entity = entities.getJSONObject(tree.getRowForPath(e.getPath()) - 2); // minus World and Entities
         
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-          DefaultTableModel dtm = (DefaultTableModel) entityCustomValues.getModel();
-          dtm.addRow(new Object[] {});
-        }
-      }));
-      
-      SpringUtilities.makeCompactGrid(uiP, 5, 2, 6, 6, 6, 6);
-      
-      uiPanel.add(uiP);
-      refresh();
+        JPanel uiP = new JPanel(new SpringLayout());
+        
+        uiP.add(new JLabel("Position:"));
+        JPanel panel = new JPanel();
+        entityPos = new JSpinner[3];
+        entityPos[0] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
+        panel.add(entityPos[0]);
+        entityPos[1] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
+        panel.add(entityPos[1]);
+        entityPos[2] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
+        panel.add(entityPos[2]);
+        uiP.add(panel);
+        
+        uiP.add(new JLabel("Rotation:"));
+        panel = new JPanel();
+        entityRot = new JSpinner[3];
+        entityRot[0] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
+        panel.add(entityRot[0]);
+        entityRot[1] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
+        panel.add(entityRot[1]);
+        entityRot[2] = new JSpinner(new SpinnerNumberModel(0f, -1000000f, 1000000f, 1));
+        panel.add(entityRot[2]);
+        uiP.add(panel);
+        
+        uiP.add(new JLabel("Custom Values:"));
+
+        EntityBuilder builder = EntityLoader.loadEntity(entity.getString("name"));
+//        if(builder.customValues){
+//          
+//        }
+        System.out.println(builder == null);
+        
+        entityCustomValues = new JTable(new DefaultTableModel(new String[] { "Name (Type)", "Value" }, 0));
+        
+        JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        entityCustomValues.setFillsViewportHeight(true);
+        jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
+        uiP.add(jsp);
+        
+        SpringUtilities.makeCompactGrid(uiP, 3, 2, 6, 6, 6, 6);
+        
+        uiPanel.add(uiP);
+        refresh();
+        
+      }
+      catch (Exception e1)
+      {
+        e1.printStackTrace();
+      }
     }
   }
 }

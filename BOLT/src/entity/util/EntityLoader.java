@@ -30,7 +30,7 @@ public class EntityLoader
 		if(doesEntityExist(name))
 		{
 			if(isParentValid(entitiesFound.get(name).getParent())) path = entitiesFound.get(name).getPath();
-			else return null;			
+			else return null;	
 		}		
 		else return null;
 		
@@ -144,8 +144,8 @@ public class EntityLoader
 
 	public static void findEntities(String path) throws IOException
 	{
-		File OBJFile = new File(path);
-		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
+		File entFile = new File(path);
+		BufferedReader reader = new BufferedReader(new FileReader(entFile));
 		String line;
 		List<String> filesToParse = new ArrayList<>();
 		while ((line = reader.readLine()) != null)
@@ -170,7 +170,7 @@ public class EntityLoader
 		}
 	}
 	
-	private static class EntityFound
+	public static class EntityFound
 	{
 		private final String parent, name, path;
 

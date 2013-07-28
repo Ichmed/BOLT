@@ -9,6 +9,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -57,13 +58,13 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 	File mapFile;
 
 	// -- tree -- //
+	JScrollPane treePanel;
 	JTree tree;
 
 	// -- components -- //
 	JPanel uiPanel;
 
 	JSONArray entities;
-
 	JSpinner entityPosX, entityPosY, entityPosZ;
 	JSpinner entityRotX, entityRotY, entityRotZ;
 	JTable entityCustomValues;
@@ -78,6 +79,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 		super("BOLT MapEditor");
 		try
 		{
+			EntityLoader.findEntities("test/entities/testList.entlist");
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e)
@@ -104,6 +106,13 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				refresh();
+				if (isChanged())
+				{
+					int r = JOptionPane.showConfirmDialog(MapEditor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (r == JOptionPane.YES_OPTION) newMap();
+					else if (r == JOptionPane.CANCEL_OPTION) return;
+				}
 				newMap();
 			}
 		});
@@ -116,6 +125,13 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				refresh();
+				if (isChanged())
+				{
+					int r = JOptionPane.showConfirmDialog(MapEditor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (r == JOptionPane.YES_OPTION) saveMap();
+					else if (r == JOptionPane.CANCEL_OPTION) return;
+				}
 				openMap();
 			}
 		});
@@ -168,14 +184,17 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 
 		JPanel panel = new JPanel(new BorderLayout());
 
+		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		treePanel.setPreferredSize(new Dimension(200, 0));
+		panel.add(treePanel, BorderLayout.LINE_START);
 		tree = new JTree(new DefaultMutableTreeNode("World"));
+		tree.setModel(null);
 		tree.setEnabled(false);
 		tree.setShowsRootHandles(true);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.setPreferredSize(new Dimension(200, 600));
 		tree.addTreeSelectionListener(this);
 		tree.setExpandsSelectedPaths(true);
-		panel.add(tree, BorderLayout.LINE_START);
+		treePanel.setViewportView(tree);
 
 		uiPanel = new JPanel(new FlowLayout());
 		uiPanel.setEnabled(false);
@@ -185,6 +204,63 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 		setContentPane(panel);
 
 		pack();
+	}
+
+	public boolean isChanged()
+	{
+		if (mapFile == null) return false;
+
+		try
+		{
+			return !writeValue(getData()).equals(writeValue(new JSONObject(Compressor.decompressFile(mapFile))));
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			return true;
+		}
+	}
+
+	public static String writeValue(Object value)
+	{
+		String string = "null";
+		try
+		{
+			if (value instanceof Integer || value instanceof Double || value instanceof Boolean) return value.toString();
+			else if (value instanceof JSONArray)
+			{
+				string = "[";
+				if (((JSONArray) value).length() > 0)
+				{
+					for (int i = 0; i < ((JSONArray) value).length(); i++)
+						string += writeValue((((JSONArray) value).get(i))) + ",";
+
+					string = string.substring(0, string.length() - 1);
+				}
+
+				return string + "]";
+			}
+			else if (value instanceof JSONObject)
+			{
+				string = "{";
+				String[] keys = JSONObject.getNames((JSONObject) value);
+				if (keys != null && keys.length > 0)
+				{
+					Arrays.sort(keys);
+					for (String s : keys)
+						string += "\"" + s + "\":" + writeValue(((JSONObject) value).get(s)) + ",";
+
+					string = string.substring(0, string.length() - 1);
+				}
+				return string + "}";
+			}
+			else return "\"" + value.toString() + "\"";
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return string;
 	}
 
 	public void showRawFile()
@@ -209,11 +285,17 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 
 	public void setTitle(String s)
 	{
-		super.setTitle("BOLT MapEditor" + ((s != null) ? " - " + s : ""));
+		super.setTitle(((s != null) ? s + " - " : "") + "BOLT MapEditor");
+	}
+
+	public String getTitle()
+	{
+		return super.getTitle().replaceAll("( - )(BOLT MapEditor)", "");
 	}
 
 	public void newMap()
 	{
+		mapFile = null;
 		reset();
 	}
 
@@ -234,8 +316,6 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 
 	public void openMap()
 	{
-		reset();
-
 		JFileChooser jfc = new JFileChooser("C:/");
 		jfc.setFileFilter(new FileNameExtensionFilter("BOLT Map-Files", "map"));
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -244,18 +324,22 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 			mapFile = jfc.getSelectedFile();
 			try
 			{
+				reset();
+
+				setTitle(mapFile.getPath());
 				JSONObject data = new JSONObject(Compressor.decompressFile(mapFile));
 				entities = data.getJSONArray("entities");
 				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
 				for (int i = 0; i < entities.length(); i++)
 				{
 					dtm.insertNodeInto(new DefaultMutableTreeNode("Entity" + i), (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent(), i);
+					refresh();
 				}
 				tree.expandRow(1);
-				refresh();
 			}
 			catch (JSONException e)
 			{
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(MapEditor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
 				mapFile = null;
 				return;
@@ -286,8 +370,10 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 			return;
 		}
 
-		Compressor.compressFile(mapFile, getData().toString());
+		String string = writeValue(getData());
 
+		Compressor.compressFile(mapFile, string);
+		refresh();
 	}
 
 	public void saveUMap()
@@ -297,15 +383,26 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
-			mapFile = new File(jfc.getSelectedFile().getPath() + ".map");
+
+			mapFile = new File(jfc.getSelectedFile().getPath().replace(".map", "") + ".map");
 			saveMap();
 		}
 	}
 
 	private void refresh()
 	{
+		if (isChanged())
+		{
+			if (!getTitle().startsWith("*")) setTitle("*" + getTitle());
+		}
+		else
+		{
+			if (mapFile != null) setTitle(mapFile.getPath());
+			else setTitle(null);
+		}
 		revalidate();
 		repaint();
+		treePanel.revalidate();
 	}
 
 	private String[] loadEntityList()
@@ -376,8 +473,14 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 						object.put("name", entities.getSelectedItem().toString().replace(".entity", ""));
 						object.put("pos", new JSONArray(new Double[] { 0d, 0d, 0d }));
 						object.put("rot", new JSONArray(new Double[] { 0d, 0d, 0d }));
-						object.put("custom", new JSONObject());
+						JSONObject custom = new JSONObject();
+						for (String key : builder.customValues.keySet())
+						{
+							custom.put(key, builder.customValues.get(key));
+						}
+						object.put("custom", custom);
 						MapEditor.this.entities.put(object);
+						refresh();
 					}
 					catch (Exception e1)
 					{
@@ -395,10 +498,18 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 		{
 			try
 			{
+				if (entities.length() == 0) return;
+
 				final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
+
 				JSONObject entity = entities.getJSONObject(tree.getRowForPath(e.getPath()) - 2);
 
 				EntityBuilder builder = EntityRegistry.entries.get(entity.getString("name"));
+				if (builder == null)
+				{
+					builder = EntityLoader.loadEntity(entity.getString("name"));
+					EntityRegistry.registerEntityBuilder(builder);
+				}
 
 				JPanel uiP = new JPanel(new SpringLayout());
 
@@ -438,7 +549,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 				ArrayList<String> keys = new ArrayList<>(builder.customValues.keySet());
 				for (int i = 0; i < data.length; i++)
 				{
-					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", builder.customValues.get(keys.get(i)).toString() };
+					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)) : builder.customValues.get(keys.get(i)).toString()).toString() };
 				}
 				entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }));
 				entityCustomValues.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -455,7 +566,6 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-
 						try
 						{
 							entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
@@ -532,6 +642,8 @@ public class MapEditor extends JFrame implements TreeSelectionListener
 							}
 
 							entities.getJSONObject(entityIndex).put("custom", custom);
+							refresh();
+
 						}
 						catch (JSONException e1)
 						{

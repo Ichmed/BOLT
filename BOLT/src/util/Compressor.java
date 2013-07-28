@@ -22,7 +22,7 @@ public class Compressor
 	 */
 	public static void compressFile(File f, String s)
 	{
-		compressFile(f, s.getBytes());
+		compressFile(f, (s + ((s.length() < 18) ? "                 " : "")).getBytes());
 	}
 
 	/**
@@ -36,6 +36,7 @@ public class Compressor
 	public static void compressFile(File f, byte[] input)
 	{
 		byte[] length = ByteBuffer.allocate(4).putInt(input.length).array();
+
 		byte[] buffer = new byte[input.length];
 		Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
 		deflater.setInput(input);

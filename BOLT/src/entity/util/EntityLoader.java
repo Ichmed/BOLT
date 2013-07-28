@@ -145,6 +145,12 @@ public class EntityLoader
 		return false;
 	}
 
+	/**
+	 * This method will only work if a .entlist file containing the Entity's path 
+	 * was already parsed using findEntities(String path)
+	 * @param name
+	 * @return
+	 */
 	private static boolean doesEntityExist(String name)
 	{
 		return entitiesFound.containsKey(name);

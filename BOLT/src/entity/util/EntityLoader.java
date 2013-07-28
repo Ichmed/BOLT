@@ -13,14 +13,20 @@ import org.lwjgl.util.vector.Vector3f;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 
+/**
+ * This class will load and create EntityBuilders
+ * @author Ichmed
+ *
+ */
 public class EntityLoader
 {	
 	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
 
 	/**
-	 * 
-	 * @param path The path of the .entity file
-	 * @param secondParsing Is this the second parsing?
+	 * This method will create a new instance of EntityBuilder containing the the 
+	 * values specified in a .entity file. You will have to call a .entlist file
+	 * containing the path to the .emtity file first
+	 * @param name the entity's name
 	 * @return Returns an instance of EntityBuilder if successful and null if not
 	 * @throws IOException
 	 */
@@ -144,6 +150,12 @@ public class EntityLoader
 		return entitiesFound.containsKey(name);
 	}
 
+	/**
+	 * This method will try to find any .entity files specified in a given .entlist file 
+	 * and put them into a HashMap for future access
+	 * @param path The path to an .entlist file
+	 * @throws IOException
+	 */
 	public static void findEntities(String path) throws IOException
 	{
 		File entFile = new File(path);
@@ -172,6 +184,11 @@ public class EntityLoader
 		}
 	}
 	
+	/**
+	 * Used internally for HashMap entries
+	 * @author Ichmed
+	 *
+	 */
 	public static class EntityFound
 	{
 		private final String parent, name, path;

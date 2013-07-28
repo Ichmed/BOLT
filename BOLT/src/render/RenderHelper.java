@@ -10,16 +10,21 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import render.util.ModelLoader;
+
 public class RenderHelper
 {
-	private static HashMap<String, Texture> textures = new HashMap<String, Texture>();
+	private static HashMap<String, Texture> textures = new HashMap<String, Texture>();	
+	public static HashMap<String, Model> models = new HashMap<>();
 
+	@Deprecated
 	public static final char[] characterChart = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.', ',', ':', ';',
 			'-', '+', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', '"', '!', '?', '=', '*', '_', '#', '\'', ' ' };
 
-	public static boolean bindTexture(String s)
+	
+	public static boolean bindTexture(String path)
 	{
-		Texture t = textures.get(s);
+		Texture t = textures.get(path);
 		if (t != null)
 		{
 			t.bind();
@@ -27,11 +32,36 @@ public class RenderHelper
 		}
 		else
 		{
-			Texture u = loadTexture(s);
-			u.bind();
-			textures.put(s, u);
+			t = loadTexture(path);
+			t.bind();
+			textures.put(path, t);
 			return true;
 		}
+	}
+	
+	/**
+	 * Returns a model. If it doesn't exist the method will try to load it
+	 * @param path The path to the model file
+	 * @return The model / null if the model could not be loaded
+	 */
+	public static Model getModel(String path)
+	{
+		Model m = models.get(path);
+		if(m == null)
+		{
+			models.put(path, ModelLoader.loadModel(path));
+			m = models.get(path);
+		}
+		return m;
+	}
+	
+	/**
+	 * Renders a model at the GL-coordinate-origin. If it doesn't exist the method will try to load the model
+	 * @param path The path to the model file
+	 */
+	public static void renderModel(String path)
+	{
+		getModel(path).renderModel();
 	}
 
 	private static Texture loadTexture(String path)
@@ -80,16 +110,19 @@ public class RenderHelper
 		GL11.glEnd();
 	}
 
+	@Deprecated
 	public static void renderString(int posX, int posY, String s)
 	{
 		renderString(posX, posY, s, 20);
 	}
 
+	@Deprecated
 	public static void renderString(int posX, int posY, String s, int size)
 	{
 		renderString(posX, posY, s, size, -1);
 	}
-
+	
+	@Deprecated
 	public static void renderString(int posX, int posY, String s, int size, int frame)
 	{
 		char[] characters = s.toCharArray();

@@ -10,9 +10,13 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import render.util.ModelLoader;
+
 public class RenderHelper
 {
 	private static HashMap<String, Texture> textures = new HashMap<String, Texture>();
+	
+	public static HashMap<String, Model> models = new HashMap<>();
 
 	public static final char[] characterChart = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.', ',', ':', ';',
 			'-', '+', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', '"', '!', '?', '=', '*', '_', '#', '\'', ' ' };
@@ -32,6 +36,22 @@ public class RenderHelper
 			textures.put(s, u);
 			return true;
 		}
+	}
+	
+	public static Model getModel(String path)
+	{
+		Model m = models.get(path);
+		if(m == null)
+		{
+			models.put(path, ModelLoader.loadModel(path));
+			m = models.get(path);
+		}
+		return m;
+	}
+	
+	public static void renderModel(String path)
+	{
+		getModel(path).renderModel();
 	}
 
 	private static Texture loadTexture(String path)

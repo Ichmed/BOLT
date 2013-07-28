@@ -21,14 +21,12 @@ public class OBJLoader
 	 * 
 	 * @param path
 	 *            The path to the file relative to the .jar's directory
-	 * @param file
-	 *            The name of the .obj file
 	 * @return an instance of Model
 	 * @throws IOException
 	 */
-	public static Model loadModel(String path, String file) throws IOException
+	public static Model loadModel(String path) throws IOException
 	{
-		File OBJFile = new File(path + file);
+		File OBJFile = new File(path);
 		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
 		Model m = new Model();
 		String line;

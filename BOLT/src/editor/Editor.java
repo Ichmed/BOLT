@@ -54,7 +54,7 @@ import entity.EntityBuilder;
 import entity.EntityRegistry;
 import entity.util.EntityLoader;
 
-public class MapEditor extends JFrame implements TreeSelectionListener
+public class Editor extends JFrame implements TreeSelectionListener
 {
   private static final long serialVersionUID = 1L;
   
@@ -77,9 +77,9 @@ public class MapEditor extends JFrame implements TreeSelectionListener
   JMenuItem                 saveUFile;
   JMenu                     view;
   
-  public MapEditor()
+  public Editor()
   {
-    super("BOLT MapEditor");
+    super("BOLT Editor");
     try
     {
       EntityLoader.findEntities("test/entities/testList.entlist");
@@ -112,7 +112,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
         refresh();
         if (isChanged())
         {
-          int r = JOptionPane.showConfirmDialog(MapEditor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+          int r = JOptionPane.showConfirmDialog(Editor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
           if (r == JOptionPane.YES_OPTION)
             newMap();
           else if (r == JOptionPane.CANCEL_OPTION)
@@ -133,7 +133,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
         refresh();
         if (isChanged())
         {
-          int r = JOptionPane.showConfirmDialog(MapEditor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+          int r = JOptionPane.showConfirmDialog(Editor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
           if (r == JOptionPane.YES_OPTION)
             saveMap();
           else if (r == JOptionPane.CANCEL_OPTION)
@@ -311,7 +311,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
     try
     {
       JDialog frame = new JDialog(this, true);
-      frame.setTitle("BOLT MapEditor - Raw File Preview");
+      frame.setTitle("BOLT Editor - Raw File Preview");
       frame.setSize(400, 400);
       frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
       JTextArea area = new JTextArea(getData().toString(4));
@@ -328,12 +328,12 @@ public class MapEditor extends JFrame implements TreeSelectionListener
   
   public void setTitle(String s)
   {
-    super.setTitle(((s != null) ? s + " - " : "") + "BOLT MapEditor");
+    super.setTitle(((s != null) ? s + " - " : "") + "BOLT Editor");
   }
   
   public String getTitle()
   {
-    return super.getTitle().replaceAll("( - )(BOLT MapEditor)", "");
+    return super.getTitle().replaceAll("( - )(BOLT Editor)", "");
   }
   
   public void newMap()
@@ -383,7 +383,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
       catch (JSONException e)
       {
         e.printStackTrace();
-        JOptionPane.showMessageDialog(MapEditor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(Editor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
         mapFile = null;
         return;
       }
@@ -524,7 +524,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
               custom.put(key, builder.customValues.get(key));
             }
             object.put("custom", custom);
-            MapEditor.this.entities.put(object);
+            Editor.this.entities.put(object);
             refresh();
           }
           catch (Exception e1)
@@ -686,7 +686,7 @@ public class MapEditor extends JFrame implements TreeSelectionListener
               
               if (!valid)
               {
-                JOptionPane.showMessageDialog(MapEditor.this, "Please enter your custom values in the same data type as specified in brackets!\n  at " + message, "Error!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(Editor.this, "Please enter your custom values in the same data type as specified in brackets!\n  at " + message, "Error!", JOptionPane.ERROR_MESSAGE);
                 return;
               }
               

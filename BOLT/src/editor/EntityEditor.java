@@ -36,7 +36,7 @@ public class EntityEditor extends JFrame
 
 	public EntityEditor()
 	{
-		super("BOLT EntityEditor");
+		super("BOLT Entity Editor");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setResizable(false);
 

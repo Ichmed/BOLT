@@ -37,7 +37,7 @@ public class OBJLoader
 		{
 			if (line.startsWith("mtllib"))
 			{
-				loadMaterialsFile(path, line.split(" ")[1], m);
+				loadMaterialsFile(path.substring(0, path.lastIndexOf("/") + 1), line.split(" ")[1], m);
 			}
 			else if (line.startsWith("v "))
 			{

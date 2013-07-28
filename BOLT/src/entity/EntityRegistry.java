@@ -22,6 +22,11 @@ public class EntityRegistry
 		return true;
 	}
 
+	/**
+	 * Creates an returns a new instance of a given Entity
+	 * @param name The Entity's name
+	 * @return A new Entity with all values set to default (position = (0, 0, 0) etc)
+	 */
 	public static Entity createEntity(String name)
 	{ 
 		try

@@ -15,31 +15,35 @@ import entity.EntityRegistry;
 
 /**
  * This class will load and create EntityBuilders
+ * 
  * @author Ichmed
- *
+ * 
  */
 public class EntityLoader
-{	
+{
 	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
 
 	/**
-	 * This method will create a new instance of EntityBuilder containing the the 
-	 * values specified in a .entity file. You will have to call a .entlist file
-	 * containing the path to the .emtity file first
-	 * @param name the entity's name
-	 * @return Returns an instance of EntityBuilder if successful and null if not
+	 * This method will create a new instance of EntityBuilder containing the
+	 * the values specified in a .entity file. You will have to call a .entlist
+	 * file containing the path to the .emtity file first
+	 * 
+	 * @param name
+	 *            the entity's name
+	 * @return Returns an instance of EntityBuilder if successful and null if
+	 *         not
 	 * @throws IOException
 	 */
 	public static EntityBuilder loadEntity(String name) throws IOException
 	{
 		String path = "";
-		if(doesEntityExist(name))
+		if (doesEntityExist(name))
 		{
-			if(isParentValid(entitiesFound.get(name).getParent())) path = entitiesFound.get(name).getPath();
-			else return null;	
-		}		
+			if (isParentValid(entitiesFound.get(name).getParent())) path = entitiesFound.get(name).getPath();
+			else return null;
+		}
 		else return null;
-		
+
 		File OBJFile = new File(path);
 		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
 		EntityBuilder e = new EntityBuilder();
@@ -52,10 +56,10 @@ public class EntityLoader
 			else if (line.startsWith("parent "))
 			{
 				String parent = line.split(" ")[1];
-				if(parent.equals("null"))parentFound = true;
+				if (parent.equals("null")) parentFound = true;
 				else if (EntityLoader.doesEntityExist(parent))
 				{
-				  EntityRegistry.registerEntityBuilder(EntityLoader.loadEntity(parent));
+					EntityRegistry.registerEntityBuilder(EntityLoader.loadEntity(parent));
 					e = EntityRegistry.entries.get(parent).clone();
 					e.parent = parent;
 					parentFound = true;
@@ -136,18 +140,19 @@ public class EntityLoader
 		}
 		reader.close();
 		return e;
-	}	
-	
+	}
+
 	private static boolean isParentValid(String parent)
 	{
-		if(parent.equals("null")) return true;
-		else if(doesEntityExist(parent))return isParentValid(entitiesFound.get(parent).getParent());		
+		if (parent.equals("null")) return true;
+		else if (doesEntityExist(parent)) return isParentValid(entitiesFound.get(parent).getParent());
 		return false;
 	}
 
 	/**
-	 * This method will only work if a .entlist file containing the Entity's path 
-	 * was already parsed using findEntities(String path)
+	 * This method will only work if a .entlist file containing the Entity's
+	 * path was already parsed using findEntities(String path)
+	 * 
 	 * @param name
 	 * @return
 	 */
@@ -157,43 +162,72 @@ public class EntityLoader
 	}
 
 	/**
-	 * This method will try to find any .entity files specified in a given .entlist file 
-	 * and put them into a HashMap for future access
-	 * @param path The path to an .entlist file
+	 * This method will try to find any .entity files specified in a given
+	 * .entlist file and put them into a HashMap for future access
+	 * 
+	 * @param path
+	 *            The path to an .entlist file
 	 * @throws IOException
 	 */
-	public static void findEntities(String path) throws IOException
+	public static void findEntities(String path)
 	{
-		File entFile = new File(path);
-		BufferedReader reader = new BufferedReader(new FileReader(entFile));
-		String line;
-		List<String> filesToParse = new ArrayList<>();
-		while ((line = reader.readLine()) != null)
+		try
 		{
-			filesToParse.add(line);
-		}
-		reader.close();
-
-		for (String s : filesToParse)
-		{
-			File file = new File(s);
-			reader = new BufferedReader(new FileReader(file));
-			String name = "", parent = "";
-			while((line = reader.readLine()) != null)
+			File entFile = new File(path);
+			BufferedReader reader = new BufferedReader(new FileReader(entFile));
+			String line;
+			List<String> filesToParse = new ArrayList<>();
+			while ((line = reader.readLine()) != null)
 			{
-				if(line.startsWith("#"));
-				else if(line.startsWith("parent ")) parent = line.split(" ")[1];
-				else if(line.startsWith("name ")) name = line.split(" ")[1];
+				filesToParse.add(line);
 			}
-			if(name != "" && parent != "")entitiesFound.put(name, new EntityFound(parent, name, s));
-			else System.err.println(s +" could not be read properly");
+			reader.close();
+
+			for (String s : filesToParse)
+			{
+				findEntity(s);
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
-	
+
+	public static void findEntity(String path)
+	{
+		try
+		{
+			File file = new File(path);
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+
+			String line;
+			String name = "", parent = "";
+
+			while ((line = reader.readLine()) != null)
+			{
+				if (line.startsWith("#"))
+				;
+				else if (line.startsWith("parent ")) parent = line.split(" ")[1];
+				else if (line.startsWith("name ")) name = line.split(" ")[1];
+			}
+
+			reader.close();
+
+			if (name != "" && parent != "") entitiesFound.put(name, new EntityFound(parent, name, path));
+			else System.err.println(path + " could not be read properly");
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Used internally for HashMap entries
+	 * 
 	 * @author Ichmed
-	 *
+	 * 
 	 */
 	public static class EntityFound
 	{

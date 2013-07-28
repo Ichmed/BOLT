@@ -58,6 +58,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	private static final long serialVersionUID = 1L;
 
 	File mapFile;
+	File entListFile;
 	JScrollPane treePanel;
 	JTree tree;
 	JPanel uiPanel;
@@ -243,7 +244,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		panel.add(uiPanel, BorderLayout.LINE_END);
 
 		setContentPane(panel);
-
 		pack();
 	}
 
@@ -587,7 +587,16 @@ public class Editor extends JFrame implements TreeSelectionListener
 				{
 					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)) : builder.customValues.get(keys.get(i)).toString()).toString() };
 				}
-				entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }));
+				entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))
+				{
+					private static final long serialVersionUID = 1L;
+
+					public boolean isCellEditable(int row, int column)
+					{
+						if (column == 0) return false; // name column
+						return true;
+					}
+				};
 				entityCustomValues.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 				JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 				entityCustomValues.setFillsViewportHeight(true);

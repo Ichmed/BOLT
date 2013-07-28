@@ -1,11 +1,14 @@
 package editor;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,33 +18,43 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SpringLayout;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import util.SpringUtilities;
 
-//TODO: tree for other entities in entlist
-
-public class EntityEditor extends JFrame
+public class EntityEditor extends JFrame implements TreeSelectionListener
 {
 	private static final long serialVersionUID = 1L;
 
-	File entityFile;
+	File entListFile;
+	ArrayList<File> entityFiles;
 
+	JPanel uiPanel;
+	JScrollPane treePanel;
 	JTree tree;
 	JTextField parent, name, fullName, klass, model, collModel;
 	JComboBox<String> physType, collType;
 	JCheckBox invis, grav;
+	JTable customVals;
 
 	public EntityEditor()
 	{
 		super("BOLT Entity Editor");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setResizable(false);
 
 		initComponents();
 
+		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -49,7 +62,7 @@ public class EntityEditor extends JFrame
 	public void initComponents()
 	{
 		JMenuBar menu = new JMenuBar();
-		JMenu entlist = new JMenu("EntityList");
+		JMenu entlist = new JMenu("File");
 		JMenuItem newFile = new JMenuItem(new AbstractAction("New")
 		{
 			private static final long serialVersionUID = 1L;
@@ -65,95 +78,60 @@ public class EntityEditor extends JFrame
 
 		setJMenuBar(menu);
 
-		JPanel panel = new JPanel(new SpringLayout());
-		panel.add(new JLabel("Parent:"));
-		JPanel panel2 = new JPanel();
-		parent = new JTextField(15);
-		panel2.add(parent);
-		panel2.add(new JButton(new AbstractAction("Validate...")
-		{
-			private static final long serialVersionUID = 1L;
+		JPanel p = new JPanel(new BorderLayout());
+		p.setPreferredSize(new Dimension(800, 600));
 
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				// TODO: check if parent is valid & loadable. If not valid, show filebrowser and add to entlist
-			}
-		}));
-		panel.add(panel2);
+		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		treePanel.setPreferredSize(new Dimension(200, 0));
+		p.add(treePanel, BorderLayout.LINE_START);
+		tree = new JTree(new DefaultMutableTreeNode("EntityList"));
+		tree.setModel(null);
+		tree.setEnabled(false);
+		tree.setShowsRootHandles(true);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(this);
+		tree.setExpandsSelectedPaths(true);
 
-		panel.add(new JLabel("Name:"));
-		name = new JTextField(15);
-		panel.add(name);
+		treePanel.setViewportView(tree);
 
-		panel.add(new JLabel("Full Name:"));
-		fullName = new JTextField(15);
-		panel.add(fullName);
-
-		panel.add(new JLabel("Physical Type:"));
-		physType = new JComboBox<>(new String[] { "physical", "static" });
-		panel.add(physType);
-
-		panel.add(new JLabel("Collision Type:"));
-		collType = new JComboBox<>(new String[] { "solid", "gameSolid", "not solid" });
-		panel.add(collType);
-
-		panel.add(new JLabel("Invisible:"));
-		invis = new JCheckBox();
-		panel.add(invis);
-
-		panel.add(new JLabel("Gravity:"));
-		grav = new JCheckBox();
-		panel.add(grav);
-
-		panel.add(new JLabel("Class:"));
-		klass = new JTextField(15);
-		panel.add(klass);
-		
-		panel.add(new JLabel("Model:"));
-		JPanel panel3 = new JPanel();
-		model = new JTextField(15);
-		panel3.add(model);
-		panel3.add(new JButton(new AbstractAction("Browse...")
-		{
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				// TODO: file browser
-			}
-		}));
-		panel.add(panel3);
-
-		panel.add(new JLabel("Collision Model:"));
-		JPanel panel4 = new JPanel();
-		model = new JTextField(15);
-		panel4.add(model);
-		panel4.add(new JButton(new AbstractAction("Browse...")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				// TODO: file browser
-			}
-		}));
-		panel.add(panel4);
-
-		SpringUtilities.makeCompactGrid(panel, 10, 2, 6, 6, 6, 6);
-
-		JPanel p = new JPanel(new FlowLayout());
-		p.setPreferredSize(new Dimension(600, 600));
-		p.add(panel);
+		uiPanel = new JPanel(new FlowLayout());
+		uiPanel.setPreferredSize(new Dimension(600, 600));
+		p.add(uiPanel, BorderLayout.LINE_END);
 
 		setContentPane(p);
 		pack();
 	}
 
-	public void newEntityList()
+	private void applyEntity()
 	{
+
+	}
+
+	private void reset()
+	{
+		tree.setEnabled(true);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("EntityList");
+		tree.setModel(new DefaultTreeModel(root));
+	}
+
+	private void refresh()
+	{
+		revalidate();
+		repaint();
+		treePanel.revalidate();
+	}
+
+	private void newEntityList()
+	{
+		reset();
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent e)
+	{
+		uiPanel.setLayout(new FlowLayout());
+		uiPanel.removeAll();
+		refresh();
 
 	}
 }

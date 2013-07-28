@@ -24,7 +24,10 @@ public class MapLoader
       
       World world = new World();
       
-      JSONArray entities = content.getJSONArray("entity");
+      String entlist = content.getString("entlist");
+      EntityLoader.findEntities(entlist);
+      
+      JSONArray entities = content.getJSONArray("entities");
       
       for (int i = 0; i < entities.length(); i++)
       {

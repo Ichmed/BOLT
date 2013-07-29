@@ -65,6 +65,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JSONArray entities;
 	JSpinner entityPosX, entityPosY, entityPosZ;
 	JSpinner entityRotX, entityRotY, entityRotZ;
+	JTextField entityID;
 	JTable entityCustomValues;
 	JMenuItem saveFile;
 	JMenuItem saveUFile;
@@ -206,7 +207,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		tree.setExpandsSelectedPaths(true);
 		tree.addMouseListener(new MouseAdapter()
 		{
-			public void mouseReleased(MouseEvent e)
+			public void mouseClicked(MouseEvent e)
 			{
 				if (e.getButton() != 3) return;
 
@@ -496,15 +497,15 @@ public class Editor extends JFrame implements TreeSelectionListener
 				public void actionPerformed(ActionEvent e)
 				{
 					DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
-					dtm.insertNodeInto(new DefaultMutableTreeNode("Entity" + (s.getChildCount())), s, s.getChildCount());
+					dtm.insertNodeInto(new DefaultMutableTreeNode(s.getChildCount()), s, s.getChildCount());
 					tree.expandRow(1);
-
 					try
 					{
 						EntityBuilder builder = EntityLoader.loadEntity(entities.getSelectedItem().toString().replace(".entity", ""));
 						EntityRegistry.registerEntityBuilder(builder);
 						JSONObject object = new JSONObject();
 						object.put("name", entities.getSelectedItem().toString().replace(".entity", ""));
+						object.put("id", "" + (s.getChildCount() - 1));
 						object.put("pos", new JSONArray(new Double[] { 0d, 0d, 0d }));
 						object.put("rot", new JSONArray(new Double[] { 0d, 0d, 0d }));
 						JSONObject custom = new JSONObject();
@@ -528,7 +529,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			refresh();
 		}
 
-		if (s.toString().startsWith("Entity")) // Entity1, Entity2, ...
+		if (tree.getRowForPath(e.getPath()) > 1) // Entity1, Entity2, ...
 		{
 			try
 			{
@@ -558,6 +559,13 @@ public class Editor extends JFrame implements TreeSelectionListener
 				JTextField parent = new JTextField(builder.parent);
 				parent.setEditable(false);
 				uiP.add(parent);
+
+				// TODO work
+
+				uiP.add(new JLabel("ID:"));
+				entityID = new JTextField(entity.getString("id"));
+				entityID.setEditable(false);
+				uiP.add(entityID);
 
 				uiP.add(new JLabel("Position:"));
 				JPanel panel = new JPanel();
@@ -589,6 +597,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 
 				JButton browse = new JButton("Browse");
+				browse.setEnabled(false);
 
 				entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))
 				{
@@ -628,6 +637,16 @@ public class Editor extends JFrame implements TreeSelectionListener
 					{
 						try
 						{
+							if (entityID.getText().length() == 0)
+							{
+								JOptionPane.showMessageDialog(Editor.this, "Please enter a unique identifier for that entity!", "Error!", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+
+							entities.getJSONObject(entityIndex).put("id", entityID.getText());
+							((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
+							refresh();
+
 							entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
 							entities.getJSONObject(entityIndex).put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
 							EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
@@ -712,7 +731,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					}
 				}));
 
-				SpringUtilities.makeCompactGrid(uiP, 7, 2, 6, 6, 6, 6);
+				SpringUtilities.makeCompactGrid(uiP, 8, 2, 6, 6, 6, 6);
 
 				uiPanel.add(uiP);
 				refresh();

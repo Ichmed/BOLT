@@ -210,7 +210,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 					if (f.exists())
 					{
-						int r = JOptionPane.showConfirmDialog(EntityEditor.this, "This file already exists! By creating a new entity int that file, it's old content will be lost!", "Warning!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+						int r = JOptionPane.showConfirmDialog(EntityEditor.this, "This file already exists! By creating a new entity in that file, it's old content will be lost!", "Warning!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 						if (r == JOptionPane.CANCEL_OPTION) return;
 					}
 					else

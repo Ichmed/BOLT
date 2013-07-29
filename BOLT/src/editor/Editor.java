@@ -601,7 +601,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)).toString() : builder.customValues.get(keys.get(i)).toString()).toString() };
 				}
 
-				final JButton browse = new JButton("Browse");
+				final JButton browse = new JButton("Browse...");
 				browse.setEnabled(false);
 
 				entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))

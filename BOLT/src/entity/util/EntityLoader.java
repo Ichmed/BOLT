@@ -138,7 +138,7 @@ public class EntityLoader
 				}
 				else if (line.startsWith("file "))
 				{
-					e.customValues.put(line.split(" ")[1], line.substring(line.indexOf(" ", 8)).trim());
+					e.customValues.put(line.split(" ")[1], new File(line.split(" ")[2]));
 				}
 			}
 		}

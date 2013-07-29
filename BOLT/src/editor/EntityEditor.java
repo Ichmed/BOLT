@@ -184,6 +184,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				public void actionPerformed(ActionEvent e)
 				{
 					JFileChooser jfc = new JFileChooser(new File("C:/"));
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setMultiSelectionEnabled(false);
 					if (path.getText().length() > 0) jfc.setSelectedFile(new File(path.getText()));
 
 					jfc.setFileFilter(new FileNameExtensionFilter("BOLT Entity-Files", "entity"));

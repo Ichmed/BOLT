@@ -21,10 +21,7 @@ public class MapLoader
 		try
 		{
 			JSONObject content = new JSONObject(Compressor.decompressFile(new File(file)));
-
-			String entlist = content.getString("entlist");
-			EntityLoader.findEntities(entlist);
-
+			
 			JSONArray entities = content.getJSONArray("entities");
 
 			for (int i = 0; i < entities.length(); i++)

@@ -117,6 +117,9 @@ public class Main
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
+		
+		Game.currentGame = new TestGame();
+		Game.currentGame.initializeGame();
 
 		while (!Display.isCloseRequested())
 			gameLoop();
@@ -225,9 +228,7 @@ public class Main
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnable(GL_TEXTURE_2D);
-		glTranslated(0, 0, -9);
-		m.renderModel();
+		Game.currentGame.gameLoop();
 
 		glColor4d(1, 1, 1, 1);
 		glBegin(GL_POINT);

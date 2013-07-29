@@ -6,9 +6,9 @@ fullName Static Prob
 physType 2
 collType 1
 
-invis false
+invisible false
 
-grav true
+gravity true
 
 class entity.probs.StaticProb
 

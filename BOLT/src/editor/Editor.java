@@ -642,7 +642,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						JFileChooser jfc = new JFileChooser("C:/");
 						jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 						jfc.setMultiSelectionEnabled(false);
-						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(jfc.getSelectedFile().getPath(), entityCustomValues.getSelectedRow(), 1);
+						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(jfc.getSelectedFile().getPath().replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
 
 					}
 				});

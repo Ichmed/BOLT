@@ -30,4 +30,12 @@ public class World
 	{
 		return currentMap;
 	}
+	
+	public void gameLoop()
+	{
+		for(Entity e : entityMap.values())
+		{
+			e.onTick();
+		}
+	}
 }

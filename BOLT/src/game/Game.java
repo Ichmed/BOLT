@@ -3,7 +3,7 @@ package game;
 public abstract class Game
 {
 	protected static Game currentGame;
-	private World currentWorld;
+	protected World currentWorld;
 	
 	/**
 	 * The path to an .entList file containing the paths to all entities this game might need
@@ -61,5 +61,10 @@ public abstract class Game
 	public static void setCurrentGame(Game currentGame)
 	{
 		Game.currentGame = currentGame;
+	}
+	
+	public void gameLoop()
+	{
+		this.currentWorld.gameLoop();
 	}
 }

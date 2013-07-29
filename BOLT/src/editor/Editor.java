@@ -52,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import util.Compressor;
+import util.FileUtils;
 import util.SpringUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
@@ -467,6 +468,20 @@ public class Editor extends JFrame implements TreeSelectionListener
 		return list.toArray(new String[] {});
 	}
 
+	public static String getRelativePath(File file, File folder)
+	{
+		String filePath = file.getAbsolutePath();
+		String folderPath = folder.getAbsolutePath();
+		if (filePath.startsWith(folderPath))
+		{
+			return filePath.substring(folderPath.length() + 1);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
@@ -642,7 +657,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						JFileChooser jfc = new JFileChooser("C:/");
 						jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 						jfc.setMultiSelectionEnabled(false);
-						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(jfc.getSelectedFile().getPath().replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
+						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(FileUtils.relativePath(mapFile, jfc.getSelectedFile()).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
 
 					}
 				});

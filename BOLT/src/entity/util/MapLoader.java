@@ -40,7 +40,7 @@ public class MapLoader
 				JSONArray cKeys = c.names();
 				for (int j = 0; j < c.length(); j++)
 				{
-					customValues.put(cKeys.getString(i), c.get(cKeys.getString(i)));
+					customValues.put(cKeys.getString(j), c.get(cKeys.getString(j)));
 				}
 				entity.customValues = customValues;
 

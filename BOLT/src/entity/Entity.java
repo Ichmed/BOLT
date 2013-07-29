@@ -105,7 +105,7 @@ public class Entity
 	/**
 	 * The Entity's unique key used to identify it
 	 */
-	public int key;
+	public String key;
 
 	/**
 	 * This method is called every game-tick to make the Entity perform whatever

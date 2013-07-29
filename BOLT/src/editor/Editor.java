@@ -208,7 +208,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 			public void mouseReleased(MouseEvent e)
 			{
-				if (!e.isPopupTrigger()) return;
+				if (e.getButton() != 3) return;
 
 				final int row = tree.getRowForLocation(e.getX(), e.getY());
 
@@ -217,7 +217,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				tree.setSelectionRow(row);
 
 				JPopupMenu menu = new JPopupMenu();
-				JMenuItem del = new JMenuItem(new AbstractAction("Entity löschen")
+				JMenuItem del = new JMenuItem(new AbstractAction("Delete")
 				{
 					private static final long serialVersionUID = 1L;
 
@@ -587,6 +587,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 				{
 					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)) : builder.customValues.get(keys.get(i)).toString()).toString() };
 				}
+
+				JButton browse = new JButton("Browse");
+
 				entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))
 				{
 					private static final long serialVersionUID = 1L;
@@ -602,7 +605,19 @@ public class Editor extends JFrame implements TreeSelectionListener
 				entityCustomValues.setFillsViewportHeight(true);
 				jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
 				uiP.add(jsp);
+				uiP.add(new JLabel());
+				browse.addActionListener(new AbstractAction("")
+				{
+					private static final long serialVersionUID = 1L;
 
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						// TODO Auto-generated method stub
+
+					}
+				});
+				uiP.add(browse);
 				uiP.add(new JLabel());
 				uiP.add(new JButton(new AbstractAction("Apply")
 				{
@@ -697,7 +712,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					}
 				}));
 
-				SpringUtilities.makeCompactGrid(uiP, 6, 2, 6, 6, 6, 6);
+				SpringUtilities.makeCompactGrid(uiP, 7, 2, 6, 6, 6, 6);
 
 				uiPanel.add(uiP);
 				refresh();

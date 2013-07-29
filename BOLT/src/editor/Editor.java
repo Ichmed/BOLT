@@ -598,7 +598,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				ArrayList<String> keys = new ArrayList<>(builder.customValues.keySet());
 				for (int i = 0; i < data.length; i++)
 				{
-					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)) : builder.customValues.get(keys.get(i)).toString()).toString() };
+					data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)).toString() : builder.customValues.get(keys.get(i)).toString()).toString() };
 				}
 
 				final JButton browse = new JButton("Browse");
@@ -623,11 +623,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 				entityCustomValues.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				entityCustomValues.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 				{
-
 					@Override
 					public void valueChanged(ListSelectionEvent e)
 					{
-						if (e.getValueIsAdjusting()) return;
+						if (e.getValueIsAdjusting() || entityCustomValues.getSelectedRow() == -1) return;
 
 						browse.setEnabled(data[entityCustomValues.getSelectedRow()][0].contains("(File)"));
 					}
@@ -637,7 +636,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 				uiP.add(new JLabel());
 				browse.addActionListener(new ActionListener()
 				{
-
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
@@ -645,6 +643,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 						jfc.setMultiSelectionEnabled(false);
 						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(jfc.getSelectedFile().getPath(), entityCustomValues.getSelectedRow(), 1);
+						
 					}
 				});
 				uiP.add(browse);
@@ -665,9 +664,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 							}
 
 							entities.getJSONObject(entityIndex).put("id", entityID.getText());
+
+							int selectedRow = tree.getSelectionRows()[0];
 							((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
 							((DefaultTreeModel) tree.getModel()).reload();
 							tree.expandRow(1);
+							tree.setSelectionRow(selectedRow);
 							refresh();
 
 							entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
@@ -721,12 +723,24 @@ public class Editor extends JFrame implements TreeSelectionListener
 										break;
 									}
 								}
-
 								else if (type.equals("Boolean"))
 								{
 									try
 									{
 										custom.put(name, Boolean.parseBoolean(content));
+									}
+									catch (Exception e1)
+									{
+										message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
+										valid = false;
+										break;
+									}
+								}
+								else if (type.equals("File"))
+								{
+									try
+									{
+										custom.put(name, content);
 									}
 									catch (Exception e1)
 									{

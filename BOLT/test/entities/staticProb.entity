@@ -16,4 +16,4 @@ model testObject.obj
 
 collisionModel testObject.obj
 
-string displayModel null
+file displayModel null

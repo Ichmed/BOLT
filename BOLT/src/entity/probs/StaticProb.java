@@ -12,5 +12,4 @@ public class StaticProb extends Entity
 		this.model = ((File) customValues.get("displayModel")).getPath();
 		super.render();
 	}
-
 }

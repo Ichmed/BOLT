@@ -7,8 +7,8 @@ public class StaticProb extends Entity
 	@Override
 	public void render()
 	{
-		this.model = (String)customValues.get("displayModel");
+		this.model = (String) customValues.get("displayModel");
 		super.render();
 	}
-	
+
 }

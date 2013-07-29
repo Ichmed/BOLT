@@ -136,6 +136,10 @@ public class EntityLoader
 				{
 					e.customValues.put(line.split(" ")[1], line.substring(line.indexOf(" ", 8)).trim());
 				}
+				else if (line.startsWith("file "))
+				{
+					e.customValues.put(line.split(" ")[1], line.substring(line.indexOf(" ", 8)).trim());
+				}
 			}
 		}
 		reader.close();

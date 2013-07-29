@@ -28,12 +28,13 @@ public class MapLoader
 			{
 				JSONObject o = entities.getJSONObject(i);
 				Entity entity = EntityRegistry.createEntity(o.getString("name"));
-
+				
 				JSONArray pos = o.getJSONArray("pos");
 				JSONArray rot = o.getJSONArray("rot");
 				entity.setPosition((float) pos.getDouble(0), (float) pos.getDouble(1), (float) pos.getDouble(2));
 				entity.setRotation((float) rot.getDouble(0), (float) rot.getDouble(1), (float) rot.getDouble(2));
 
+				
 				HashMap<String, Object> customValues = new HashMap<>();
 				JSONObject c = o.getJSONObject("custom");
 				JSONArray cKeys = c.names();

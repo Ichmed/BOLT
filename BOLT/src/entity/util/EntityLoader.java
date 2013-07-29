@@ -76,7 +76,7 @@ public class EntityLoader
 			}
 			else if (line.startsWith("fullName "))
 			{
-				e.fullName = line.split(" ")[1];
+				e.fullName = line.substring(line.indexOf(" ", 8)).trim();
 			}
 			else if (line.startsWith("physicsType "))
 			{

@@ -643,7 +643,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 						jfc.setMultiSelectionEnabled(false);
 						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(jfc.getSelectedFile().getPath(), entityCustomValues.getSelectedRow(), 1);
-						
+
 					}
 				});
 				uiP.add(browse);
@@ -664,14 +664,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 							}
 
 							entities.getJSONObject(entityIndex).put("id", entityID.getText());
-
-							int selectedRow = tree.getSelectionRows()[0];
-							((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
-							((DefaultTreeModel) tree.getModel()).reload();
-							tree.expandRow(1);
-							tree.setSelectionRow(selectedRow);
-							refresh();
-
 							entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
 							entities.getJSONObject(entityIndex).put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
 							EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
@@ -758,6 +750,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 							}
 
 							entities.getJSONObject(entityIndex).put("custom", custom);
+							int selectedRow = tree.getSelectionRows()[0];
+							((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
+							((DefaultTreeModel) tree.getModel()).reload();
+							tree.expandRow(1);
+							tree.setSelectionRow(selectedRow);
 							refresh();
 
 						}

@@ -10,8 +10,10 @@ invis false
 
 grav true
 
-class null
+class entity.probs.StaticProb
 
 model testObject.obj
 
 collisionModel testObject.obj
+
+string displayModel null

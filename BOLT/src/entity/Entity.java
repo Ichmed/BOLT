@@ -1,10 +1,13 @@
 package entity;
 
+import event.EntityEvent;
 import game.World;
 
 import static org.lwjgl.opengl.GL11.*;
 
 import java.util.HashMap;
+import java.util.List;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import render.RenderHelper;
@@ -86,6 +89,8 @@ public class Entity
 	 * string <br>
 	 */
 	public HashMap<String, Object> customValues;
+	
+	public HashMap<String, List<EntityEvent>> events = new HashMap<>();
 
 	/**
 	 * A reference to the World this Entity is in
@@ -173,5 +178,10 @@ public class Entity
 	{
 		for (String s : map.keySet())
 			this.customValues.put(s, map.get(s));
+	}
+	
+	public void triggerEvent(String s)
+	{
+		for(EntityEvent e : events.get(s)) e.trigger();
 	}
 }

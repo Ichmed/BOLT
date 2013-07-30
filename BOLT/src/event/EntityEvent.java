@@ -43,7 +43,13 @@ public class EntityEvent
 		try
 		{
 			for(int i = 0; i < parameters.length(); i++)
-				o[i] = owner.customValues.get(parameters.get(i));
+			{
+				Object obj = parameters.get(i);
+				if(obj instanceof String && ((String)obj).startsWith("@"))
+					o[i] = owner.customValues.get(obj);
+				else o[i] = obj;
+				
+			}
 			
 			for(Method m : methods)
 				if(m.getName().equals("targetFunction"))

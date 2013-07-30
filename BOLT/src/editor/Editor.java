@@ -2,6 +2,7 @@ package editor;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
@@ -57,6 +59,7 @@ import org.json.JSONObject;
 
 import util.Compressor;
 import util.FileUtilities;
+import util.JSuggestField;
 import util.SpringUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
@@ -651,11 +654,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		name.setEditable(false);
 		entityPanel.add(name);
 
-		entityPanel.add(new JLabel("Parent:"));
-		JTextField parent = new JTextField(builder.parent);
-		parent.setEditable(false);
-		entityPanel.add(parent);
-
 		entityPanel.add(new JLabel("ID:"));
 		entityID = new JTextField(entity.getString("id"));
 		entityPanel.add(entityID);
@@ -742,7 +740,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		entityPanel.add(browse);
 
-		SpringUtilities.makeCompactGrid(entityPanel, 7, 2, 6, 6, 6, 6);
+		SpringUtilities.makeCompactGrid(entityPanel, 6, 2, 6, 6, 6, 6);
 
 		JPanel wrap = new JPanel();
 		wrap.add(entityPanel);
@@ -776,7 +774,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (eventEvents.getSelectedRow() > -1) showEditEventsDialog();
+				if (eventEvents.getSelectedRow() > -1) editEvent();
 			}
 		}));
 		eventPanel.add(new JButton(new AbstractAction("Delete")
@@ -791,10 +789,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}));
 
 		pane.addTab("Events", eventPanel);
-		
+
 		// -- Final -- //
 		uiPanel.add(pane);
-		
+
 		JButton apply = new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;
@@ -913,12 +911,45 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
 		uiPanel.add(apply);
-		
+
 		refresh();
 	}
 
-	private void showEditEventsDialog()
+	private void editEvent()
 	{
-
+		JDialog dialog = new JDialog(this, "BOLT Event Editor", true);
+		dialog.setSize(315, 200);
+		dialog.setLayout(new FlowLayout());
+		Vector<String> data = new Vector<>();
+		for (int i = 0; i < entities.length(); i++)
+		{
+			try
+			{
+				data.add(entities.getJSONObject(i).getString("id"));
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		final JSuggestField target = new JSuggestField((Window) dialog, data);
+		target.setPreferredSize(new Dimension(150, 22));
+		target.setFocusable(false);
+		target.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e)
+			{
+				target.setFocusable(true);
+				target.requestFocus();
+			}
+		});
+		dialog.add(target);
+		JComboBox<String> function = new JComboBox<>(new String[] { "-- Choose a function --" });
+		dialog.add(function);
+		dialog.setResizable(false);
+		dialog.setDefaultCloseOperation(HIDE_ON_CLOSE);
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
 	}
 }

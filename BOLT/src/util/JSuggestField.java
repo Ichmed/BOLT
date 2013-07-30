@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -122,7 +123,7 @@ public class JSuggestField extends JTextField
 	 * @param owner
 	 *            Frame containing this JSuggestField
 	 */
-	public JSuggestField(Frame owner)
+	public JSuggestField(Window owner)
 	{
 		super();
 		data = new Vector<String>();
@@ -333,7 +334,7 @@ public class JSuggestField extends JTextField
 	 * @param data
 	 *            Available suggestions
 	 */
-	public JSuggestField(Frame owner, Vector<String> data)
+	public JSuggestField(Window owner, Vector<String> data)
 	{
 		this(owner);
 		setSuggestData(data);

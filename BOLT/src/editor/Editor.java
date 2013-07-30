@@ -133,7 +133,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					if (r == JOptionPane.YES_OPTION) saveMap();
 					else if (r == JOptionPane.CANCEL_OPTION) return;
 				}
-				
+
 				dispose();
 			}
 		});
@@ -1040,6 +1040,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 		jsp.setPreferredSize(new Dimension(eventDialog.getWidth() - 20, eventDialog.getHeight() - 60 - 35));
 		params.setFillsViewportHeight(true);
 		eventDialog.add(jsp);
+		
+		JPanel flagPanel = new JPanel(new FlowLayout());
+		//final JTextField flag = 
+
 		JButton apply = new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;

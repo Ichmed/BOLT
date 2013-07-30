@@ -50,6 +50,8 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		Game.currentGame = new TestGame();
+		
 		try
 		{
 			logmanager.readConfiguration(new FileInputStream(new File("./nonsync/logging.properties")));
@@ -118,7 +120,6 @@ public class Main
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
 		
-		Game.currentGame = new TestGame();
 		Game.currentGame.initializeGame();
 
 		while (!Display.isCloseRequested())

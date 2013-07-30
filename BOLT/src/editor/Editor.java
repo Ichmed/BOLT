@@ -1,6 +1,5 @@
 package editor;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -200,11 +200,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		setJMenuBar(menu);
 
-		JPanel panel = new JPanel(new BorderLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
 		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		treePanel.setPreferredSize(new Dimension(200, 0));
-		panel.add(treePanel, BorderLayout.LINE_START);
+		treePanel.setPreferredSize(new Dimension(200, 600));
+		panel.add(treePanel);
 		tree = new JTree(new DefaultMutableTreeNode("World"));
 		tree.setModel(null);
 		tree.setEnabled(false);
@@ -249,8 +250,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 		uiPanel = new JPanel(new FlowLayout());
 		uiPanel.setEnabled(false);
 		uiPanel.setPreferredSize(new Dimension(600, 600));
-		panel.add(uiPanel, BorderLayout.LINE_END);
 
+		panel.add(uiPanel);
 		setContentPane(panel);
 		pack();
 	}
@@ -365,7 +366,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void openMap()
 	{
-		JFileChooser jfc = new JFileChooser("C:/");
+		JFileChooser jfc = new JFileChooser(FileUtilities.getHardDrive(FileUtilities.getJarFile()));
 		jfc.setFileFilter(new FileNameExtensionFilter("BOLT Map-Files", "map"));
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setMultiSelectionEnabled(false);
@@ -382,7 +383,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
 				for (int i = 0; i < entities.length(); i++)
 				{
-					dtm.insertNodeInto(new DefaultMutableTreeNode("Entity" + i), (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent(), i);
+					dtm.insertNodeInto(new DefaultMutableTreeNode(entities.getJSONObject(i).getString("id")), (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent(), i);
 					refresh();
 				}
 				tree.expandRow(1);
@@ -485,6 +486,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		if (tree.getRowForPath(e.getPath()) > 1) // Entity1, Entity2, ...
 		{
 			if (entities.length() == 0) return;
+
+			if (tree.getRowForPath(e.getPath()) - 2 < 0) return;
+
 			try
 			{
 				showEntityUI(e);
@@ -557,12 +561,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private void showEntityUI(TreeSelectionEvent e) throws Exception
 	{
-		JTabbedPane pane = new JTabbedPane();
-		pane.setPreferredSize(uiPanel.getPreferredSize());
-		
-		final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
+		uiPanel.setLayout(null);
 
-		if (tree.getRowForPath(e.getPath()) - 2 < 0) return;
+		JTabbedPane pane = new JTabbedPane();
+		pane.setBounds(0, 0, uiPanel.getWidth(), uiPanel.getHeight());
+		pane.setPreferredSize(uiPanel.getPreferredSize());
+		final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
 
 		JSONObject entity = entities.getJSONObject(tree.getRowForPath(e.getPath()) - 2);
 
@@ -572,26 +576,26 @@ public class Editor extends JFrame implements TreeSelectionListener
 			builder = EntityLoader.loadEntity(entity.getString("name"));
 			EntityRegistry.registerEntityBuilder(builder);
 		}
-		
+
 		// -- Entity Tab -- //
 
-		JPanel uiP = new JPanel(new SpringLayout());
+		JPanel entityPanel = new JPanel(new SpringLayout());
 
-		uiP.add(new JLabel("Name:"));
+		entityPanel.add(new JLabel("Name:"));
 		JTextField name = new JTextField(builder.fullName + " (" + builder.name + ")");
 		name.setEditable(false);
-		uiP.add(name);
+		entityPanel.add(name);
 
-		uiP.add(new JLabel("Parent:"));
+		entityPanel.add(new JLabel("Parent:"));
 		JTextField parent = new JTextField(builder.parent);
 		parent.setEditable(false);
-		uiP.add(parent);
+		entityPanel.add(parent);
 
-		uiP.add(new JLabel("ID:"));
+		entityPanel.add(new JLabel("ID:"));
 		entityID = new JTextField(entity.getString("id"));
-		uiP.add(entityID);
+		entityPanel.add(entityID);
 
-		uiP.add(new JLabel("Position:"));
+		entityPanel.add(new JLabel("Position:"));
 		JPanel panel = new JPanel();
 		entityPosX = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(0), -1000000, 1000000, 1));
 		panel.add(entityPosX);
@@ -599,9 +603,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		panel.add(entityPosY);
 		entityPosZ = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(2), -1000000, 1000000, 1));
 		panel.add(entityPosZ);
-		uiP.add(panel);
+		entityPanel.add(panel);
 
-		uiP.add(new JLabel("Rotation:"));
+		entityPanel.add(new JLabel("Rotation:"));
 		panel = new JPanel();
 		entityRotX = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(0), -1000000, 1000000, 1));
 		panel.add(entityRotX);
@@ -609,9 +613,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		panel.add(entityRotY);
 		entityRotZ = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(2), -1000000, 1000000, 1));
 		panel.add(entityRotZ);
-		uiP.add(panel);
+		entityPanel.add(panel);
 
-		uiP.add(new JLabel("Custom Values:"));
+		entityPanel.add(new JLabel("Custom Values:"));
 
 		final String[][] data = new String[builder.customValues.size()][2];
 		ArrayList<String> keys = new ArrayList<>(builder.customValues.keySet());
@@ -651,8 +655,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 		jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
-		uiP.add(jsp);
-		uiP.add(new JLabel());
+		entityPanel.add(jsp);
+		entityPanel.add(new JLabel());
 		browse.addActionListener(new ActionListener()
 		{
 			@Override
@@ -668,13 +672,13 @@ public class Editor extends JFrame implements TreeSelectionListener
 						JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile(), jfc.getSelectedFile()).replace("\\", "/").replace("../", ""), entityCustomValues.getSelectedRow(), 1);
+					entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), jfc.getSelectedFile()), entityCustomValues.getSelectedRow(), 1);
 				}
 			}
 		});
-		uiP.add(browse);
-		uiP.add(new JLabel());
-		uiP.add(new JButton(new AbstractAction("Apply")
+		entityPanel.add(browse);
+		entityPanel.add(new JLabel());
+		entityPanel.add(new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -791,12 +795,14 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		}));
 
-		SpringUtilities.makeCompactGrid(uiP, 8, 2, 6, 6, 6, 6);
+		SpringUtilities.makeCompactGrid(entityPanel, 8, 2, 6, 6, 6, 6);
 
-		pane.addTab("Entity", uiP);
-		
+		JPanel wrap = new JPanel();
+		wrap.add(entityPanel);
+
+		pane.addTab("Entity", wrap);
+
 		uiPanel.add(pane);
-		
 		refresh();
 	}
 }

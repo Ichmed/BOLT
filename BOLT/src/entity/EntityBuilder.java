@@ -90,6 +90,8 @@ public class EntityBuilder
 		e.balancePoint = new Vector3f(this.balancePoint);
 
 		e.customValues = (HashMap<String, Object>) this.customValues.clone();
+		
+		e.initEntity();
 
 		return e;
 	}

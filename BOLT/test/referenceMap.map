@@ -10,7 +10,17 @@
       "description": "Foo Bar"
     },
     "name": "testObject",
-    "id": "testID"
+    "id": "testID",
+    "events": [
+      {
+        "target", "ID",
+        "function", "functionNAME",
+        "params": {
+          "param1": "CustomValues-Key",
+          ...
+        }
+      }
+    ]
   }
   ]
 }

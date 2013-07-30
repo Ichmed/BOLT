@@ -35,7 +35,6 @@ public class World
 	{
 		for(Entity e : entityMap.values())
 		{
-			System.out.println(e);
 			e.onTick();
 		}
 	}

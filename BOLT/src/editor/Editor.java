@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -482,7 +483,17 @@ public class Editor extends JFrame implements TreeSelectionListener
 		showEntitesUI(s);
 
 		if (tree.getRowForPath(e.getPath()) > 1) // Entity1, Entity2, ...
-		showEntityUI(e);
+		{
+			if (entities.length() == 0) return;
+			try
+			{
+				showEntityUI(e);
+			}
+			catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private void showEntitesUI(final DefaultMutableTreeNode s)
@@ -544,250 +555,248 @@ public class Editor extends JFrame implements TreeSelectionListener
 		refresh();
 	}
 
-	private void showEntityUI(TreeSelectionEvent e)
+	private void showEntityUI(TreeSelectionEvent e) throws Exception
 	{
-		try
+		JTabbedPane pane = new JTabbedPane();
+		pane.setPreferredSize(uiPanel.getPreferredSize());
+		
+		final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
+
+		if (tree.getRowForPath(e.getPath()) - 2 < 0) return;
+
+		JSONObject entity = entities.getJSONObject(tree.getRowForPath(e.getPath()) - 2);
+
+		EntityBuilder builder = EntityRegistry.entries.get(entity.getString("name"));
+		if (builder == null)
 		{
-			if (entities.length() == 0) return;
-
-			final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
-
-			if (tree.getRowForPath(e.getPath()) - 2 < 0) return;
-
-			JSONObject entity = entities.getJSONObject(tree.getRowForPath(e.getPath()) - 2);
-
-			EntityBuilder builder = EntityRegistry.entries.get(entity.getString("name"));
-			if (builder == null)
-			{
-				builder = EntityLoader.loadEntity(entity.getString("name"));
-				EntityRegistry.registerEntityBuilder(builder);
-			}
-
-			JPanel uiP = new JPanel(new SpringLayout());
-
-			uiP.add(new JLabel("Name:"));
-			JTextField name = new JTextField(builder.fullName + " (" + builder.name + ")");
-			name.setEditable(false);
-			uiP.add(name);
-
-			uiP.add(new JLabel("Parent:"));
-			JTextField parent = new JTextField(builder.parent);
-			parent.setEditable(false);
-			uiP.add(parent);
-
-			uiP.add(new JLabel("ID:"));
-			entityID = new JTextField(entity.getString("id"));
-			uiP.add(entityID);
-
-			uiP.add(new JLabel("Position:"));
-			JPanel panel = new JPanel();
-			entityPosX = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(0), -1000000, 1000000, 1));
-			panel.add(entityPosX);
-			entityPosY = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(1), -1000000, 1000000, 1));
-			panel.add(entityPosY);
-			entityPosZ = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(2), -1000000, 1000000, 1));
-			panel.add(entityPosZ);
-			uiP.add(panel);
-
-			uiP.add(new JLabel("Rotation:"));
-			panel = new JPanel();
-			entityRotX = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(0), -1000000, 1000000, 1));
-			panel.add(entityRotX);
-			entityRotY = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(1), -1000000, 1000000, 1));
-			panel.add(entityRotY);
-			entityRotZ = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(2), -1000000, 1000000, 1));
-			panel.add(entityRotZ);
-			uiP.add(panel);
-
-			uiP.add(new JLabel("Custom Values:"));
-
-			final String[][] data = new String[builder.customValues.size()][2];
-			ArrayList<String> keys = new ArrayList<>(builder.customValues.keySet());
-			for (int i = 0; i < data.length; i++)
-			{
-				data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)).toString() : builder.customValues.get(keys.get(i)).toString()).toString() };
-			}
-
-			final JButton browse = new JButton("Browse...");
-			browse.setEnabled(false);
-
-			entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))
-			{
-				private static final long serialVersionUID = 1L;
-
-				public boolean isCellEditable(int row, int column)
-				{
-					if (column == 0) return false; // name column
-
-					if (column == 1 && entityCustomValues.getValueAt(row, 0).toString().contains("(File)")) return false; // file type
-
-					return true;
-				}
-			};
-			entityCustomValues.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-			JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			entityCustomValues.setFillsViewportHeight(true);
-			entityCustomValues.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			entityCustomValues.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-			{
-				@Override
-				public void valueChanged(ListSelectionEvent e)
-				{
-					if (e.getValueIsAdjusting() || entityCustomValues.getSelectedRow() == -1) return;
-
-					browse.setEnabled(data[entityCustomValues.getSelectedRow()][0].contains("(File)"));
-				}
-			});
-			jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
-			uiP.add(jsp);
-			uiP.add(new JLabel());
-			browse.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					JFileChooser jfc = new JFileChooser(FileUtilities.getHardDrive(FileUtilities.getJarFile()));
-					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					jfc.setMultiSelectionEnabled(false);
-					if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-					{
-						if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))
-						{
-							JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile(), jfc.getSelectedFile()).replace("\\", "/").replace("../", ""), entityCustomValues.getSelectedRow(), 1);
-					}
-				}
-			});
-			uiP.add(browse);
-			uiP.add(new JLabel());
-			uiP.add(new JButton(new AbstractAction("Apply")
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					try
-					{
-						if (entityID.getText().length() == 0)
-						{
-							JOptionPane.showMessageDialog(Editor.this, "Please enter a unique identifier for that entity!", "Error!", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-
-						entities.getJSONObject(entityIndex).put("id", entityID.getText());
-						entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
-						entities.getJSONObject(entityIndex).put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
-						EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
-						JSONObject custom = new JSONObject();
-						boolean valid = true;
-						String message = "";
-						for (int i = 0; i < entityCustomValues.getModel().getRowCount(); i++)
-						{
-							String name = entityCustomValues.getModel().getValueAt(i, 0).toString().replaceAll("( )(\\(.{1,}\\))", "");
-							String type = builder.customValues.get(name).getClass().getSimpleName();
-							String content = entityCustomValues.getModel().getValueAt(i, 1).toString();
-
-							if (type.equals("Integer"))
-							{
-								try
-								{
-									custom.put(name, Integer.parseInt(content));
-								}
-								catch (Exception e1)
-								{
-									message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-									valid = false;
-									break;
-								}
-							}
-							else if (type.equals("Float"))
-							{
-								try
-								{
-									custom.put(name, Float.parseFloat(content));
-								}
-								catch (Exception e1)
-								{
-									message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-									valid = false;
-									break;
-								}
-							}
-							else if (type.equals("Byte"))
-							{
-								try
-								{
-									custom.put(name, Byte.parseByte(content));
-								}
-								catch (Exception e1)
-								{
-									message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-									valid = false;
-									break;
-								}
-							}
-							else if (type.equals("Boolean"))
-							{
-								try
-								{
-									custom.put(name, Boolean.parseBoolean(content));
-								}
-								catch (Exception e1)
-								{
-									message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-									valid = false;
-									break;
-								}
-							}
-							else if (type.equals("File"))
-							{
-								try
-								{
-									custom.put(name, content);
-								}
-								catch (Exception e1)
-								{
-									message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-									valid = false;
-									break;
-								}
-							}
-						}
-
-						if (!valid)
-						{
-							JOptionPane.showMessageDialog(Editor.this, "Please enter your custom values in the same data type as specified in brackets!\n  at " + message, "Error!", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-
-						entities.getJSONObject(entityIndex).put("custom", custom);
-						int selectedRow = tree.getSelectionRows()[0];
-						((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
-						((DefaultTreeModel) tree.getModel()).reload();
-						tree.expandRow(1);
-						tree.setSelectionRow(selectedRow);
-						refresh();
-
-					}
-					catch (JSONException e1)
-					{
-						e1.printStackTrace();
-					}
-				}
-			}));
-
-			SpringUtilities.makeCompactGrid(uiP, 8, 2, 6, 6, 6, 6);
-
-			uiPanel.add(uiP);
-			refresh();
-
+			builder = EntityLoader.loadEntity(entity.getString("name"));
+			EntityRegistry.registerEntityBuilder(builder);
 		}
-		catch (Exception e1)
+		
+		// -- Entity Tab -- //
+
+		JPanel uiP = new JPanel(new SpringLayout());
+
+		uiP.add(new JLabel("Name:"));
+		JTextField name = new JTextField(builder.fullName + " (" + builder.name + ")");
+		name.setEditable(false);
+		uiP.add(name);
+
+		uiP.add(new JLabel("Parent:"));
+		JTextField parent = new JTextField(builder.parent);
+		parent.setEditable(false);
+		uiP.add(parent);
+
+		uiP.add(new JLabel("ID:"));
+		entityID = new JTextField(entity.getString("id"));
+		uiP.add(entityID);
+
+		uiP.add(new JLabel("Position:"));
+		JPanel panel = new JPanel();
+		entityPosX = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(0), -1000000, 1000000, 1));
+		panel.add(entityPosX);
+		entityPosY = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(1), -1000000, 1000000, 1));
+		panel.add(entityPosY);
+		entityPosZ = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("pos").getDouble(2), -1000000, 1000000, 1));
+		panel.add(entityPosZ);
+		uiP.add(panel);
+
+		uiP.add(new JLabel("Rotation:"));
+		panel = new JPanel();
+		entityRotX = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(0), -1000000, 1000000, 1));
+		panel.add(entityRotX);
+		entityRotY = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(1), -1000000, 1000000, 1));
+		panel.add(entityRotY);
+		entityRotZ = new JSpinner(new SpinnerNumberModel(entity.getJSONArray("rot").getDouble(2), -1000000, 1000000, 1));
+		panel.add(entityRotZ);
+		uiP.add(panel);
+
+		uiP.add(new JLabel("Custom Values:"));
+
+		final String[][] data = new String[builder.customValues.size()][2];
+		ArrayList<String> keys = new ArrayList<>(builder.customValues.keySet());
+		for (int i = 0; i < data.length; i++)
 		{
-			e1.printStackTrace();
+			data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)).toString() : builder.customValues.get(keys.get(i)).toString()).toString() };
 		}
+
+		final JButton browse = new JButton("Browse...");
+		browse.setEnabled(false);
+
+		entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))
+		{
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column)
+			{
+				if (column == 0) return false; // name column
+
+				if (column == 1 && entityCustomValues.getValueAt(row, 0).toString().contains("(File)")) return false; // file type
+
+				return true;
+			}
+		};
+		entityCustomValues.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		entityCustomValues.setFillsViewportHeight(true);
+		entityCustomValues.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		entityCustomValues.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				if (e.getValueIsAdjusting() || entityCustomValues.getSelectedRow() == -1) return;
+
+				browse.setEnabled(data[entityCustomValues.getSelectedRow()][0].contains("(File)"));
+			}
+		});
+		jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
+		uiP.add(jsp);
+		uiP.add(new JLabel());
+		browse.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				JFileChooser jfc = new JFileChooser(FileUtilities.getHardDrive(FileUtilities.getJarFile()));
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				jfc.setMultiSelectionEnabled(false);
+				if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+				{
+					if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))
+					{
+						JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile(), jfc.getSelectedFile()).replace("\\", "/").replace("../", ""), entityCustomValues.getSelectedRow(), 1);
+				}
+			}
+		});
+		uiP.add(browse);
+		uiP.add(new JLabel());
+		uiP.add(new JButton(new AbstractAction("Apply")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					if (entityID.getText().length() == 0)
+					{
+						JOptionPane.showMessageDialog(Editor.this, "Please enter a unique identifier for that entity!", "Error!", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					entities.getJSONObject(entityIndex).put("id", entityID.getText());
+					entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
+					entities.getJSONObject(entityIndex).put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
+					EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
+					JSONObject custom = new JSONObject();
+					boolean valid = true;
+					String message = "";
+					for (int i = 0; i < entityCustomValues.getModel().getRowCount(); i++)
+					{
+						String name = entityCustomValues.getModel().getValueAt(i, 0).toString().replaceAll("( )(\\(.{1,}\\))", "");
+						String type = builder.customValues.get(name).getClass().getSimpleName();
+						String content = entityCustomValues.getModel().getValueAt(i, 1).toString();
+
+						if (type.equals("Integer"))
+						{
+							try
+							{
+								custom.put(name, Integer.parseInt(content));
+							}
+							catch (Exception e1)
+							{
+								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
+								valid = false;
+								break;
+							}
+						}
+						else if (type.equals("Float"))
+						{
+							try
+							{
+								custom.put(name, Float.parseFloat(content));
+							}
+							catch (Exception e1)
+							{
+								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
+								valid = false;
+								break;
+							}
+						}
+						else if (type.equals("Byte"))
+						{
+							try
+							{
+								custom.put(name, Byte.parseByte(content));
+							}
+							catch (Exception e1)
+							{
+								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
+								valid = false;
+								break;
+							}
+						}
+						else if (type.equals("Boolean"))
+						{
+							try
+							{
+								custom.put(name, Boolean.parseBoolean(content));
+							}
+							catch (Exception e1)
+							{
+								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
+								valid = false;
+								break;
+							}
+						}
+						else if (type.equals("File"))
+						{
+							try
+							{
+								custom.put(name, content);
+							}
+							catch (Exception e1)
+							{
+								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
+								valid = false;
+								break;
+							}
+						}
+					}
+
+					if (!valid)
+					{
+						JOptionPane.showMessageDialog(Editor.this, "Please enter your custom values in the same data type as specified in brackets!\n  at " + message, "Error!", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					entities.getJSONObject(entityIndex).put("custom", custom);
+					int selectedRow = tree.getSelectionRows()[0];
+					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
+					((DefaultTreeModel) tree.getModel()).reload();
+					tree.expandRow(1);
+					tree.setSelectionRow(selectedRow);
+					refresh();
+
+				}
+				catch (JSONException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
+
+		SpringUtilities.makeCompactGrid(uiP, 8, 2, 6, 6, 6, 6);
+
+		pane.addTab("Entity", uiP);
+		
+		uiPanel.add(pane);
+		
+		refresh();
 	}
 }

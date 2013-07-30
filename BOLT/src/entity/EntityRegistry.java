@@ -21,6 +21,24 @@ public class EntityRegistry
 		entries.put(builder.name, builder);
 		return true;
 	}
+	
+	public EntityBuilder getEntityBuilder(String name)
+	{
+		try
+		{
+			if (!entries.containsKey(name))
+			{
+				EntityBuilder e = EntityLoader.loadEntity(name);
+				if (e == null) return null;
+				registerEntityBuilder(e);
+			}
+			if (entries.containsKey(name)) return entries.get(name);
+		}
+		catch (Exception e)
+		{
+		}
+		return null;
+	}
 
 	/**
 	 * Creates an returns a new instance of a given Entity

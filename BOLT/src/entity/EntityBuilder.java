@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -22,6 +24,8 @@ public class EntityBuilder
 	public String collisionModel;
 	public Float weight;
 	public Vector3f balancePoint = new Vector3f();
+	
+	public List<String> triggers = new ArrayList<>(), functions = new ArrayList<>();
 
 	public String classPath;
 

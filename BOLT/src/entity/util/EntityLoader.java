@@ -114,6 +114,14 @@ public class EntityLoader
 			{
 				e.balancePoint = new Vector3f(Float.valueOf(line.split(" ")[1]), Float.valueOf(line.split(" ")[2]), Float.valueOf(line.split(" ")[3]));
 			}
+			else if (line.startsWith("trigger "))
+			{
+				e.triggers.add(line.split(" ")[1]);
+			}
+			else if (line.startsWith("function "))
+			{
+				e.functions.add(line.split(" ")[1]);
+			}
 			else
 			{
 				if (line.startsWith("byte "))

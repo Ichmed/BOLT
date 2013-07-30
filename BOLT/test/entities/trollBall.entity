@@ -21,6 +21,6 @@ float speed 1.0
 
 float maxRad 10.0
 
-event onReachMaxRad
+trigger onReachMaxRad
 
 function setColor3i(int red, int green, int blue)

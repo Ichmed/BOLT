@@ -66,14 +66,23 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	File mapFile;
 	File entListFile;
+
+	// -- Components -- //
 	JScrollPane treePanel;
 	JTree tree;
 	JPanel uiPanel;
+
+	// -- Entity Tab -- //
 	JSONArray entities;
 	JSpinner entityPosX, entityPosY, entityPosZ;
 	JSpinner entityRotX, entityRotY, entityRotZ;
 	JTextField entityID;
 	JTable entityCustomValues;
+
+	// -- Events Tab -- //
+	JTable eventEvents;
+
+	// -- menu -- //
 	JMenuItem saveFile;
 	JMenuItem saveUFile;
 	JMenu view;
@@ -538,6 +547,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					object.put("id", "" + (s.getChildCount() - 1));
 					object.put("pos", new JSONArray(new Double[] { 0d, 0d, 0d }));
 					object.put("rot", new JSONArray(new Double[] { 0d, 0d, 0d }));
+					object.put("events", new JSONArray());
 					JSONObject custom = new JSONObject();
 					for (String key : builder.customValues.keySet())
 					{
@@ -564,7 +574,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		uiPanel.setLayout(null);
 
 		JTabbedPane pane = new JTabbedPane();
-		pane.setBounds(0, 0, uiPanel.getWidth(), uiPanel.getHeight());
+		pane.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() + 2);
 		pane.setPreferredSize(uiPanel.getPreferredSize());
 		final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
 
@@ -623,7 +633,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 			data[i] = new String[] { keys.get(i) + " (" + builder.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entity.getJSONObject("custom").has(keys.get(i))) ? entity.getJSONObject("custom").get(keys.get(i)).toString() : builder.customValues.get(keys.get(i)).toString()).toString() };
 		}
-
 		final JButton browse = new JButton("Browse...");
 		browse.setEnabled(false);
 
@@ -802,7 +811,56 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		pane.addTab("Entity", wrap);
 
+		// -- Events Tab -- //
+		JPanel eventPanel = new JPanel(new FlowLayout());
+		eventEvents = new JTable(new DefaultTableModel(new String[] { "Type", "Value" }, 0));
+		eventEvents.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		eventEvents.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		eventEvents.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 60 - 30));
+		jsp = new JScrollPane(eventEvents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 30 - 30));
+		entityCustomValues.setFillsViewportHeight(true);
+		eventPanel.add(jsp);
+		eventPanel.add(new JButton(new AbstractAction("Edit...")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (eventEvents.getSelectedRow() > -1) showEditEventsDialog();
+			}
+		}));
+		eventPanel.add(new JButton(new AbstractAction("New")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				((DefaultTableModel) eventEvents.getModel()).addRow(new String[] {});
+			}
+		}));
+		eventPanel.add(new JButton(new AbstractAction("Delete")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (eventEvents.getSelectedRow() > -1) ((DefaultTableModel) eventEvents.getModel()).removeRow(eventEvents.getSelectedRow());
+			}
+		}));
+
+		pane.addTab("Events", eventPanel);
+
+		// -- Final -- //
 		uiPanel.add(pane);
 		refresh();
+	}
+
+	private void showEditEventsDialog()
+	{
+
 	}
 }

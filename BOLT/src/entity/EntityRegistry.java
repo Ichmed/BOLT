@@ -1,6 +1,5 @@
 package entity;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import entity.util.EntityLoader;
@@ -22,7 +21,7 @@ public class EntityRegistry
 		return true;
 	}
 	
-	public EntityBuilder getEntityBuilder(String name)
+	public static EntityBuilder getEntityBuilder(String name)
 	{
 		try
 		{
@@ -46,33 +45,14 @@ public class EntityRegistry
 	 * @return A new Entity with all values set to default (position = (0, 0, 0) etc)
 	 */
 	public static Entity createEntity(String name)
-	{ 
-		try
+	{
+		EntityBuilder b = getEntityBuilder(name);
+		if(b == null) return null;
+		else try
 		{
-			if(!entries.containsKey(name))
-			{
-				EntityBuilder e = EntityLoader.loadEntity(name);
-				if(e == null) return null;
-				registerEntityBuilder(e);
-			}
-			
-			if(entries.containsKey(name))
-			return entries.get(name).createEntity();
-			else return null;
+			return b.createEntity();
 		}
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (InstantiationException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

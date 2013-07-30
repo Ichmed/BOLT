@@ -629,7 +629,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		uiPanel.setLayout(null);
 
 		JTabbedPane pane = new JTabbedPane();
-		pane.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() + 2);
+		pane.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
 		pane.setPreferredSize(uiPanel.getPreferredSize());
 		final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
 
@@ -741,8 +741,61 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 		entityPanel.add(browse);
-		entityPanel.add(new JLabel());
-		entityPanel.add(new JButton(new AbstractAction("Apply")
+
+		SpringUtilities.makeCompactGrid(entityPanel, 7, 2, 6, 6, 6, 6);
+
+		JPanel wrap = new JPanel();
+		wrap.add(entityPanel);
+
+		pane.addTab("Entity", wrap);
+
+		// -- Events Tab -- //
+		JPanel eventPanel = new JPanel(new FlowLayout());
+		eventEvents = new JTable(new DefaultTableModel(new String[] { "Type", "Value" }, 0));
+		eventEvents.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		eventEvents.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		eventEvents.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 60 - 35));
+		jsp = new JScrollPane(eventEvents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 30 - 35));
+		entityCustomValues.setFillsViewportHeight(true);
+		eventPanel.add(jsp);
+		eventPanel.add(new JButton(new AbstractAction("New")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				((DefaultTableModel) eventEvents.getModel()).addRow(new String[] {});
+			}
+		}));
+		eventPanel.add(new JButton(new AbstractAction("Edit...")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (eventEvents.getSelectedRow() > -1) showEditEventsDialog();
+			}
+		}));
+		eventPanel.add(new JButton(new AbstractAction("Delete")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (eventEvents.getSelectedRow() > -1) ((DefaultTableModel) eventEvents.getModel()).removeRow(eventEvents.getSelectedRow());
+			}
+		}));
+
+		pane.addTab("Events", eventPanel);
+		
+		// -- Final -- //
+		uiPanel.add(pane);
+		
+		JButton apply = new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -857,60 +910,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 					e1.printStackTrace();
 				}
 			}
-		}));
-
-		SpringUtilities.makeCompactGrid(entityPanel, 8, 2, 6, 6, 6, 6);
-
-		JPanel wrap = new JPanel();
-		wrap.add(entityPanel);
-
-		pane.addTab("Entity", wrap);
-
-		// -- Events Tab -- //
-		JPanel eventPanel = new JPanel(new FlowLayout());
-		eventEvents = new JTable(new DefaultTableModel(new String[] { "Type", "Value" }, 0));
-		eventEvents.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-		eventEvents.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		eventEvents.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 60 - 35));
-		jsp = new JScrollPane(eventEvents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jsp.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 30 - 35));
-		entityCustomValues.setFillsViewportHeight(true);
-		eventPanel.add(jsp);
-		eventPanel.add(new JButton(new AbstractAction("New")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				((DefaultTableModel) eventEvents.getModel()).addRow(new String[] {});
-			}
-		}));
-		eventPanel.add(new JButton(new AbstractAction("Edit...")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (eventEvents.getSelectedRow() > -1) showEditEventsDialog();
-			}
-		}));
-		eventPanel.add(new JButton(new AbstractAction("Delete")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (eventEvents.getSelectedRow() > -1) ((DefaultTableModel) eventEvents.getModel()).removeRow(eventEvents.getSelectedRow());
-			}
-		}));
-
-		pane.addTab("Events", eventPanel);
-
-		// -- Final -- //
-		uiPanel.add(pane);
+		});
+		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
+		uiPanel.add(apply);
+		
 		refresh();
 	}
 

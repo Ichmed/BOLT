@@ -46,7 +46,7 @@ public class EntityEvent
 			{
 				Object obj = parameters.get(i);
 				if(obj instanceof String && ((String)obj).startsWith("@"))
-					o[i] = owner.customValues.get(obj);
+					o[i] = owner.customValues.get(((String)obj).replace("@", ""));
 				else o[i] = obj;				
 			}
 			

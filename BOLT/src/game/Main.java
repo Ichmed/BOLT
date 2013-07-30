@@ -51,6 +51,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		Game.currentGame = new TestGame();
+		Game.currentGame.prepareGame();
 		
 		try
 		{

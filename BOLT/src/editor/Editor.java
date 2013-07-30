@@ -57,6 +57,7 @@ import util.SpringUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 import entity.util.EntityLoader;
+import game.Game;
 
 public class Editor extends JFrame implements TreeSelectionListener
 {
@@ -81,7 +82,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		super("BOLT Editor");
 		try
 		{
-			EntityLoader.findEntities("test/entities/testList.entlist");
+			EntityLoader.findEntities(Game.getCurrentGame().entListFilePath);
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e)
@@ -573,8 +574,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 			JTextField parent = new JTextField(builder.parent);
 			parent.setEditable(false);
 			uiP.add(parent);
-
-			// TODO work
 
 			uiP.add(new JLabel("ID:"));
 			entityID = new JTextField(entity.getString("id"));

@@ -52,7 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import util.Compressor;
-import util.FileUtils;
+import util.FileUtilities;
 import util.SpringUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
@@ -468,20 +468,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		return list.toArray(new String[] {});
 	}
 
-	public static String getRelativePath(File file, File folder)
-	{
-		String filePath = file.getAbsolutePath();
-		String folderPath = folder.getAbsolutePath();
-		if (filePath.startsWith(folderPath))
-		{
-			return filePath.substring(folderPath.length() + 1);
-		}
-		else
-		{
-			return null;
-		}
-	}
-
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
@@ -654,11 +640,18 @@ public class Editor extends JFrame implements TreeSelectionListener
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						JFileChooser jfc = new JFileChooser("C:/");
+						JFileChooser jfc = new JFileChooser(FileUtilities.getHardDrive(FileUtilities.getJarFile()));
 						jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 						jfc.setMultiSelectionEnabled(false);
-						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) entityCustomValues.setValueAt(FileUtils.relativePath(mapFile, jfc.getSelectedFile()).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
-
+						if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+						{
+							if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))
+							{
+								JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile(), jfc.getSelectedFile()).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
+						}
 					}
 				});
 				uiP.add(browse);

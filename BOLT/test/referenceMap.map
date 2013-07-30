@@ -18,7 +18,8 @@
         "params": {
           "param1": "CustomValues-Key",
           ...
-        }
+        },
+        flags: [flag_0, ...]
       }
     ]
   }

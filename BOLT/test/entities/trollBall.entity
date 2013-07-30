@@ -1,0 +1,22 @@
+parent null
+name trollBall
+fullName Troll Ball
+
+physType 1 
+collType 1
+invisible false
+gravity false
+
+class entity.TrollBall
+
+model test/trollBall.obj
+
+collisionModel testObject.obj
+
+integer red 255
+integer green 255
+integer blue 255
+
+event onReachMaxRad
+
+function setColor3i

@@ -13,7 +13,7 @@
     "id": "testID",
     "events": [
       {
-        "type": "TYPE",
+        "trigger": "TRIGGER",
         "target", "ID",
         "function", "functionNAME",
         "params": [

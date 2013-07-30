@@ -8,9 +8,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
@@ -102,6 +105,19 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				if (isChanged())
+				{
+					int r = JOptionPane.showConfirmDialog(Editor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (r == JOptionPane.YES_OPTION) saveMap();
+					else if (r == JOptionPane.CANCEL_OPTION) return;
+				}
+			}
+		});
 		initComponents();
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -375,7 +391,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void openMap()
 	{
-		JFileChooser jfc = new JFileChooser(FileUtilities.getHardDrive(FileUtilities.getJarFile()));
+		JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
 		jfc.setFileFilter(new FileNameExtensionFilter("BOLT Map-Files", "map"));
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setMultiSelectionEnabled(false);
@@ -397,7 +413,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 				tree.expandRow(1);
 			}
-			catch (JSONException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(Editor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
@@ -422,12 +438,52 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
+	public JSONObject validateCustomValues(JSONObject customValues, String entityName) throws JSONException
+	{
+		HashMap<String, Object> cv = EntityRegistry.createEntity(entityName).customValues;
+		if (customValues.length() == cv.size()) return customValues;
+
+		if (customValues.length() > cv.size())
+		{
+			for (int i = 0; i < customValues.length(); i++)
+			{
+				String key = customValues.names().getString(i);
+				if (!cv.containsKey(customValues.get(key))) customValues.remove(key);
+			}
+		}
+
+		for (int i = 0; i < cv.size(); i++)
+		{
+			String key = new ArrayList<String>(cv.keySet()).get(i);
+			if (!customValues.has(key)) customValues.put(key, cv.get(key));
+		}
+
+		return customValues;
+	}
+
 	public void saveMap()
 	{
 		if (mapFile == null)
 		{
 			saveUMap();
 			return;
+		}
+
+		try
+		{
+			JSONArray entities = getData().getJSONArray("entities");
+			for (int i = 0; i < entities.length(); i++)
+			{
+				JSONObject object = entities.getJSONObject(i);
+				object.put("custom", validateCustomValues(object.getJSONObject("custom"), object.getString("name")));
+
+				entities.put(i, object);
+			}
+			this.entities = entities;
+
+		}
+		catch (Exception e)
+		{
 		}
 
 		String string = writeValue(getData());
@@ -471,7 +527,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		ArrayList<String> list = new ArrayList<>();
 		list.add("-- Choose an Entity --");
 
-		EntityLoader.findEntities("test/entities/testList.entlist");
 		for (String key : EntityLoader.entitiesFound.keySet())
 		{
 			list.add(key);
@@ -816,21 +871,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 		eventEvents = new JTable(new DefaultTableModel(new String[] { "Type", "Value" }, 0));
 		eventEvents.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		eventEvents.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		eventEvents.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 60 - 30));
+		eventEvents.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 60 - 35));
 		jsp = new JScrollPane(eventEvents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jsp.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 30 - 30));
+		jsp.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 30 - 35));
 		entityCustomValues.setFillsViewportHeight(true);
 		eventPanel.add(jsp);
-		eventPanel.add(new JButton(new AbstractAction("Edit...")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (eventEvents.getSelectedRow() > -1) showEditEventsDialog();
-			}
-		}));
 		eventPanel.add(new JButton(new AbstractAction("New")
 		{
 			private static final long serialVersionUID = 1L;
@@ -839,6 +884,16 @@ public class Editor extends JFrame implements TreeSelectionListener
 			public void actionPerformed(ActionEvent e)
 			{
 				((DefaultTableModel) eventEvents.getModel()).addRow(new String[] {});
+			}
+		}));
+		eventPanel.add(new JButton(new AbstractAction("Edit...")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (eventEvents.getSelectedRow() > -1) showEditEventsDialog();
 			}
 		}));
 		eventPanel.add(new JButton(new AbstractAction("Delete")

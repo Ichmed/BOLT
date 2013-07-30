@@ -13,12 +13,13 @@
     "id": "testID",
     "events": [
       {
+        "type": "TYPE",
         "target", "ID",
         "function", "functionNAME",
-        "params": {
-          "param1": "CustomValues-Key",
+        "params": [
+          "CustomValues-Key",
           ...
-        },
+        ],
         flags: [flag_0, ...]
       }
     ]

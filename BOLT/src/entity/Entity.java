@@ -141,6 +141,10 @@ public class Entity
 		glRotated(this.rotation.z, 0, 0, 1);	
 		RenderHelper.renderModel(this.model);		
 	}
+	
+	public void initEntity()
+	{		
+	}
 
 	public void setPosition(float x, float y, float z)
 	{

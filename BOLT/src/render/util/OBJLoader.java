@@ -71,9 +71,31 @@ public class OBJLoader
 				for (int i = 1; i < line.split(" ").length; i++)
 				{
 					String s = line.split(" ")[i];
-					float v = Float.valueOf(s.split("/")[0]);
-					float t = Float.valueOf(s.split("/")[1]);
-					float n = Float.valueOf(s.split("/")[2]);
+					float v = 0;
+					float t = 0;
+					float n = 0;
+
+					try
+					{
+						v = Float.valueOf(s.split("/")[0]);
+					}
+					catch (Exception e)
+					{
+					}
+					try
+					{
+						t = Float.valueOf(s.split("/")[1]);
+					}
+					catch (Exception e)
+					{
+					}
+					try
+					{
+						n = Float.valueOf(s.split("/")[2]);
+					}
+					catch (Exception e)
+					{
+					}
 
 					indices[i - 1] = new Vector3f(v, t, n);
 				}

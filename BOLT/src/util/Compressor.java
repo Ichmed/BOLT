@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
@@ -68,9 +67,8 @@ public class Compressor
 			inflater.end();
 			return buf;
 		}
-		catch (DataFormatException e)
+		catch (Exception e)
 		{
-			e.printStackTrace();
 			return null;
 		}
 	}

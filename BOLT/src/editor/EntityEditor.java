@@ -39,6 +39,12 @@ import javax.swing.tree.TreeSelectionModel;
 
 import util.SpringUtilities;
 
+/**
+ * Entity Editor GUI
+ * 
+ * @author Dakror
+ * 
+ */
 public class EntityEditor extends JFrame implements TreeSelectionListener
 {
 	private static final long serialVersionUID = 1L;
@@ -327,6 +333,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			JScrollPane jsp = new JScrollPane(customVals, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			customVals.setFillsViewportHeight(true);
 			customVals.setRowHeight(23);
+			JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Integer", "Float", "Boolean", "String" });
+			type.setSelectedIndex(4);
+			customVals.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(type));
 			jsp.setPreferredSize(new Dimension(customVals.getWidth(), 150));
 			panel5.add(jsp, BorderLayout.NORTH);
 			panel5.add(new JButton(new AbstractAction("Append Row")
@@ -336,9 +345,6 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Integer", "Float", "Boolean", "String" });
-					type.setSelectedIndex(4);
-					customVals.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(type));
 					DefaultTableModel model = (DefaultTableModel) customVals.getModel();
 
 					model.addRow(new Object[] { "String", " ", " " });

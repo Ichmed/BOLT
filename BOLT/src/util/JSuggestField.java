@@ -43,7 +43,7 @@ public class JSuggestField extends JTextField
 		public boolean matches(String dataWord, String searchWord);
 	}
 
-	public class ContainsMatcher implements SuggestMatcher
+	public static class ContainsMatcher implements SuggestMatcher
 	{
 		@Override
 		public boolean matches(String dataWord, String searchWord)
@@ -52,7 +52,7 @@ public class JSuggestField extends JTextField
 		}
 	}
 
-	public class EndsWithMatcher implements SuggestMatcher
+	public static class EndsWithMatcher implements SuggestMatcher
 	{
 		@Override
 		public boolean matches(String dataWord, String searchWord)
@@ -61,7 +61,7 @@ public class JSuggestField extends JTextField
 		}
 	}
 
-	public class StartsWithMatcher implements SuggestMatcher
+	public static class StartsWithMatcher implements SuggestMatcher
 	{
 		@Override
 		public boolean matches(String dataWord, String searchWord)
@@ -223,7 +223,7 @@ public class JSuggestField extends JTextField
 					setText("");
 				}
 
-				showSuggest();
+				// showSuggest();
 			}
 		});
 		d = new JDialog(owner);
@@ -319,7 +319,8 @@ public class JSuggestField extends JTextField
 					d.setVisible(false);
 					return;
 				}
-				showSuggest();
+				if (getText().length() > 0) showSuggest();
+				else hideSuggest();
 			}
 		});
 		regular = getFont();

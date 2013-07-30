@@ -24,14 +24,11 @@ public class EntityLoader
 	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
 
 	/**
-	 * This method will create a new instance of EntityBuilder containing the
-	 * the values specified in a .entity file. You will have to call a .entlist
-	 * file containing the path to the .emtity file first
+	 * This method will create a new instance of EntityBuilder containing the the values specified in a .entity file. You will have to call a .entlist file containing the path to the .emtity file first
 	 * 
 	 * @param name
 	 *            the entity's name
-	 * @return Returns an instance of EntityBuilder if successful and null if
-	 *         not
+	 * @return Returns an instance of EntityBuilder if successful and null if not
 	 * @throws IOException
 	 */
 	public static EntityBuilder loadEntity(String name) throws IOException
@@ -120,7 +117,7 @@ public class EntityLoader
 			}
 			else if (line.startsWith("function "))
 			{
-				e.functions.add(line.split(" ")[1]);
+				e.functions.add(line.substring("function ".length()));
 			}
 			else
 			{
@@ -162,8 +159,7 @@ public class EntityLoader
 	}
 
 	/**
-	 * This method will only work if a .entlist file containing the Entity's
-	 * path was already parsed using findEntities(String path)
+	 * This method will only work if a .entlist file containing the Entity's path was already parsed using findEntities(String path)
 	 * 
 	 * @param name
 	 * @return
@@ -174,8 +170,7 @@ public class EntityLoader
 	}
 
 	/**
-	 * This method will try to find any .entity files specified in a given
-	 * .entlist file and put them into a HashMap for future access
+	 * This method will try to find any .entity files specified in a given .entlist file and put them into a HashMap for future access
 	 * 
 	 * @param path
 	 *            The path to an .entlist file

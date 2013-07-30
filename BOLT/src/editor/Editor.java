@@ -739,7 +739,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				JFileChooser jfc = new JFileChooser(FileUtilities.getHardDrive(FileUtilities.getJarFile()));
+				JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
 				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				jfc.setMultiSelectionEnabled(false);
 				if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
@@ -749,7 +749,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), jfc.getSelectedFile()), entityCustomValues.getSelectedRow(), 1);
+					entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), jfc.getSelectedFile()).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
 				}
 			}
 		});

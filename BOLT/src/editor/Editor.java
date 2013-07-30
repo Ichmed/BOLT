@@ -120,7 +120,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			e.printStackTrace();
 		}
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		addWindowListener(new WindowAdapter()
 		{
@@ -132,6 +132,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 					int r = JOptionPane.showConfirmDialog(Editor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (r == JOptionPane.YES_OPTION) saveMap();
 					else if (r == JOptionPane.CANCEL_OPTION) return;
+					
+					dispose();
 				}
 			}
 		});

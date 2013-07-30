@@ -132,9 +132,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 					int r = JOptionPane.showConfirmDialog(Editor.this, "\"" + mapFile.getName() + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (r == JOptionPane.YES_OPTION) saveMap();
 					else if (r == JOptionPane.CANCEL_OPTION) return;
-					
-					dispose();
 				}
+				
+				dispose();
 			}
 		});
 		initComponents();
@@ -518,12 +518,17 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void saveUMap()
 	{
-		JFileChooser jfc = new JFileChooser("C:/");
+		JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
 		jfc.setFileFilter(new FileNameExtensionFilter("BOLT Map-Files", "map"));
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setMultiSelectionEnabled(false);
 		if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
+			if (jfc.getSelectedFile().exists())
+			{
+				int r = JOptionPane.showConfirmDialog(Editor.this, "This file already exists! By creating a new map in that file, it's old content will be lost!", "Warning!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+				if (r == JOptionPane.CANCEL_OPTION) return;
+			}
 
 			mapFile = new File(jfc.getSelectedFile().getPath().replace(".map", "") + ".map");
 			saveMap();
@@ -698,6 +703,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		final String[][] data = new String[entity.customValues.size()][2];
 		ArrayList<String> keys = new ArrayList<>(entity.customValues.keySet());
+		Collections.sort(keys);
 		for (int i = 0; i < data.length; i++)
 		{
 			data[i] = new String[] { keys.get(i) + " (" + entity.customValues.get(keys.get(i)).getClass().getSimpleName() + ")", ((entityData.getJSONObject("custom").has(keys.get(i))) ? entityData.getJSONObject("custom").get(keys.get(i)).toString() : entity.customValues.get(keys.get(i)).toString()).toString() };
@@ -884,22 +890,31 @@ public class Editor extends JFrame implements TreeSelectionListener
 					// -- Events Tab Data -- //
 					valid = true;
 					message = "";
-					// JSONArray events = new JSONArray();
-					// for (int i = 0; i < eventEvents.getRowCount(); i++)
-					// {
-					// String trigger = eventEvents.getValueAt(i, 0).toString();
-					// String content = eventEvents.getValueAt(i, 1).toString();
-					//
-					// if (content.length() == 0)
-					// {
-					// valid = true;
-					// message = "Please edit or remove Event #" + (i + 1);
-					// break;
-					// }
-					//
-					// JSONObject o = new JSONObject();
-					// o.put("trigger", trigger);
-					// }
+					JSONArray events = new JSONArray();
+					for (int i = 0; i < eventEvents.getRowCount(); i++)
+					{
+						String trigger = eventEvents.getValueAt(i, 0).toString();
+						String target = eventEvents.getValueAt(i, 1).toString();
+						String function = eventEvents.getValueAt(i, 2).toString();
+						String params = eventEvents.getValueAt(i, 3).toString();
+
+						if (target.length() == 0 && function.length() == 0 && params.length() == 0)
+						{
+							valid = true;
+							message = "Please edit or remove Event #" + (i + 1);
+							break;
+						}
+
+						JSONObject o = new JSONObject();
+						o.put("trigger", trigger);
+						o.put("target", target);
+						o.put("function", function);
+						o.put("params", new JSONArray("[" + params + "]"));
+
+						events.put(o);
+					}
+
+					entities.getJSONObject(entityIndex).put("events", events);
 
 					int selectedRow = tree.getSelectionRows()[0];
 					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
@@ -1072,8 +1087,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 				if (p.length() > 2) p = p.substring(0, p.length() - 2);
 
-				String result = eventTarget.getText() + ", " + eventFunction.getSelectedItem().toString().replaceAll("\\(.{1,}\\)", "") + "(" + p + ")";
-				eventEvents.setValueAt(result, eventEvents.getSelectedRow(), 1);
+				eventEvents.setValueAt(eventTarget.getText(), eventEvents.getSelectedRow(), 1);
+				eventEvents.setValueAt(eventFunction.getSelectedItem().toString().replaceAll("\\(.{1,}\\)", ""), eventEvents.getSelectedRow(), 2);
+				eventEvents.setValueAt(p, eventEvents.getSelectedRow(), 3);
 
 				eventDialog.dispose();
 			}

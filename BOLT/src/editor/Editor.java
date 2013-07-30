@@ -844,6 +844,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				try
 				{
+					// -- Entity Tab Data -- //
 					if (entityID.getText().length() == 0)
 					{
 						JOptionPane.showMessageDialog(Editor.this, "Please enter a unique identifier for that entity!", "Error!", JOptionPane.ERROR_MESSAGE);
@@ -859,75 +860,15 @@ public class Editor extends JFrame implements TreeSelectionListener
 					String message = "";
 					for (int i = 0; i < entityCustomValues.getModel().getRowCount(); i++)
 					{
-						String name = entityCustomValues.getModel().getValueAt(i, 0).toString().replaceAll("( )(\\(.{1,}\\))", "");
+						String name = entityCustomValues.getValueAt(i, 0).toString().split(" ")[0];
 						String type = builder.customValues.get(name).getClass().getSimpleName();
-						String content = entityCustomValues.getModel().getValueAt(i, 1).toString();
+						String content = entityCustomValues.getValueAt(i, 1).toString();
 
-						if (type.equals("Integer"))
-						{
-							try
-							{
-								custom.put(name, Integer.parseInt(content));
-							}
-							catch (Exception e1)
-							{
-								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-								valid = false;
-								break;
-							}
-						}
-						else if (type.equals("Float"))
-						{
-							try
-							{
-								custom.put(name, Float.parseFloat(content));
-							}
-							catch (Exception e1)
-							{
-								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-								valid = false;
-								break;
-							}
-						}
-						else if (type.equals("Byte"))
-						{
-							try
-							{
-								custom.put(name, Byte.parseByte(content));
-							}
-							catch (Exception e1)
-							{
-								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-								valid = false;
-								break;
-							}
-						}
-						else if (type.equals("Boolean"))
-						{
-							try
-							{
-								custom.put(name, Boolean.parseBoolean(content));
-							}
-							catch (Exception e1)
-							{
-								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-								valid = false;
-								break;
-							}
-						}
-						else if (type.equals("File"))
-						{
-							try
-							{
-								custom.put(name, content);
-							}
-							catch (Exception e1)
-							{
-								message = "\"" + entityCustomValues.getModel().getValueAt(i, 0).toString() + "\": " + e1.getMessage();
-								valid = false;
-								break;
-							}
-						}
+						if (type.equals("Integer")) custom.put(name, Integer.parseInt(content));
+						else if (type.equals("Float")) custom.put(name, (Float) (float) Double.parseDouble(content));
+						else if (type.equals("Byte")) custom.put(name, Byte.parseByte(content));
+						else if (type.equals("Boolean")) custom.put(name, Boolean.parseBoolean(content));
+						else if (type.equals("File")) custom.put(name, content);
 					}
 
 					if (!valid)
@@ -937,6 +878,29 @@ public class Editor extends JFrame implements TreeSelectionListener
 					}
 
 					entities.getJSONObject(entityIndex).put("custom", custom);
+
+					// -- Events Tab Data -- //
+					valid = true;
+					message = "";
+					JSONArray events = new JSONArray();
+					for (int i = 0; i < eventEvents.getRowCount(); i++)
+					{
+						String trigger = eventEvents.getValueAt(i, 0).toString();
+						String content = eventEvents.getValueAt(i, 1).toString();
+
+						if (content.length() == 0)
+						{
+							valid = true;
+							message = "Please edit or remove Event #" + (i + 1);
+							break;
+						}
+						
+//						JSONObject o = new JSONObject();
+//						o.put("trigger", trigger);
+//						o.put();
+
+					}
+
 					int selectedRow = tree.getSelectionRows()[0];
 					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
 					((DefaultTreeModel) tree.getModel()).reload();
@@ -1035,7 +999,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void itemStateChanged(ItemEvent e)
 			{
-				if (e.getStateChange() == ItemEvent.DESELECTED) return;
+				if (e.getStateChange() == ItemEvent.DESELECTED || eventFunction.getSelectedIndex() == 0) return;
 
 				DefaultTableModel dtm = (DefaultTableModel) params.getModel();
 				dtm.setRowCount(0);
@@ -1081,33 +1045,19 @@ public class Editor extends JFrame implements TreeSelectionListener
 					valid = false;
 					message += "Please select a function!\n";
 				}
-				
+
 				if (valid)
 				{
 					for (int i = 0; i < params.getRowCount(); i++)
 					{
-						if (params.getModel().getValueAt(i, 1).toString().length() == 0)
+						if (params.getValueAt(i, 1).toString().length() == 0)
 						{
 							valid = false;
-							message += "Please enter a value for the parameter \"" + params.getModel().getValueAt(i, 0) + "\"!\n";
+							message += "Please enter a value for the parameter \"" + params.getValueAt(i, 0) + "\"!\n";
 							break;
 						}
 					}
 				}
-
-//				if (valid)
-//				{
-//					for (int i = 0; i < params.getRowCount(); i++)
-//					{
-//						String o = params.getModel().getValueAt(i, 1).toString();
-//						String type =  params.getModel().getValueAt(i, 0)
-//						{
-//							valid = false;
-//							message += "Please enter a value for the parameter \"" + params.getModel().getValueAt(i, 0) + "\"!\n";
-//							break;
-//						}
-//					}
-//				}
 
 				if (!valid)
 				{
@@ -1118,9 +1068,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				String p = "";
 
 				for (int i = 0; i < params.getRowCount(); i++)
-				{
-					p += params.getModel().getValueAt(i, 1).toString() + ", ";
-				}
+					p += params.getValueAt(i, 1).toString() + ", ";
 
 				if (p.length() > 2) p = p.substring(0, p.length() - 2);
 

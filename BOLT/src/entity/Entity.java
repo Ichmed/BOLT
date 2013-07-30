@@ -128,13 +128,18 @@ public class Entity
 	{
 		glPushMatrix();
 		
+		doRendering();
+		
+		glPopMatrix();
+	}
+	
+	protected void doRendering()
+	{		
 		glTranslated(this.position.x, this.position.y, this.position.z);
 		glRotated(this.rotation.x, 1, 0, 0);
 		glRotated(this.rotation.y, 0, 1, 0);
-		glRotated(this.rotation.z, 0, 0, 1);
-		RenderHelper.renderModel(this.model);
-		
-		glPopMatrix();
+		glRotated(this.rotation.z, 0, 0, 1);	
+		RenderHelper.renderModel(this.model);		
 	}
 
 	public void setPosition(float x, float y, float z)

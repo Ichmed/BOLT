@@ -46,6 +46,7 @@ public class MapLoader
 				entity.customValues = customValues;
 				entity.key = o.getString("id");
 
+				entity.initEntity();
 				world.spawnEntity(entity);
 			}
 		}

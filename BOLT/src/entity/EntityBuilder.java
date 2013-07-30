@@ -89,9 +89,7 @@ public class EntityBuilder
 		e.weight = this.weight;
 		e.balancePoint = new Vector3f(this.balancePoint);
 
-		e.customValues = (HashMap<String, Object>) this.customValues.clone();
-		
-		e.initEntity();
+		e.customValues = (HashMap<String, Object>) this.customValues.clone();		
 
 		return e;
 	}

@@ -1,6 +1,10 @@
 package entity;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import org.lwjgl.util.vector.Vector3f;
+
+import render.RenderHelper;
 
 public class TrollBall extends Entity
 {
@@ -31,6 +35,7 @@ public class TrollBall extends Entity
 		{
 			this.position = new Vector3f(0, 0, 0);
 			this.randomizeVelocity();
+			this.triggerEvent("onReachMaxRad");
 		}
 	}
 	
@@ -44,6 +49,21 @@ public class TrollBall extends Entity
 	private float randomSpeed()
 	{
 		return (float) (Math.random() * 2) - 1;
+	}
+
+	protected void doRendering()
+	{
+		glTranslated(this.position.x, this.position.y, this.position.z);
+		glRotated(this.rotation.x, 1, 0, 0);
+		glRotated(this.rotation.y, 0, 1, 0);
+		glRotated(this.rotation.z, 0, 0, 1);
+		glColor3d(getColorAsDecimal("red"), getColorAsDecimal("green"), getColorAsDecimal("blue"));
+		RenderHelper.renderModel(this.model);
+	}
+	
+	private double getColorAsDecimal(String color)
+	{
+		return (double)((int)this.customValues.get(color)) / 256D;
 	}
 
 	public void setColor3i(int red, int blue, int green)

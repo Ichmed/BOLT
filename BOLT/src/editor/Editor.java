@@ -462,7 +462,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public JSONObject validateCustomValues(JSONObject customValues, String entityName) throws JSONException
 	{
-		HashMap<String, Object> cv = EntityRegistry.createEntity(entityName).customValues;
+		HashMap<String, Object> cv = EntityRegistry.getEntityBuilder(entityName).customValues;
 		if (customValues.length() == cv.size()) return customValues;
 
 		if (customValues.length() > cv.size())

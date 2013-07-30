@@ -43,6 +43,7 @@ public class MapLoader
 					customValues.put(cKeys.getString(j), c.get(cKeys.getString(j)));
 				}
 				entity.customValues = customValues;
+				entity.key = c.getString("id");
 
 				world.spawnEntity(entity);
 			}

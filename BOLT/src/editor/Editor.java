@@ -650,7 +650,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 								JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
-							entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile(), jfc.getSelectedFile()).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
+							entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile(), jfc.getSelectedFile()).replace("\\", "/").replace("../", ""), entityCustomValues.getSelectedRow(), 1);
 						}
 					}
 				});

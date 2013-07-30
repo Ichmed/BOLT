@@ -17,7 +17,7 @@ integer red 255
 integer green 255
 integer blue 255
 
-double speed 0.001
+double speed 1
 
 double maxRad 100.0
 

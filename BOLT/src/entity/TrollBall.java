@@ -18,7 +18,7 @@ public class TrollBall extends Entity
 	{
 		super.initEntity();
 		v = (float) (double) this.customValues.get("speed");
-		this.velocity = new Vector3f((float) Math.random() * v, (float) Math.random() * v, (float) Math.random() * v);
+		this.randomizeVelocity();
 	}
 
 	@Override
@@ -30,8 +30,20 @@ public class TrollBall extends Entity
 		if (this.position.length() > (double) this.customValues.get("maxRad"))
 		{
 			this.position = new Vector3f(0, 0, 0);
-			this.velocity = new Vector3f((float) Math.random() * v, (float) Math.random() * v, (float) Math.random() * v);
+			this.randomizeVelocity();
 		}
+	}
+	
+	public void randomizeVelocity()
+	{
+		this.velocity = new Vector3f(randomSpeed(), randomSpeed(), randomSpeed());
+		this.velocity.normalise();
+		this.velocity.scale(v);
+	}
+	
+	private float randomSpeed()
+	{
+		return (float) (Math.random() * 2) - 1;
 	}
 
 	public void setColor3i(int red, int blue, int green)

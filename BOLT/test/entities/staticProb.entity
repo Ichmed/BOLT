@@ -17,4 +17,4 @@ model testObject.obj
 collisionModel testObject.obj
 
 file displayModel null
-float size 1.0
+double size 1.0

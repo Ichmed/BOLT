@@ -768,14 +768,14 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 
 			JPanel eventPanel = new JPanel(new FlowLayout());
-			eventEvents = new JTable(new DefaultTableModel(new String[] { "Trigger", "Target, Function(Parameters)" }, 0))
+			eventEvents = new JTable(new DefaultTableModel(new String[] { "Trigger", "Target", "Function", "Parameters" }, 0))
 			{
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public boolean isCellEditable(int row, int column)
 				{
-					if (column == 1) return false; // value column
+					if (column > 0) return false; // value column
 					return true;
 				}
 			};
@@ -865,7 +865,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						String content = entityCustomValues.getValueAt(i, 1).toString();
 
 						if (type.equals("Integer")) custom.put(name, Integer.parseInt(content));
-						else if (type.equals("Float")) custom.put(name, (Float) (float) Double.parseDouble(content));
+						else if (type.equals("Double")) custom.put(name, Double.parseDouble(content));
 						else if (type.equals("Byte")) custom.put(name, Byte.parseByte(content));
 						else if (type.equals("Boolean")) custom.put(name, Boolean.parseBoolean(content));
 						else if (type.equals("File")) custom.put(name, content);
@@ -882,24 +882,22 @@ public class Editor extends JFrame implements TreeSelectionListener
 					// -- Events Tab Data -- //
 					valid = true;
 					message = "";
-					JSONArray events = new JSONArray();
-					for (int i = 0; i < eventEvents.getRowCount(); i++)
-					{
-						String trigger = eventEvents.getValueAt(i, 0).toString();
-						String content = eventEvents.getValueAt(i, 1).toString();
-
-						if (content.length() == 0)
-						{
-							valid = true;
-							message = "Please edit or remove Event #" + (i + 1);
-							break;
-						}
-						
-//						JSONObject o = new JSONObject();
-//						o.put("trigger", trigger);
-//						o.put();
-
-					}
+					// JSONArray events = new JSONArray();
+					// for (int i = 0; i < eventEvents.getRowCount(); i++)
+					// {
+					// String trigger = eventEvents.getValueAt(i, 0).toString();
+					// String content = eventEvents.getValueAt(i, 1).toString();
+					//
+					// if (content.length() == 0)
+					// {
+					// valid = true;
+					// message = "Please edit or remove Event #" + (i + 1);
+					// break;
+					// }
+					//
+					// JSONObject o = new JSONObject();
+					// o.put("trigger", trigger);
+					// }
 
 					int selectedRow = tree.getSelectionRows()[0];
 					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());

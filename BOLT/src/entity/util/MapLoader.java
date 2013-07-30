@@ -21,26 +21,27 @@ public class MapLoader
 		try
 		{
 			JSONObject content = new JSONObject(Compressor.decompressFile(new File(file)));
-			
+
 			JSONArray entities = content.getJSONArray("entities");
 
 			for (int i = 0; i < entities.length(); i++)
 			{
 				JSONObject o = entities.getJSONObject(i);
 				Entity entity = EntityRegistry.createEntity(o.getString("name"));
-				
+
 				JSONArray pos = o.getJSONArray("pos");
 				JSONArray rot = o.getJSONArray("rot");
 				entity.setPosition((float) pos.getDouble(0), (float) pos.getDouble(1), (float) pos.getDouble(2));
 				entity.setRotation((float) rot.getDouble(0), (float) rot.getDouble(1), (float) rot.getDouble(2));
 
-				
 				HashMap<String, Object> customValues = new HashMap<>();
 				JSONObject c = o.getJSONObject("custom");
 				JSONArray cKeys = c.names();
 				for (int j = 0; j < c.length(); j++)
 				{
-					customValues.put(cKeys.getString(j), c.get(cKeys.getString(j)));
+					Object object = c.get(cKeys.getString(j));
+
+					customValues.put(cKeys.getString(j), object);
 				}
 				entity.customValues = customValues;
 				entity.key = o.getString("id");

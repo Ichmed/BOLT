@@ -333,7 +333,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			JScrollPane jsp = new JScrollPane(customVals, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			customVals.setFillsViewportHeight(true);
 			customVals.setRowHeight(23);
-			JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Integer", "Float", "Boolean", "String" });
+			JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Double", "Boolean", "String" });
 			type.setSelectedIndex(4);
 			customVals.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(type));
 			jsp.setPreferredSize(new Dimension(customVals.getWidth(), 150));

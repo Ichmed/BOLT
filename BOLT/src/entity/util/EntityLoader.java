@@ -125,13 +125,9 @@ public class EntityLoader
 				{
 					e.customValues.put(line.split(" ")[1], Byte.valueOf(line.split(" ")[2]));
 				}
-				else if (line.startsWith("float "))
+				else if (line.startsWith("double "))
 				{
-					e.customValues.put(line.split(" ")[1], Float.valueOf(line.split(" ")[2]));
-				}
-				else if (line.startsWith("integer "))
-				{
-					e.customValues.put(line.split(" ")[1], Integer.valueOf(line.split(" ")[2]));
+					e.customValues.put(line.split(" ")[1], Double.valueOf(line.split(" ")[2]));
 				}
 				else if (line.startsWith("boolean "))
 				{

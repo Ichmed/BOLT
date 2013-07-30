@@ -52,7 +52,7 @@ collisionModel testObject.obj
 # these will be read in and stored in a HashMap for in-game access
 # types:
 #     byte
-#     float
+#     double
 #     integer
 #     boolean
 #     string

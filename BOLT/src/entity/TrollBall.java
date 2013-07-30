@@ -5,9 +5,9 @@ import org.lwjgl.util.vector.Vector3f;
 public class TrollBall extends Entity
 {
 	Vector3f velocity;
-	
+
 	private float v;
-	
+
 	public TrollBall()
 	{
 		super();
@@ -17,8 +17,8 @@ public class TrollBall extends Entity
 	public void initEntity()
 	{
 		super.initEntity();
-		v = (float) this.customValues.get("speed");
-		this.velocity = new Vector3f((float)Math.random() * v, (float)Math.random() * v, (float)Math.random() * v);
+		v = (float) (double) this.customValues.get("speed");
+		this.velocity = new Vector3f((float) Math.random() * v, (float) Math.random() * v, (float) Math.random() * v);
 	}
 
 	@Override
@@ -26,11 +26,11 @@ public class TrollBall extends Entity
 	{
 		super.onTick();
 		this.position.translate(this.velocity.x, this.velocity.y, this.velocity.z);
-		
-		if(this.position.length() > (double)this.customValues.get("maxRad"))
+
+		if (this.position.length() > (double) this.customValues.get("maxRad"))
 		{
 			this.position = new Vector3f(0, 0, 0);
-			this.velocity = new Vector3f((float)Math.random() * v, (float)Math.random() * v, (float)Math.random() * v);
+			this.velocity = new Vector3f((float) Math.random() * v, (float) Math.random() * v, (float) Math.random() * v);
 		}
 	}
 

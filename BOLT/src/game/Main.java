@@ -24,7 +24,9 @@ import physics.collisionmodels.CollisionBox;
 import render.Model;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
+import util.math.Line;
 import util.math.MathHelper;
+import util.math.Plane;
 import editor.Editor;
 
 public class Main
@@ -110,12 +112,7 @@ public class Main
 		initGLSettings();
 		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
 //		c = new CollisionBox(new Vector3f(-2, -2, -2), new Vector3f(0, 0, 1), new Vector3f(1, 0, 0), new Vector3f(0, 1, 0));
-		c.toString();
-
-		for (Vector3f v : c.points)
-		{
-			System.out.println(v);
-		}
+		log.log(Level.INFO, "\n------------------------------------------------------------------------------------------------------------\n" + c.toString());
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);

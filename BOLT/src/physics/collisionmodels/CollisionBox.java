@@ -3,6 +3,7 @@ package physics.collisionmodels;
 import game.Main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -626,7 +627,7 @@ public class CollisionBox
 	@Override
 	public String toString()
 	{
-		return "points:\n" + points.toString() + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() +
+		return "points:" + Arrays.toString(points) + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() +
 				"\nwidth: " + width.toString() + "\nheight: " + height.toString() + "\nstartingPoint: " +
 				startingPoint.toString() + "\nmass: " + mass;
 	}

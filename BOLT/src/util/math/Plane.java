@@ -16,6 +16,12 @@ public class Plane
 		this.startingPoint.set(startingPoint.getX(), startingPoint.getY(), startingPoint.getZ());
 	}
 	
+	public Plane(Plane plane)
+	{
+		this.normal.set(plane.normal.getX(), plane.normal.getY(), plane.normal.getZ());
+		this.startingPoint.set(plane.startingPoint.getX(), plane.startingPoint.getY(), plane.startingPoint.getZ());
+	}
+	
 	public Vector3f getNormal()
 	{
 		return new Vector3f(normal.x, normal.y, normal.z);

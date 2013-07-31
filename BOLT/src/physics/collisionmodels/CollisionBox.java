@@ -360,7 +360,7 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			back = new Plane(normalFront, maxBackPoint);
 			back.transformToHesseNormalForm();
-			if(front.getNormal() == back.getNormal())
+			if((front.getNormal().getX() == back.getNormal().getX()) && ( front.getNormal().getY() == back.getNormal().getY()) && (front.getNormal().getZ() == back.getNormal().getZ()))
 				back.negateNormal();
 			distanceFrontBack = Math.abs(front.calculateDistancePoint(false, maxBackPoint));
 			if(distanceFrontBack < minDistanceFrontBack)
@@ -385,21 +385,25 @@ public class CollisionBox
 		Vector3f bestPointLeft = new Vector3f();
 		Vector3f bestPointRight = new Vector3f();
 		Vector3f bestNormalLeft = MathHelper.createPerpendicularVector(bestNormalFront);
-		float minDistanceLeftRight = Math.abs(maxX - minX);
+		bestNormalLeft.normalise();
+		float minDistanceLeftRight = Float.MAX_VALUE;
 		Vector3f normalLeft = MathHelper.cloneVector(bestNormalLeft);
 		//working values for Planes and distances
-		float distanceLeftRight = Math.abs(maxX - minX);
+		float distanceLeftRight = 0;
 		Plane left = new Plane(normalLeft, pointLeft);
 		Plane right = new Plane(normalLeft, pointRight);
 		left.transformToHesseNormalForm();
 		right.transformToHesseNormalForm();
 		//Rotating Planes around the object to a max value of 180� where the planes are just swapped versions of the starting planes
-		rotationPlane = front;
+		rotationPlane = new Plane(front);
 		//Planes will rotate around the normalVector of the left/right-Plane
-		for(int degree = 1; degree < 180; degree++)
+		for(int degree = 0; degree < 180; degree++)
 		{
-			MathHelper.rotateVector(normalLeft, degree, rotationPlane);
-			normalLeft.normalise();
+			if(degree != 0)
+			{
+				MathHelper.rotateVector(normalLeft, degree, rotationPlane);
+				normalLeft.normalise();
+			}
 			//
 			//Rotating leftPlane and transforming it to the standard (HesseNormalForm)
 			//
@@ -442,7 +446,7 @@ public class CollisionBox
 			//
 			right = new Plane(normalLeft, pointRight);
 			right.transformToHesseNormalForm();
-			if(left.getNormal() == right.getNormal())
+			if(left.getNormal().x == right.getNormal().x && left.getNormal().y == right.getNormal().y && left.getNormal().z == right.getNormal().z)
 				right.negateNormal();
 			//Initializing temporary maximum values
 			Vector3f maxRightPoint = new Vector3f (0, 0, 0);
@@ -475,7 +479,7 @@ public class CollisionBox
 			//setting the round-best-Values (for the next rotation as compareValues)
 			right = new Plane(normalLeft, maxRightPoint);
 			right.transformToHesseNormalForm();
-			if(left.getNormal() == right.getNormal())
+			if(left.getNormal().x == right.getNormal().x && left.getNormal().y == right.getNormal().y && left.getNormal().z == right.getNormal().z)
 				right.negateNormal();
 			distanceLeftRight = Math.abs(left.calculateDistancePoint(false, maxRightPoint));
 			if(distanceLeftRight < minDistanceLeftRight)
@@ -541,7 +545,7 @@ public class CollisionBox
 		//working values for Planes
 		Plane bottom = new Plane(bestNormalTop, pointBottom);
 		bottom.transformToHesseNormalForm();
-		if(top.getNormal() == bottom.getNormal())
+		if(top.getNormal().x == bottom.getNormal().x && top.getNormal().y == bottom.getNormal().y && top.getNormal().z == bottom.getNormal().z)
 			bottom.negateNormal();
 		float maxBottomDis = 0;
 		//calculating if the bottomPlane has to be moved outwards
@@ -571,7 +575,7 @@ public class CollisionBox
 		}
 		bottom = new Plane(bestNormalTop, maxPointBottom);
 		bottom.transformToHesseNormalForm();
-		if(top.getNormal() == bottom.getNormal())
+		if(top.getNormal().x == bottom.getNormal().x && top.getNormal().y == bottom.getNormal().y && top.getNormal().z == bottom.getNormal().z)
 			bottom.negateNormal();
 		Main.log.log(Level.INFO, "front:\n" + front.toString() + "\nback:\n" + back.toString()  + "\nleft:\n" +
 					left.toString() + "\nright:\n" + right.toString() + "\ntop:\n" + top.toString() + "\nbottom:\n" +

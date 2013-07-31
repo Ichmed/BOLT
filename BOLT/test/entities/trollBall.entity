@@ -22,5 +22,7 @@ double speed 1
 double maxRad 100.0
 
 trigger onReachMaxRad
+trigger onColorChange
+
 
 function setColor3i(Integer red, Integer green, Integer blue)

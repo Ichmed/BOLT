@@ -4,6 +4,10 @@ public abstract class Game
 {
 	protected static Game currentGame;
 	protected World currentWorld;
+	private long lastTick;
+	private long peak;
+	private long ticks = 0;
+	private long sum = 0;
 	
 	/**
 	 * The path to an .entList file containing the paths to all entities this game might need
@@ -79,6 +83,12 @@ public abstract class Game
 	
 	public void gameLoop()
 	{
+		ticks++;
+		lastTick = System.currentTimeMillis();
 		this.currentWorld.gameLoop();
+		long l = System.currentTimeMillis() - lastTick;
+		sum += l;
+		peak = Math.max(peak, l);
+//		System.out.println("Last Tick: " + l + " Peak: " + peak + "\n Average: " + sum / ticks);
 	}
 }

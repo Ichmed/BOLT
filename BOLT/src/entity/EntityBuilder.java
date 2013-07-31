@@ -26,7 +26,7 @@ public class EntityBuilder
 	public String collisionModel;
 	public Float weight;
 	public Vector3f balancePoint = new Vector3f();
-	
+
 	public List<String> triggers = new ArrayList<>(), functions = new ArrayList<>();
 
 	public String classPath;
@@ -61,10 +61,14 @@ public class EntityBuilder
 		return e;
 	}
 
+	public boolean equals(EntityBuilder o)
+	{
+		return parent.equals(o.parent) && name.equals(o.name) && fullName.equals(o.fullName) && physicsType == o.physicsType && collisionType == o.collisionType && invisible == o.invisible && gravity == o.gravity && model.equals(o.model) && collisionModel.equals(o.collisionModel) && weight == o.weight && MathHelper.equalsVector3f(balancePoint, o.balancePoint) && triggers.equals(o.triggers) && functions.equals(o.functions) && classPath.equals(o.classPath) && customValues.equals(o.customValues);
+	}
+
 	/**
 	 * 
-	 * @return creates and returns an instance of Entity specified in this
-	 *         EntityBuilder
+	 * @return creates and returns an instance of Entity specified in this EntityBuilder
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
@@ -92,8 +96,8 @@ public class EntityBuilder
 		e.balancePoint = new Vector3f(this.balancePoint);
 
 		e.customValues = (HashMap<String, Object>) this.customValues.clone();
-		
-		for(String s : this.triggers)
+
+		for (String s : this.triggers)
 			e.events.put(s, new ArrayList<EntityEvent>());
 
 		return e;

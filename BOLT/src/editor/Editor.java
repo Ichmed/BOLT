@@ -71,7 +71,7 @@ import util.JSuggestField;
 import util.SpringUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
-import entity.util.EntityLoader;
+import entity.util.EntityIO;
 import game.Game;
 
 /**
@@ -117,7 +117,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		super("BOLT Editor");
 		try
 		{
-			EntityLoader.findEntities(Game.getCurrentGame().entListFilePath);
+			EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e)
@@ -551,7 +551,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		ArrayList<String> list = new ArrayList<>();
 		list.add("-- Choose an Entity --");
 
-		for (String key : EntityLoader.entitiesFound.keySet())
+		for (String key : EntityIO.entitiesFound.keySet())
 		{
 			list.add(key);
 		}

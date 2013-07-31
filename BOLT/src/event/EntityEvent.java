@@ -1,6 +1,8 @@
 package event;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +18,7 @@ public class EntityEvent
 	public String targetFunction;
 	public boolean onlyOnce;
 	public JSONArray parameters;
+	private List<String> flags = new ArrayList<>();
 	
 	public EntityEvent(Entity owner, JSONObject o)
 	{
@@ -24,13 +27,23 @@ public class EntityEvent
 		{
 			this.target = o.getString("target");
 			this.targetFunction = o.getString("function");
-			this.onlyOnce = o.getBoolean("onlyOnce");
 			this.parameters = o.getJSONArray("params");
+			
+			JSONArray f = o.getJSONArray("flags");
+			for(int i = 0; i < f.length(); i++)
+			{
+				this.flags.add(f.getString(i));
+			}
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isFlagSet(String name)
+	{
+		return this.flags.contains(name);
 	}
 	
 	public boolean trigger()
@@ -51,8 +64,8 @@ public class EntityEvent
 			}
 			
 			for(Method m : methods)
-				if(m.getName().equals("targetFunction"))
-					m.invoke(null, o);
+				if(m.getName().equals(targetFunction))
+					m.invoke(eTarget, o);
 		}
 		catch(Exception e)
 		{

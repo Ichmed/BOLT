@@ -128,11 +128,11 @@ public class EntityIO
 			}
 			else if (line.startsWith("function "))
 			{
-				e.functions.add(line.substring("function ".length()));
+				e.functions.add(line.split(" ")[1]);
 			}
 			else if (line.startsWith("-function "))
 			{
-				e.functions.remove(line.substring("-function ".length()));
+				e.functions.remove(line.split(" ")[1]);
 			}
 			else
 			{

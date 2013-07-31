@@ -53,6 +53,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -97,6 +98,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JSpinner entityRotX, entityRotY, entityRotZ;
 	JTextField entityID;
 	JTable entityCustomValues;
+
+	JTabbedPane tabs;
 
 	// -- Events Tab -- //
 	JTable eventEvents;
@@ -412,40 +415,34 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void openMap()
 	{
-		JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
-		jfc.setFileFilter(new FileNameExtensionFilter("BOLT Map-Files", "map"));
-		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setMultiSelectionEnabled(false);
-		if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		File f = getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT Map-Files", "map"));
+		if (f == null) return;
+		mapFile = f;
+		try
 		{
-			mapFile = jfc.getSelectedFile();
-			try
+			reset();
+
+			setTitle(mapFile.getPath());
+			JSONObject data = new JSONObject(Compressor.decompressFile(mapFile));
+			entities = data.getJSONArray("entities");
+			DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
+
+			for (int i = 0; i < entities.length(); i++)
 			{
-				reset();
-
-				setTitle(mapFile.getPath());
-				JSONObject data = new JSONObject(Compressor.decompressFile(mapFile));
-				entities = data.getJSONArray("entities");
-				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
-
-				for (int i = 0; i < entities.length(); i++)
-				{
-					dtm.insertNodeInto(new DefaultMutableTreeNode(entities.getJSONObject(i).getString("id")), (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent(), i);
-					refresh();
-				}
-				tree.expandRow(1);
+				dtm.insertNodeInto(new DefaultMutableTreeNode(entities.getJSONObject(i).getString("id")), (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent(), i);
+				refresh();
 			}
-			catch (Exception e)
-			{
-				JOptionPane.showMessageDialog(Editor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
-				mapFile = null;
+			tree.expandRow(1);
+		}
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(Editor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
+			mapFile = null;
 
-				DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
-				tree.setModel(new DefaultTreeModel(root));
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
+			tree.setModel(new DefaultTreeModel(root));
 
-				return;
-			}
-
+			return;
 		}
 	}
 
@@ -520,21 +517,17 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void saveUMap()
 	{
-		JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
-		jfc.setFileFilter(new FileNameExtensionFilter("BOLT Map-Files", "map"));
-		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setMultiSelectionEnabled(false);
-		if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-		{
-			if (jfc.getSelectedFile().exists())
-			{
-				int r = JOptionPane.showConfirmDialog(Editor.this, "This file already exists! By creating a new map in that file, it's old content will be lost!", "Warning!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-				if (r == JOptionPane.CANCEL_OPTION) return;
-			}
+		File f = getDefaultJFileChooser(false, this, new FileNameExtensionFilter("BOLT Map-Files", "map"));
+		if (f == null) return;
 
-			mapFile = new File(jfc.getSelectedFile().getPath().replace(".map", "") + ".map");
-			saveMap();
+		if (f.exists())
+		{
+			int r = JOptionPane.showConfirmDialog(Editor.this, "This file already exists! By creating a new map in that file, it's old content will be lost!", "Warning!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (r == JOptionPane.CANCEL_OPTION) return;
 		}
+
+		mapFile = new File(f.getPath().replace(".map", "") + ".map");
+		saveMap();
 	}
 
 	private void refresh()
@@ -659,9 +652,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 	{
 		uiPanel.setLayout(null);
 
-		JTabbedPane pane = new JTabbedPane();
-		pane.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
-		pane.setPreferredSize(uiPanel.getPreferredSize());
+		tabs = new JTabbedPane();
+		tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
+		tabs.setPreferredSize(uiPanel.getPreferredSize());
 		final int entityIndex = tree.getSelectionRows()[0] - 2;
 
 		JSONObject entityData = entities.getJSONObject(entityIndex);
@@ -749,18 +742,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				jfc.setMultiSelectionEnabled(false);
-				if (jfc.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-				{
-					if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))
-					{
-						JOptionPane.showMessageDialog(Editor.this, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), jfc.getSelectedFile()).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
-				}
+				File f = getDefaultJFileChooser(false, Editor.this, null);
+				if (f != null) entityCustomValues.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"), entityCustomValues.getSelectedRow(), 1);
 			}
 		});
 		entityPanel.add(browse);
@@ -770,7 +753,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		JPanel wrap = new JPanel();
 		wrap.add(entityPanel);
 
-		pane.addTab("Entity", wrap);
+		tabs.addTab("Entity", wrap);
 
 		// -- Events Tab -- //
 
@@ -807,7 +790,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			eventEvents.setRowHeight(22);
 			eventEvents.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jsp = new JScrollPane(eventEvents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			jsp.setPreferredSize(new Dimension(pane.getWidth(), pane.getHeight() - 30 - 35));
+			jsp.setPreferredSize(new Dimension(tabs.getWidth(), tabs.getHeight() - 30 - 35));
 			eventEvents.setFillsViewportHeight(true);
 			eventPanel.add(jsp);
 			eventPanel.add(new JButton(new AbstractAction("New")
@@ -851,10 +834,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 			}));
 
-			pane.addTab("Events", eventPanel);
+			tabs.addTab("Events", eventPanel);
 		}
 		// -- Final -- //
-		uiPanel.add(pane);
+		uiPanel.add(tabs);
 
 		JButton apply = new JButton(new AbstractAction("Apply")
 		{
@@ -937,10 +920,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 					entities.put(entityIndex, data);
 					int selectedRow = tree.getSelectionRows()[0];
+					int selectedTab = tabs.getSelectedIndex();
 					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
 					((DefaultTreeModel) tree.getModel()).reload();
 					tree.expandRow(1);
 					tree.setSelectionRow(selectedRow);
+					tabs.setSelectedIndex(selectedTab);
 					refresh();
 
 				}
@@ -1223,5 +1208,25 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 			e1.printStackTrace();
 		}
+	}
+
+	public static File getDefaultJFileChooser(boolean open, Window parent, FileFilter filter)
+	{
+		JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
+		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jfc.setMultiSelectionEnabled(false);
+		jfc.setFileFilter(filter);
+		if (((open) ? jfc.showOpenDialog(parent) : jfc.showSaveDialog(parent)) == JFileChooser.APPROVE_OPTION)
+		{
+			if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))
+			{
+				JOptionPane.showMessageDialog(parent, "Please choose a file stored on the harddrive \"" + FileUtilities.getHardDrive(FileUtilities.getJarFile()).toString() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+
+			return jfc.getSelectedFile();
+		}
+
+		return null;
 	}
 }

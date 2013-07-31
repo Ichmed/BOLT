@@ -1,6 +1,9 @@
 package util;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import editor.Editor;
@@ -33,5 +36,19 @@ public class FileUtilities
 	public static String getFileContent(File f)
 	{
 		return new String(Compressor.getFileContentAsByteArray(f));
+	}
+
+	public static void setFileContent(File f, String s)
+	{
+		try
+		{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+			bw.write(s);
+			bw.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

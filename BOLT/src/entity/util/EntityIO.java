@@ -1,10 +1,8 @@
 package entity.util;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,16 +159,37 @@ public class EntityIO
 
 	public static void saveEntityFile(EntityBuilder b, File f)
 	{
-		try
-		{
-			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+		String content = "";
+		String nl = "\n";
+		content += "parent " + n(b.parent) + nl;
+		content += "name " + b.name + nl;
+		content += "fullName " + b.fullName + nl;
+		content += "physType " + b.physicsType + nl;
+		content += "collType " + b.collisionType + nl;
+		content += "invis " + Boolean.toString(b.invisible) + nl;
+		content += "grav " + Boolean.toString(b.gravity) + nl;
+		content += "class " + n(b.classPath) + nl;
+		content += "model " + n(b.model) + nl;
+		content += "collisionModel " + n(b.collisionModel) + nl;
 
-			bw.close();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		for (String key : b.customValues.keySet())
+			content += b.customValues.get(key).getClass().getSimpleName().toLowerCase() + " " + key + " " + b.customValues.get(key) + nl;
+
+		Compressor.compressFile(f, content);
+		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
+	}
+
+	/**
+	 * Handles null values
+	 * 
+	 * @param o
+	 *            String to check
+	 * @return 'null'-escaped String
+	 */
+	private static String n(String o)
+	{
+		if (o == null) return "null";
+		else return o;
 	}
 
 	private static boolean isParentValid(String parent)

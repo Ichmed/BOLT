@@ -323,44 +323,54 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 	public void showEntityUI()
 	{
-		EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));	
-		
+		EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));
+		System.out.println(b == null);
+
 		JPanel panel = new JPanel(new SpringLayout());
 		panel.add(new JLabel("Parent:"));
 		parent = new JSuggestField(this);
+		parent.setText(b.parent);
 		panel.add(parent);
 
 		panel.add(new JLabel("Name:"));
 		name = new JTextField(15);
+		name.setText(b.name);
 		panel.add(name);
 
 		panel.add(new JLabel("Full Name:"));
 		fullName = new JTextField(15);
+		fullName.setText(b.fullName);
 		panel.add(fullName);
 
 		panel.add(new JLabel("Physical Type:"));
-		physType = new JComboBox<>(new String[] { "physical", "static" });
+		physType = new JComboBox<>(new String[] { "none", "physical", "static" });
+		physType.setSelectedIndex(b.physicsType);
 		panel.add(physType);
 
 		panel.add(new JLabel("Collision Type:"));
 		collType = new JComboBox<>(new String[] { "solid", "gameSolid", "not solid" });
+		collType.setSelectedIndex(b.collisionType);
 		panel.add(collType);
 
 		panel.add(new JLabel("Invisible:"));
 		invis = new JCheckBox();
+		invis.setSelected(b.invisible);
 		panel.add(invis);
 
 		panel.add(new JLabel("Gravity:"));
 		grav = new JCheckBox();
+		grav.setSelected(b.gravity);
 		panel.add(grav);
 
 		panel.add(new JLabel("Class:"));
 		klass = new JTextField(15);
+		klass.setText(b.classPath);
 		panel.add(klass);
 
 		panel.add(new JLabel("Model:"));
 		JPanel panel3 = new JPanel();
 		model = new JTextField(15);
+		model.setText(b.model);
 		panel3.add(model);
 		panel3.add(new JButton(new AbstractAction("Browse...")
 		{

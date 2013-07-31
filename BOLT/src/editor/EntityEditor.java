@@ -10,8 +10,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -25,19 +27,24 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import util.FileUtilities;
@@ -67,7 +74,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	JTextField name, fullName, klass, model, collModel;
 	JComboBox<String> physType, collType;
 	JCheckBox invis, grav;
-	JTable customVals;
+	JButton browse;
+	JTable customVals, functions, events;
+	JTabbedPane tabs;
 
 	public EntityEditor()
 	{
@@ -116,12 +125,12 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		setJMenuBar(menu);
 
-		JPanel p = new JPanel(new BorderLayout());
-		p.setPreferredSize(new Dimension(800, 600));
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
 		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treePanel.setPreferredSize(new Dimension(200, 0));
-		p.add(treePanel, BorderLayout.LINE_START);
+		panel.add(treePanel);
 		tree = new JTree(new DefaultMutableTreeNode("EntityList"));
 		tree.setModel(null);
 		tree.setEnabled(false);
@@ -134,15 +143,10 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		uiPanel = new JPanel(new FlowLayout());
 		uiPanel.setPreferredSize(new Dimension(600, 600));
-		p.add(uiPanel, BorderLayout.LINE_END);
+		panel.add(uiPanel);
 
-		setContentPane(p);
+		setContentPane(panel);
 		pack();
-	}
-
-	private void applyEntity()
-	{
-
 	}
 
 	private void reset()
@@ -162,6 +166,24 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		treePanel.revalidate();
 	}
 
+	private void checkChanged()
+	{
+		try
+		{
+			if (tree.getSelectionRows().length == 0) return;
+
+			int selRow = tree.getSelectionRows()[0];
+			File f = new ArrayList<>(entityFiles.keySet()).get(selRow - 1);
+			boolean equals = entityFiles.get(new ArrayList<>(entityFiles.keySet()).get(selRow - 1)).equals(EntityIO.loadEntityFile(f));
+			((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(((equals) ? "" : "*") + f.getName().replace(".entity", ""));
+			((DefaultTreeModel) tree.getModel()).reload((TreeNode) tree.getSelectionPath().getLastPathComponent());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	private void newEntityList()
 	{
 		reset();
@@ -170,7 +192,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	private void openEntityList()
 	{
 
-		File f = Editor.getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT EntityList-Files", "entlist"));
+		File f = Editor.getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT EntityList-Files (*.entlist)", "entlist"));
 		if (f == null) return;
 
 		entListFile = f;
@@ -258,7 +280,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				jfc.setMultiSelectionEnabled(false);
 				if (path.getText().length() > 0) jfc.setSelectedFile(new File(path.getText()));
 
-				jfc.setFileFilter(new FileNameExtensionFilter("BOLT Entity-Files", "entity"));
+				jfc.setFileFilter(new FileNameExtensionFilter("BOLT Entity-Files (*.entity)", "entity"));
 				if (jfc.showSaveDialog(EntityEditor.this) == JFileChooser.APPROVE_OPTION)
 				{
 					if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))
@@ -323,12 +345,31 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 	public void showEntityUI()
 	{
+		uiPanel.setLayout(null);
+
+		tabs = new JTabbedPane();
+		tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
+		tabs.setPreferredSize(uiPanel.getPreferredSize());
+
 		EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));
-		System.out.println(b == null);
+
+		// -- first tab -- //
 
 		JPanel panel = new JPanel(new SpringLayout());
-		panel.add(new JLabel("Parent:"));
-		parent = new JSuggestField(this);
+		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 525));
+		JLabel label = new JLabel("Parent:");
+		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
+		panel.add(label);
+
+		Vector<String> suggest = new Vector<String>();
+		ArrayList<File> keys = new ArrayList<File>(entityFiles.keySet());
+		for (int i = 0; i < entityFiles.size(); i++)
+		{
+			if (i == tree.getSelectionRows()[0] - 1) continue;
+			String name = keys.get(i).getName().replace(".entity", "");
+			suggest.add(name);
+		}
+		parent = new JSuggestField(this, suggest);
 		parent.setText(b.parent);
 		panel.add(parent);
 
@@ -348,7 +389,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		panel.add(physType);
 
 		panel.add(new JLabel("Collision Type:"));
-		collType = new JComboBox<>(new String[] { "solid", "gameSolid", "not solid" });
+		collType = new JComboBox<>(new String[] { "solid", "gameSolid", "nonSolid" });
 		collType.setSelectedIndex(b.collisionType);
 		panel.add(collType);
 
@@ -379,15 +420,19 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				// TODO: file browser
+				File f = Editor.getDefaultJFileChooser(true, EntityEditor.this, new FileNameExtensionFilter("Wavefront geometry file (*.obj)", "obj"));
+				if (f == null) return;
+
+				model.setText(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"));
 			}
 		}));
 		panel.add(panel3);
 
 		panel.add(new JLabel("Collision Model:"));
 		JPanel panel4 = new JPanel();
-		model = new JTextField(15);
-		panel4.add(model);
+		collModel = new JTextField(15);
+		collModel.setText(b.collisionModel);
+		panel4.add(collModel);
 		panel4.add(new JButton(new AbstractAction("Browse...")
 		{
 			private static final long serialVersionUID = 1L;
@@ -395,24 +440,59 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				// TODO: file browser
+				File f = Editor.getDefaultJFileChooser(true, EntityEditor.this, new FileNameExtensionFilter("Wavefront Geometry File (*.obj)", "obj"));
+				if (f == null) return;
+
+				model.setText(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"));
 			}
 		}));
 		panel.add(panel4);
 
 		panel.add(new JLabel("Custom Values:"));
 		JPanel panel5 = new JPanel(new BorderLayout());
-		customVals = new JTable(new DefaultTableModel(new String[] { "Type", "Name", "Default Value" }, 0));
+		String[][] data = new String[b.customValues.size()][];
+		ArrayList<String> keySet = new ArrayList<>(b.customValues.keySet());
+		for (int i = 0; i < b.customValues.size(); i++)
+		{
+			String key = keySet.get(i);
+			data[i] = new String[] { b.customValues.get(key).getClass().getSimpleName(), key, b.customValues.get(key).toString() };
+		}
+		customVals = new JTable(new DefaultTableModel(data, new String[] { "Type", "Name", "Value" }));
 		customVals.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		JScrollPane jsp = new JScrollPane(customVals, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		customVals.setFillsViewportHeight(true);
-		customVals.setRowHeight(23);
-		JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Integer", "Double", "Boolean", "String" });
+		customVals.setRowHeight(22);
+		customVals.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		customVals.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				if (customVals.getSelectedRow() > -1) browse.setEnabled(customVals.getValueAt(customVals.getSelectedRow(), 0).toString().equals("File"));
+			}
+		});
+
+		JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Integer", "Double", "Boolean", "String", "File" });
 		type.setSelectedIndex(4);
 		customVals.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(type));
 		jsp.setPreferredSize(new Dimension(customVals.getWidth(), 150));
 		panel5.add(jsp, BorderLayout.NORTH);
-		panel5.add(new JButton(new AbstractAction("Append Row")
+		browse = new JButton(new AbstractAction("Browse...")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				File f = Editor.getDefaultJFileChooser(true, EntityEditor.this, null);
+				if (f == null) return;
+
+				customVals.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"), customVals.getSelectedRow(), 2);
+			}
+		});
+		browse.setEnabled(false);
+		panel5.add(browse, BorderLayout.PAGE_END);
+		panel5.add(new JButton(new AbstractAction("Remove")
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -420,27 +500,93 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			public void actionPerformed(ActionEvent e)
 			{
 				DefaultTableModel model = (DefaultTableModel) customVals.getModel();
-
-				model.addRow(new Object[] { "String", " ", " " });
-				model.fireTableDataChanged();
-				customVals.repaint();
+				if (customVals.getSelectedRow() == -1) return;
+				model.removeRow(customVals.getSelectedRow());
 			}
-		}), BorderLayout.SOUTH);
-		panel.add(panel5);
-
-		panel.add(new JLabel());
-		panel.add(new JButton(new AbstractAction("Apply")
+		}), BorderLayout.WEST);
+		panel5.add(new JButton(new AbstractAction("New")
 		{
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				applyEntity();
+				DefaultTableModel model = (DefaultTableModel) customVals.getModel();
+				model.addRow(new Object[] { "String", "", "" });
 			}
-		}));
+		}), BorderLayout.EAST);
+		panel.add(panel5);
 
-		SpringUtilities.makeCompactGrid(panel, 12, 2, 6, 6, 6, 6);
-		uiPanel.add(panel);
+		SpringUtilities.makeCompactGrid(panel, 11, 2, 6, 6, 6, 6);
+
+		tabs.addTab("Basic", panel);
+
+		uiPanel.add(tabs);
+
+		JButton apply = new JButton(new AbstractAction("Apply")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				boolean valid = true;
+				String message = "";
+
+				EntityBuilder builder = new EntityBuilder();
+
+				builder.parent = parent.getText();
+
+				if (valid && name.getText().length() == 0)
+				{
+					valid = false;
+					message = "Please enter a name!";
+				}
+				else builder.name = name.getText();
+
+				if (fullName.getText().length() == 0) builder.fullName = name.getText();
+				else builder.fullName = fullName.getText();
+
+				builder.physicsType = physType.getSelectedIndex();
+				builder.collisionType = collType.getSelectedIndex();
+				builder.invisible = invis.isSelected();
+				builder.gravity = grav.isSelected();
+				builder.model = model.getText();
+				builder.collisionModel = collModel.getText();
+				builder.classPath = klass.getText();
+				for (int i = 0; i < customVals.getRowCount(); i++)
+				{
+					String type = customVals.getValueAt(i, 0).toString();
+					String name = customVals.getValueAt(i, 1).toString();
+					String value = customVals.getValueAt(i, 2).toString();
+
+					if (type.length() == 0 || name.length() == 0 || value.length() == 0)
+					{
+						valid = false;
+						message = "Please fill all fields for customValue #" + i + "!";
+						break;
+					}
+
+					if (type.equals("Integer")) builder.customValues.put(name, Integer.parseInt(value));
+					else if (type.equals("Double")) builder.customValues.put(name, Double.parseDouble(value));
+					else if (type.equals("Byte")) builder.customValues.put(name, Byte.parseByte(value));
+					else if (type.equals("Boolean")) builder.customValues.put(name, Boolean.parseBoolean(value));
+					else if (type.equals("File")) builder.customValues.put(name, value);
+				}
+
+				if (!valid)
+				{
+					JOptionPane.showMessageDialog(EntityEditor.this, message, "Error!", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				entityFiles.put(new ArrayList<>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1), builder);
+
+				checkChanged();
+				refresh();
+			}
+		});
+		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
+		uiPanel.add(apply);
 	}
 }

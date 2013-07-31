@@ -1,35 +1,35 @@
 package entity;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import event.EntityEvent;
-
 import util.math.MathHelper;
+import event.EntityEvent;
 
 public class EntityBuilder
 {
 	public static EntityBuilder defaultEntityBuilder;
 
-	public String parent;
-	public String name;
-	public String fullName;
+	public String parent = "";
+	public String name = "";
+	public String fullName = "";
 
 	public Integer physicsType = 1;
 	public Integer collisionType = 2;
 	public Boolean invisible = false;
 	public Boolean gravity = false;
-	public String model;
-	public String collisionModel;
-	public Float weight;
+	public String model = "";
+	public String collisionModel = "";
+	public Float weight = 0f;
 	public Vector3f balancePoint = new Vector3f();
 
 	public List<String> triggers = new ArrayList<>(), functions = new ArrayList<>();
 
-	public String classPath;
+	public String classPath = "";
 
 	public HashMap<String, Object> customValues = new HashMap<>();
 
@@ -63,7 +63,25 @@ public class EntityBuilder
 
 	public boolean equals(EntityBuilder o)
 	{
-		return parent.equals(o.parent) && name.equals(o.name) && fullName.equals(o.fullName) && physicsType == o.physicsType && collisionType == o.collisionType && invisible == o.invisible && gravity == o.gravity && model.equals(o.model) && collisionModel.equals(o.collisionModel) && weight == o.weight && MathHelper.equalsVector3f(balancePoint, o.balancePoint) && triggers.equals(o.triggers) && functions.equals(o.functions) && classPath.equals(o.classPath) && customValues.equals(o.customValues);
+		return toString().equals(o.toString());
+	}
+
+	@Override
+	public String toString()
+	{
+		String s = getClass().getSimpleName() + "[";
+		for (Field field : getClass().getFields())
+		{
+			try
+			{
+				s += field.getName() + "=" + field.get(this) + ",";
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return s.substring(0, s.length() - 2) + "]";
 	}
 
 	/**

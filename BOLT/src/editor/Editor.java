@@ -58,6 +58,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.json.JSONArray;
@@ -80,6 +81,8 @@ import game.Game;
  * @author Dakror
  * 
  */
+
+// TODO: add comments to customvalues in entity files
 public class Editor extends JFrame implements TreeSelectionListener
 {
 	private static final long serialVersionUID = 1L;
@@ -415,7 +418,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void openMap()
 	{
-		File f = getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT Map-Files", "map"));
+		File f = getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map"));
 		if (f == null) return;
 		mapFile = f;
 		try
@@ -517,7 +520,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void saveUMap()
 	{
-		File f = getDefaultJFileChooser(false, this, new FileNameExtensionFilter("BOLT Map-Files", "map"));
+		File f = getDefaultJFileChooser(false, this, new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map"));
 		if (f == null) return;
 
 		if (f.exists())
@@ -594,6 +597,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		final JComboBox<String> entities = new JComboBox<>(loadEntityList());
 		entities.setSelectedIndex(0);
+		entities.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 10, 22));
 		entities.addItemListener(new ItemListener()
 		{
 			@Override
@@ -643,7 +647,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 		newEntity.setEnabled(false);
-		newEntity.setPreferredSize(new Dimension(300, 24));
+		newEntity.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 10, 22));
 		uiPanel.add(newEntity);
 		refresh();
 	}
@@ -664,8 +668,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 		// -- Entity Tab -- //
 
 		JPanel entityPanel = new JPanel(new SpringLayout());
-
-		entityPanel.add(new JLabel("Name:"));
+		entityPanel.setPreferredSize(new Dimension(uiPanel.getWidth(), 315));
+		JLabel label = new JLabel("Name:");
+		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
+		entityPanel.add(label);
 		JTextField name = new JTextField(entity.fullName + " (" + entity.name + ")");
 		name.setEditable(false);
 		entityPanel.add(name);
@@ -722,7 +728,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		entityCustomValues.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		entityCustomValues.setFillsViewportHeight(true);
-		entityCustomValues.setRowHeight(23);
+		entityCustomValues.setRowHeight(22);
 		entityCustomValues.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		entityCustomValues.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
@@ -919,12 +925,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 					}
 
 					entities.put(entityIndex, data);
-					int selectedRow = tree.getSelectionRows()[0];
 					int selectedTab = tabs.getSelectedIndex();
 					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
-					((DefaultTreeModel) tree.getModel()).reload();
-					tree.expandRow(1);
-					tree.setSelectionRow(selectedRow);
+					((DefaultTreeModel) tree.getModel()).reload((TreeNode) tree.getSelectionPath().getLastPathComponent());
 					tabs.setSelectedIndex(selectedTab);
 					refresh();
 				}
@@ -1214,7 +1217,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		JFileChooser jfc = new JFileChooser(FileUtilities.getJarFile().getParentFile());
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setMultiSelectionEnabled(false);
-		jfc.setFileFilter(filter);
+		if (filter != null) jfc.setFileFilter(filter);
 		if (((open) ? jfc.showOpenDialog(parent) : jfc.showSaveDialog(parent)) == JFileChooser.APPROVE_OPTION)
 		{
 			if (!FileUtilities.getHardDrive(jfc.getSelectedFile()).equals(FileUtilities.getHardDrive(FileUtilities.getJarFile())))

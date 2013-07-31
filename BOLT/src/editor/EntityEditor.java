@@ -352,6 +352,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tabs.setPreferredSize(uiPanel.getPreferredSize());
 
 		EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));
+		EntityBuilder p = getParent(b);
 
 		// -- first tab -- //
 
@@ -458,8 +459,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			data[i] = new String[] { b.customValues.get(key).getClass().getSimpleName(), key, b.customValues.get(key).toString() };
 		}
 		customVals = new JTable(new DefaultTableModel(data, new String[] { "Type", "Name", "Value" }));
-		customVals.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		customVals.putClientProperty("terminateEditOnFocusLost", true);
 		JScrollPane jsp = new JScrollPane(customVals, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp.setPreferredSize(new Dimension(customVals.getWidth(), 150));
 		customVals.setFillsViewportHeight(true);
 		customVals.setRowHeight(22);
 		customVals.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -519,7 +521,88 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		SpringUtilities.makeCompactGrid(panel, 11, 2, 6, 6, 6, 6);
 
-		tabs.addTab("Basic", panel);
+		JPanel wrap = new JPanel();
+		wrap.add(panel);
+
+		tabs.addTab("Basic", wrap);
+
+		// -- second tab -- //
+		panel = new JPanel(new SpringLayout());
+		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 310));
+
+		label = new JLabel("Triggers:");
+		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
+		panel.add(label);
+
+		String[][] eventData = new String[b.triggers.size() + b.nonInheritedTriggers.size()][];
+		for (int i = 0; i < b.triggers.size(); i++)
+		{
+			eventData[i] = new String[] { "false", ((p != null && p.triggers.contains(b.triggers.get(i))) ? "parent:" : "") + b.triggers.get(i) };
+		}
+		for (int i = b.triggers.size(); i < eventData.length; i++)
+		{
+			eventData[i] = new String[] { "true", "parent:" + b.triggers.get(i) };
+		}
+		events = new JTable(new DefaultTableModel(eventData, new String[] { "nonInherit", "Name" }))
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column)
+			{
+				if (!events.getValueAt(row, 1).toString().contains("parent:") && column == 0) return false; // disable nonInherit of not from parent
+
+				return true;
+			}
+		};
+		events.putClientProperty("terminateEditOnFocusLost", true);
+		events.setRowHeight(22);
+		events.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+		events.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsp = new JScrollPane(events, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		events.setFillsViewportHeight(true);
+		jsp.setPreferredSize(new Dimension(0, 150));
+		panel.add(jsp);
+
+		panel.add(new JLabel("Functions:"));
+
+		String[][] functionData = new String[b.functions.size() + b.nonInheritedFunctions.size()][];
+		for (int i = 0; i < b.functions.size(); i++)
+		{
+			String f = b.functions.get(i);
+			functionData[i] = new String[] { "false", ((p != null && p.functions.contains(f)) ? "parent:" : "") + f.substring(0, f.indexOf("(")).trim(), f.substring(f.indexOf("(") + 1, f.indexOf(")")).trim() };
+		}
+		for (int i = b.functions.size(); i < functionData.length; i++)
+		{
+			functionData[i] = new String[] { "true", "parent:" + b.functions.get(i).substring(0, b.functions.get(i).indexOf("(")).trim(), b.functions.get(i).substring(b.functions.get(i).indexOf("(") + 1, b.functions.get(i).indexOf(")")).trim() };
+		}
+		functions = new JTable(new DefaultTableModel(functionData, new String[] { "nonInherit", "Name", "Parameters" }))
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column)
+			{
+				if (!functions.getValueAt(row, 1).toString().contains("parent:") && column == 0) return false; // disable nonInherit of not from parent
+
+				return true;
+			}
+		};
+		functions.putClientProperty("terminateEditOnFocusLost", true);
+		functions.setRowHeight(22);
+		functions.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+		functions.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsp = new JScrollPane(functions, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		functions.setFillsViewportHeight(true);
+		jsp.setPreferredSize(new Dimension(0, 150));
+		panel.add(jsp);
+
+		SpringUtilities.makeCompactGrid(panel, 2, 2, 6, 6, 6, 6);
+
+		wrap = new JPanel();
+		wrap.add(panel);
+
+		tabs.addTab("Events", wrap);
 
 		uiPanel.add(tabs);
 
@@ -588,5 +671,20 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
 		uiPanel.add(apply);
+
+		refresh();
+	}
+
+	private EntityBuilder getParent(EntityBuilder b)
+	{
+		if (b.parent == null) return null;
+
+		for (File key : entityFiles.keySet())
+		{
+			EntityBuilder v = entityFiles.get(key);
+			if (v.name.equals(b.parent)) return v;
+		}
+
+		return null;
 	}
 }

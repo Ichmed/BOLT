@@ -122,9 +122,17 @@ public class EntityIO
 			{
 				e.triggers.add(line.split(" ")[1]);
 			}
+			else if (line.startsWith("-trigger "))
+			{
+				e.triggers.remove(line.split(" ")[1]);
+			}
 			else if (line.startsWith("function "))
 			{
 				e.functions.add(line.substring("function ".length()));
+			}
+			else if (line.startsWith("-function "))
+			{
+				e.functions.remove(line.substring("function ".length()));
 			}
 			else
 			{

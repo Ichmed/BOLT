@@ -8,7 +8,11 @@ public class Counter extends Entity
 	public void onTick()
 	{
 		if ((int) this.customValues.get("value") >= (int) this.customValues.get("targetValue"))
+		{
 			this.triggerEvent("onReachTargetValue");
+			if((boolean)this.customValues.get("reset"))
+				this.customValues.put("value", (int) this.customValues.get("startingValue"));
+		}
 	}
 
 	@Override

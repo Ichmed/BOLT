@@ -58,6 +58,16 @@ public class EntityBuilder
 
 		e.customValues = (HashMap<String, Object>) this.customValues.clone();
 
+		List<String> l = new ArrayList<>();
+		for (String s : this.triggers)
+			l.add(s);
+		e.triggers = l;
+
+		l = new ArrayList<>();
+		for (String s : this.functions)
+			l.add(s);
+		e.functions = l;
+
 		return e;
 	}
 
@@ -86,7 +96,8 @@ public class EntityBuilder
 
 	/**
 	 * 
-	 * @return creates and returns an instance of Entity specified in this EntityBuilder
+	 * @return creates and returns an instance of Entity specified in this
+	 *         EntityBuilder
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException

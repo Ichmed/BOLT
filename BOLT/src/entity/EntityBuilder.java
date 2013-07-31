@@ -18,10 +18,10 @@ public class EntityBuilder
 	public String name;
 	public String fullName;
 
-	public Integer physicsType;
-	public Integer collisionType;
-	public Boolean invisible;
-	public Boolean gravity;
+	public Integer physicsType = 1;
+	public Integer collisionType = 2;
+	public Boolean invisible = false;
+	public Boolean gravity = false;
 	public String model;
 	public String collisionModel;
 	public Float weight;

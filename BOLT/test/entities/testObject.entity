@@ -14,15 +14,15 @@ fullName Test Object
 
 # how the entity reacts to physical force applied to it
 # types:
-#     1 physical
-#     2 static
-physType 1 
+#     0 physical
+#     1 static
+physType 0 
 
 # types:
-#     1 solid (all objects will collide with this object)
-#     2 gameSolid (only object marked as gamePlay objects will collide with the object (players, projectiles, etc.) but not particles etc.
-#     3 not Solid (everything will pass through this entity)
-collType 1
+#     0 solid (all objects will collide with this object)
+#     1 gameSolid (only object marked as gamePlay objects will collide with the object (players, projectiles, etc.) but not particles etc.
+#     2 not Solid (everything will pass through this entity)
+collType 0
 
 # if true the entity won't be rendered in-game
 invis false

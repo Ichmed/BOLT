@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import event.EntityEvent;
+
 import util.math.MathHelper;
 
 public class EntityBuilder
@@ -89,7 +91,10 @@ public class EntityBuilder
 		e.weight = this.weight;
 		e.balancePoint = new Vector3f(this.balancePoint);
 
-		e.customValues = (HashMap<String, Object>) this.customValues.clone();		
+		e.customValues = (HashMap<String, Object>) this.customValues.clone();
+		
+		for(String s : this.triggers)
+			e.events.put(s, new ArrayList<EntityEvent>());
 
 		return e;
 	}

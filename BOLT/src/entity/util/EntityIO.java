@@ -11,6 +11,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import util.Compressor;
+import util.FileUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 
@@ -178,15 +179,27 @@ public class EntityIO
 		content += "collType " + b.collisionType + nl;
 		content += "invis " + Boolean.toString(b.invisible) + nl;
 		content += "grav " + Boolean.toString(b.gravity) + nl;
-		content += "class " + n(b.classPath) + nl;
-		content += "model " + n(b.model) + nl;
-		content += "collisionModel " + n(b.collisionModel) + nl;
+		if (!n(b.classPath).equals("null")) content += "class " + b.classPath + nl;
+		if (!n(b.model).equals("null")) content += "model " + b.model + nl;
+		if (!n(b.collisionModel).equals("null")) content += "collisionModel " + b.collisionModel + nl;
 
 		for (String key : b.customValues.keySet())
 			content += b.customValues.get(key).getClass().getSimpleName().toLowerCase() + " " + key + " " + b.customValues.get(key) + nl;
 
+		for (String function : b.functions)
+			content += "function " + function + nl;
+
+		for (String trigger : b.triggers)
+			content += "trigger " + trigger + nl;
+
+		for (String function : b.nonInheritedFunctions)
+			content += "-function " + function + nl;
+
+		for (String trigger : b.nonInheritedTriggers)
+			content += "-trigger " + trigger + nl;
+
 		Compressor.compressFile(f, content);
-		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
+		FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
 	}
 
 	/**
@@ -198,7 +211,7 @@ public class EntityIO
 	 */
 	private static String n(String o)
 	{
-		if (o == null) return "null";
+		if (o == null || o.length() == 0) return "null";
 		else return o;
 	}
 

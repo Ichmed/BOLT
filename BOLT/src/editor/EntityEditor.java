@@ -74,8 +74,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	JTextField name, fullName, klass, model, collModel;
 	JComboBox<String> physType, collType;
 	JCheckBox invis, grav;
-	JButton browse;
-	JTable customVals, functions, events;
+	JButton browse, apply;
+	JTable customVals, functions, triggers;
 	JTabbedPane tabs;
 
 	public EntityEditor()
@@ -175,6 +175,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			int selRow = tree.getSelectionRows()[0];
 			File f = new ArrayList<>(entityFiles.keySet()).get(selRow - 1);
 			boolean equals = entityFiles.get(new ArrayList<>(entityFiles.keySet()).get(selRow - 1)).equals(EntityIO.loadEntityFile(f));
+			System.out.println("me: " + entityFiles.get(new ArrayList<>(entityFiles.keySet()).get(selRow - 1)));
+			System.out.println("fl: " + EntityIO.loadEntityFile(f));
 			((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(((equals) ? "" : "*") + f.getName().replace(".entity", ""));
 			((DefaultTreeModel) tree.getModel()).reload((TreeNode) tree.getSelectionPath().getLastPathComponent());
 		}
@@ -351,7 +353,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
 		tabs.setPreferredSize(uiPanel.getPreferredSize());
 
-		EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));
+		if (tree.getSelectionRows()[0] - 1 < 0) return;
+
+		final EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));
 		EntityBuilder p = getParent(b);
 
 		// -- first tab -- //
@@ -528,7 +532,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		// -- second tab -- //
 		panel = new JPanel(new SpringLayout());
-		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 310));
+		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 370));
 
 		label = new JLabel("Triggers:");
 		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
@@ -543,26 +547,48 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		{
 			eventData[i] = new String[] { "true", "parent:" + b.triggers.get(i) };
 		}
-		events = new JTable(new DefaultTableModel(eventData, new String[] { "nonInherit", "Name" }))
+		triggers = new JTable(new DefaultTableModel(eventData, new String[] { "nonInherit", "Name" }))
 		{
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public boolean isCellEditable(int row, int column)
 			{
-				if (!events.getValueAt(row, 1).toString().contains("parent:") && column == 0) return false; // disable nonInherit of not from parent
+				if (!triggers.getValueAt(row, 1).toString().contains("parent:") && column == 0) return false; // disable nonInherit of not from parent
 
 				return true;
 			}
 		};
-		events.putClientProperty("terminateEditOnFocusLost", true);
-		events.setRowHeight(22);
-		events.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
-		events.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jsp = new JScrollPane(events, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		events.setFillsViewportHeight(true);
+		triggers.putClientProperty("terminateEditOnFocusLost", true);
+		triggers.setRowHeight(22);
+		triggers.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+		triggers.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsp = new JScrollPane(triggers, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		triggers.setFillsViewportHeight(true);
 		jsp.setPreferredSize(new Dimension(0, 150));
-		panel.add(jsp);
+		JPanel panel2 = new JPanel(new BorderLayout());
+		panel2.add(jsp, BorderLayout.NORTH);
+		panel2.add(new JButton(new AbstractAction("Remove")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (triggers.getSelectedRow() > -1) ((DefaultTableModel) triggers.getModel()).removeRow(triggers.getSelectedRow());
+			}
+		}), BorderLayout.WEST);
+		panel2.add(new JButton(new AbstractAction("Add")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				((DefaultTableModel) triggers.getModel()).addRow(new String[] { "false", "" });
+			}
+		}), BorderLayout.EAST);
+		panel.add(panel2);
 
 		panel.add(new JLabel("Functions:"));
 
@@ -595,7 +621,29 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		jsp = new JScrollPane(functions, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		functions.setFillsViewportHeight(true);
 		jsp.setPreferredSize(new Dimension(0, 150));
-		panel.add(jsp);
+		panel2 = new JPanel(new BorderLayout());
+		panel2.add(jsp, BorderLayout.NORTH);
+		panel2.add(new JButton(new AbstractAction("Remove")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (functions.getSelectedRow() > -1) ((DefaultTableModel) functions.getModel()).removeRow(functions.getSelectedRow());
+			}
+		}), BorderLayout.WEST);
+		panel2.add(new JButton(new AbstractAction("Add")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				((DefaultTableModel) functions.getModel()).addRow(new String[] { "false", "", "" });
+			}
+		}), BorderLayout.EAST);
+		panel.add(panel2);
 
 		SpringUtilities.makeCompactGrid(panel, 2, 2, 6, 6, 6, 6);
 
@@ -606,7 +654,27 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		uiPanel.add(tabs);
 
-		JButton apply = new JButton(new AbstractAction("Apply")
+		JButton save = new JButton(new AbstractAction("Save")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				apply.doClick();
+
+				File key = new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1);
+
+				EntityIO.saveEntityFile(entityFiles.get(key), key);
+
+				checkChanged();
+				refresh();
+			}
+		});
+		save.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth() / 2, 25);
+		uiPanel.add(save);
+
+		apply = new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -657,6 +725,37 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 					else if (type.equals("File")) builder.customValues.put(name, value);
 				}
 
+				for (int i = 0; i < triggers.getRowCount(); i++)
+				{
+					Boolean inherit = Boolean.valueOf(triggers.getValueAt(i, 0).toString());
+					String name = triggers.getValueAt(i, 1).toString();
+					if (name.length() == 0)
+					{
+						valid = false;
+						message = "Please enter a name for trigger #" + i + "!";
+						break;
+					}
+
+					if (name.startsWith("parent:") && !inherit) builder.nonInheritedTriggers.add(name.replace("parent:", ""));
+					else builder.triggers.add(name.replace("parent:", ""));
+				}
+
+				for (int i = 0; i < functions.getRowCount(); i++)
+				{
+					Boolean inherit = Boolean.valueOf(functions.getValueAt(i, 0).toString());
+					String name = functions.getValueAt(i, 1).toString();
+					String params = functions.getValueAt(i, 2).toString();
+					if (name.length() == 0)
+					{
+						valid = false;
+						message = "Please enter a name for function #" + i + "!";
+						break;
+					}
+
+					if (name.startsWith("parent:") && !inherit) builder.nonInheritedFunctions.add(name.replace("parent:", "") + "(" + params + ")");
+					else builder.functions.add(name.replace("parent:", "") + "(" + params + ")");
+				}
+
 				if (!valid)
 				{
 					JOptionPane.showMessageDialog(EntityEditor.this, message, "Error!", JOptionPane.ERROR_MESSAGE);
@@ -669,7 +768,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				refresh();
 			}
 		});
-		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
+		apply.setBounds(uiPanel.getWidth() / 2, uiPanel.getHeight() - 27, uiPanel.getWidth() / 2, 25);
 		uiPanel.add(apply);
 
 		refresh();

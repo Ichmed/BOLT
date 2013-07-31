@@ -1,13 +1,17 @@
 package entity;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.json.JSONObject;
 import org.lwjgl.util.vector.Vector3f;
 
 import util.math.MathHelper;
+import editor.Editor;
 import event.EntityEvent;
 
 public class EntityBuilder
@@ -82,9 +86,14 @@ public class EntityBuilder
 		String s = getClass().getSimpleName() + "[";
 		for (Field field : getClass().getFields())
 		{
+			if (Modifier.isStatic(field.getModifiers())) continue;
 			try
 			{
-				s += field.getName() + "=" + field.get(this) + ",";
+				if (field.getName().equals("customValues"))
+				{
+					s += "customValues=" + Editor.writeValue(JSONObject.wrap((Map<String, Object>) customValues)) + ",";
+				}
+				else s += field.getName() + "=" + field.get(this) + ",";
 			}
 			catch (Exception e)
 			{

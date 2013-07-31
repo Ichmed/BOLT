@@ -323,48 +323,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
-	public static String writeValue(Object value)
-	{
-		String string = "null";
-		try
-		{
-			if (value instanceof Integer || value instanceof Double || value instanceof Boolean) return value.toString();
-			else if (value instanceof JSONArray)
-			{
-				string = "[";
-				if (((JSONArray) value).length() > 0)
-				{
-					for (int i = 0; i < ((JSONArray) value).length(); i++)
-						string += writeValue((((JSONArray) value).get(i))) + ",";
-
-					string = string.substring(0, string.length() - 1);
-				}
-
-				return string + "]";
-			}
-			else if (value instanceof JSONObject)
-			{
-				string = "{";
-				String[] keys = JSONObject.getNames((JSONObject) value);
-				if (keys != null && keys.length > 0)
-				{
-					Arrays.sort(keys);
-					for (String s : keys)
-						string += "\"" + s + "\":" + writeValue(((JSONObject) value).get(s)) + ",";
-
-					string = string.substring(0, string.length() - 1);
-				}
-				return string + "}";
-			}
-			else return "\"" + value.toString() + "\"";
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return string;
-	}
-
 	public void showRawFile()
 	{
 		try
@@ -742,7 +700,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
 		entityPanel.add(jsp);
-		
+
 		entityPanel.add(new JLabel());
 		browse.addActionListener(new ActionListener()
 		{
@@ -1231,5 +1189,47 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 
 		return null;
+	}
+
+	public static String writeValue(Object value)
+	{
+		String string = "null";
+		try
+		{
+			if (value instanceof Integer || value instanceof Double || value instanceof Boolean) return value.toString();
+			else if (value instanceof JSONArray)
+			{
+				string = "[";
+				if (((JSONArray) value).length() > 0)
+				{
+					for (int i = 0; i < ((JSONArray) value).length(); i++)
+						string += writeValue((((JSONArray) value).get(i))) + ",";
+
+					string = string.substring(0, string.length() - 1);
+				}
+
+				return string + "]";
+			}
+			else if (value instanceof JSONObject)
+			{
+				string = "{";
+				String[] keys = JSONObject.getNames((JSONObject) value);
+				if (keys != null && keys.length > 0)
+				{
+					Arrays.sort(keys);
+					for (String s : keys)
+						string += "\"" + s + "\":" + writeValue(((JSONObject) value).get(s)) + ",";
+
+					string = string.substring(0, string.length() - 1);
+				}
+				return string + "}";
+			}
+			else return "\"" + value.toString() + "\"";
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return string;
 	}
 }

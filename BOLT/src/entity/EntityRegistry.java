@@ -2,7 +2,7 @@ package entity;
 
 import java.util.HashMap;
 
-import entity.util.EntityLoader;
+import entity.util.EntityIO;
 
 public class EntityRegistry
 {
@@ -27,7 +27,7 @@ public class EntityRegistry
 		{
 			if (!entries.containsKey(name))
 			{
-				EntityBuilder e = EntityLoader.loadEntity(name);
+				EntityBuilder e = EntityIO.loadEntity(name);
 				if (e == null) return null;
 				registerEntityBuilder(e);
 			}

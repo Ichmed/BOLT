@@ -15,7 +15,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import util.Compressor;
 
-public class MapLoader
+public class MapIO
 {
 	public static void loadMap(World world, String file)
 	{

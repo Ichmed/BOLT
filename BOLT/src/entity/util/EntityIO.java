@@ -19,7 +19,7 @@ import entity.EntityRegistry;
  * @author Ichmed
  * 
  */
-public class EntityLoader
+public class EntityIO
 {
 	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
 
@@ -54,9 +54,9 @@ public class EntityLoader
 			{
 				String parent = line.split(" ")[1];
 				if (parent.equals("null")) parentFound = true;
-				else if (EntityLoader.doesEntityExist(parent))
+				else if (EntityIO.doesEntityExist(parent))
 				{
-					EntityRegistry.registerEntityBuilder(EntityLoader.loadEntity(parent));
+					EntityRegistry.registerEntityBuilder(EntityIO.loadEntity(parent));
 					e = EntityRegistry.entries.get(parent).clone();
 					e.parent = parent;
 					parentFound = true;

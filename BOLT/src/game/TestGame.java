@@ -1,7 +1,7 @@
 package game;
 
-import entity.util.EntityLoader;
-import entity.util.MapLoader;
+import entity.util.EntityIO;
+import entity.util.MapIO;
 
 public class TestGame extends Game
 {
@@ -15,8 +15,8 @@ public class TestGame extends Game
 	@Override
 	protected void initGame()
 	{
-		EntityLoader.findEntities(this.entListFilePath);
+		EntityIO.findEntities(this.entListFilePath);
 		this.currentWorld = new World();
-		MapLoader.loadMap(currentWorld, "test/testMap.map");
+		MapIO.loadMap(currentWorld, "test/testMap.map");
 	}
 }

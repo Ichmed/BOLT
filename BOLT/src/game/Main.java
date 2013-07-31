@@ -24,9 +24,7 @@ import physics.collisionmodels.CollisionBox;
 import render.Model;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
-import util.math.Line;
 import util.math.MathHelper;
-import util.math.Plane;
 import editor.Editor;
 
 public class Main
@@ -47,8 +45,6 @@ public class Main
 	public static Vector3f lightPos = new Vector3f();
 
 	public static final Logger log = Logger.getLogger("BOLT");
-
-	// TODO: logger einrichten
 
 	public static void main(String[] args)
 	{
@@ -210,6 +206,22 @@ public class Main
 			lightPos.y = camera.position.y;
 			lightPos.z = camera.position.z;
 		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_UP))
+		{
+			lightPos.z++;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+		{
+			lightPos.z--;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT))
+		{
+			lightPos.x++;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
+		{
+			lightPos.x--;
+		}
 		glPushMatrix();
 
 		glRotated(camera.rotation.x, 1f, 0f, 0f);
@@ -217,7 +229,9 @@ public class Main
 		glRotated(camera.rotation.z, 0f, 0f, 1f);
 
 		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
-		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { -camera.position.x, -camera.position.y, -camera.position.z, 1 }));
+		
+		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[]
+				{ lightPos.x, lightPos.y, lightPos.z, 1 }));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -227,13 +241,14 @@ public class Main
 		Game.currentGame.gameLoop();
 
 		glColor4d(1, 1, 1, 1);
-		glBegin(GL_POINT);
+		glPointSize(10);
 		for (Vector3f v : c.points)
 		{
+			glBegin(GL_POINTS);
 			glVertex3f(v.x, v.y, v.z);
+			glEnd();
 			// System.out.println(v);
 		}
-		glEnd();
 
 		Display.update();
 		Display.sync(50);

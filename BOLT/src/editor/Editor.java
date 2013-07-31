@@ -363,7 +363,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 			JDialog frame = new JDialog(this, true);
 			frame.setTitle("BOLT Editor - Raw File Preview");
-			frame.setSize(400, 400);
+			frame.setSize(getWidth(), getHeight());
 			frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
 			JTextArea area = new JTextArea(getData().toString(4));
 
@@ -660,9 +660,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		JTabbedPane pane = new JTabbedPane();
 		pane.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
 		pane.setPreferredSize(uiPanel.getPreferredSize());
-		final int entityIndex = tree.getRowForPath(e.getPath()) - 2;
+		final int entityIndex = tree.getSelectionRows()[0] - 2;
 
-		JSONObject entityData = entities.getJSONObject(tree.getRowForPath(e.getPath()) - 2);
+		JSONObject entityData = entities.getJSONObject(entityIndex);
 
 		EntityBuilder entity = EntityRegistry.getEntityBuilder(entityData.getString("name"));
 
@@ -776,7 +776,17 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 
 			JPanel eventPanel = new JPanel(new FlowLayout());
-			eventEvents = new JTable(new DefaultTableModel(new String[] { "Trigger", "Target", "Function", "Parameters" }, 0))
+			String[][] eventData = new String[entityData.getJSONArray("events").length()][4];
+			for (int i = 0; i < eventData.length; i++)
+			{
+				JSONObject o = entityData.getJSONArray("events").getJSONObject(i);
+				eventData[i][0] = o.getString("trigger");
+				eventData[i][1] = o.getString("target");
+				eventData[i][2] = o.getString("function");
+				eventData[i][3] = o.getJSONArray("params").join(", ");
+			}
+
+			eventEvents = new JTable(new DefaultTableModel(eventData, new String[] { "Trigger", "Target", "Function", "Parameters" }))
 			{
 				private static final long serialVersionUID = 1L;
 
@@ -938,24 +948,19 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private void editEvent() throws JSONException
 	{
-		JSONObject entityData = entities.getJSONObject(tree.getSelectionRows()[0] - 2);
-		EntityBuilder entity = EntityRegistry.getEntityBuilder(entityData.getString("name"));
+		final int entityIndex = tree.getSelectionRows()[0] - 2;
+
+		JSONObject entityData = entities.getJSONObject(entityIndex);
+		final EntityBuilder entity = EntityRegistry.getEntityBuilder(entityData.getString("name"));
 
 		eventDialog = new JDialog(this, "BOLT Event Editor", true);
 		eventDialog.setLayout(new FlowLayout());
 		Vector<String> data = new Vector<>();
 		for (int i = 0; i < entities.length(); i++)
-		{
-			try
-			{
-				data.add(entities.getJSONObject(i).getString("id"));
-			}
-			catch (JSONException e)
-			{
-				e.printStackTrace();
-			}
-		}
+			data.add(entities.getJSONObject(i).getString("id"));
+
 		eventTarget = new JSuggestField((Window) eventDialog, data);
+
 		eventTarget.setPreferredSize(new Dimension(150, 22));
 		eventTarget.setFocusable(false);
 		eventTarget.addMouseListener(new MouseAdapter()
@@ -973,6 +978,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		functions.add("-- Choose a function --");
 
 		eventFunction = new JComboBox<>(functions.toArray(new String[] {}));
+
 		eventTarget.getDocument().addDocumentListener(new DocumentListener()
 		{
 
@@ -1014,12 +1020,16 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void itemStateChanged(ItemEvent e)
 			{
-				if (e.getStateChange() == ItemEvent.DESELECTED || eventFunction.getSelectedIndex() == 0) return;
+				if (e.getStateChange() == ItemEvent.DESELECTED) return;
 
 				DefaultTableModel dtm = (DefaultTableModel) params.getModel();
 				dtm.setRowCount(0);
 
-				String[] params = e.getItem().toString().substring(e.getItem().toString().indexOf("(") + 1, e.getItem().toString().indexOf(")")).split(", ");
+				if (eventFunction.getSelectedIndex() == 0) return;
+
+				String function = entity.functions.get(eventFunction.getSelectedIndex() - 1);
+
+				String[] params = function.substring(function.indexOf("(") + 1, function.indexOf(")")).split(", ");
 				for (String param : params)
 					dtm.addRow(new String[] { param.split(" ")[1] + " (" + param.split(" ")[0] + ")", "" });
 			}
@@ -1040,9 +1050,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		jsp.setPreferredSize(new Dimension(eventDialog.getWidth() - 20, eventDialog.getHeight() - 60 - 35));
 		params.setFillsViewportHeight(true);
 		eventDialog.add(jsp);
-		
+
 		JPanel flagPanel = new JPanel(new FlowLayout());
-		//final JTextField flag = 
+		// final JTextField flag =
 
 		JButton apply = new JButton(new AbstractAction("Apply")
 		{
@@ -1080,7 +1090,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 				if (!valid)
 				{
-					JOptionPane.showMessageDialog(eventDialog, "Please solve the following problem(s) before applying:\n" + message, "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(eventDialog, message, "Error!", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
@@ -1099,6 +1109,14 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 		apply.setPreferredSize(new Dimension(eventDialog.getWidth() - 20, 24));
+
+		if (entityData.getJSONArray("events").length() > entityIndex)
+		{
+			eventTarget.setText(entityData.getJSONArray("events").getJSONObject(entityIndex).getString("target"));
+
+			updateEditEventFunction();
+			eventFunction.setSelectedItem(entityData.getJSONArray("events").getJSONObject(entityIndex).getString("function"));
+		}
 		eventDialog.add(apply);
 		eventDialog.setResizable(false);
 		eventDialog.setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -1119,7 +1137,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					functions.add("-- Choose a function --");
 					for (String f : entity.functions)
 					{
-						functions.add(f);
+						functions.add(f.substring(0, f.indexOf("(")).trim());
 					}
 					eventFunction.setModel(new DefaultComboBoxModel<String>(functions.toArray(new String[] {})));
 

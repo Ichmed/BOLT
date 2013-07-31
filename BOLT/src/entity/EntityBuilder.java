@@ -27,7 +27,7 @@ public class EntityBuilder
 	public Float weight = 0f;
 	public Vector3f balancePoint = new Vector3f();
 
-	public List<String> triggers = new ArrayList<>(), functions = new ArrayList<>();
+	public List<String> triggers = new ArrayList<>(), functions = new ArrayList<>(), nonInheritedTriggers = new ArrayList<>(), nonInheritedFunctions = new ArrayList<>();
 
 	public String classPath = "";
 
@@ -96,8 +96,7 @@ public class EntityBuilder
 
 	/**
 	 * 
-	 * @return creates and returns an instance of Entity specified in this
-	 *         EntityBuilder
+	 * @return creates and returns an instance of Entity specified in this EntityBuilder
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException

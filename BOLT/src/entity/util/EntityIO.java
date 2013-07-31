@@ -1,8 +1,10 @@
 package entity.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import util.Compressor;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 
@@ -24,7 +27,7 @@ public class EntityIO
 	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
 
 	/**
-	 * This method will create a new instance of EntityBuilder containing the the values specified in a .entity file. You will have to call a .entlist file containing the path to the .emtity file first
+	 * This method will create a new instance of EntityBuilder containing the the values specified in a .entity file. You will have to call a .entlist file containing the path to the .entity file first
 	 * 
 	 * @param name
 	 *            the entity's name
@@ -41,13 +44,20 @@ public class EntityIO
 		}
 		else return null;
 
-		File OBJFile = new File(path);
-		BufferedReader reader = new BufferedReader(new FileReader(OBJFile));
+		return loadEntityFile(new File(path));
+
+	}
+
+	public static EntityBuilder loadEntityFile(File f) throws IOException
+	{
+		String[] lines = Compressor.decompressFile(f).split("\n");
+
 		EntityBuilder e = new EntityBuilder();
-		String line;
 		boolean parentFound = false;
-		while ((line = reader.readLine()) != null)
+		for (int i = 0; i < lines.length; i++)
 		{
+			String line = lines[i].trim();
+
 			if (line.startsWith("#"))
 			;
 			else if (line.startsWith("parent "))
@@ -64,7 +74,6 @@ public class EntityIO
 			}
 			else if (!parentFound)
 			{
-				reader.close();
 				return null;
 			}
 			else if (line.startsWith("name "))
@@ -147,8 +156,21 @@ public class EntityIO
 				}
 			}
 		}
-		reader.close();
 		return e;
+	}
+
+	public static void saveEntityFile(EntityBuilder b, File f)
+	{
+		try
+		{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+
+			bw.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private static boolean isParentValid(String parent)
@@ -203,31 +225,24 @@ public class EntityIO
 
 	public static void findEntity(String path)
 	{
-		try
+		File file = new File(path);
+
+		String[] lines = Compressor.decompressFile(file).split("\n");
+
+		String name = "", parent = "";
+
+		for (int i = 0; i < lines.length; i++)
 		{
-			File file = new File(path);
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line = lines[i].trim();
 
-			String line;
-			String name = "", parent = "";
-
-			while ((line = reader.readLine()) != null)
-			{
-				if (line.startsWith("#"))
-				;
-				else if (line.startsWith("parent ")) parent = line.split(" ")[1];
-				else if (line.startsWith("name ")) name = line.split(" ")[1];
-			}
-
-			reader.close();
-
-			if (name != "" && parent != "") entitiesFound.put(name, new EntityFound(parent, name, path));
-			else System.err.println(path + " could not be read properly");
+			if (line.startsWith("#"))
+			;
+			else if (line.startsWith("parent ")) parent = line.split(" ")[1];
+			else if (line.startsWith("name ")) name = line.split(" ")[1];
 		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+
+		if (name != "" && parent != "") entitiesFound.put(name, new EntityFound(parent, name, path));
+		else System.err.println(path + " could not be read properly");
 	}
 
 	/**

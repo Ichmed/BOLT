@@ -44,12 +44,12 @@ public class MapIO
 
 					customValues.put(cKeys.getString(j), object);
 				}
-				
+
 				JSONArray events = o.getJSONArray("events");
-				
-				for(int j = 0; j < events.length(); j++)
+
+				for (int j = 0; j < events.length(); j++)
 					entity.events.get(events.getJSONObject(j).get("trigger")).add(new EntityEvent(entity, events.getJSONObject(j)));
-				
+
 				entity.customValues = customValues;
 				entity.key = o.getString("id");
 				entity.initEntity();

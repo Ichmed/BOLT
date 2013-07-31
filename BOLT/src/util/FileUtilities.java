@@ -29,4 +29,9 @@ public class FileUtilities
 	{
 		return from.toPath().relativize(to.toPath()).toFile().toString();
 	}
+
+	public static String getFileContent(File f)
+	{
+		return new String(Compressor.getFileContentAsByteArray(f));
+	}
 }

@@ -606,9 +606,6 @@ public class CollisionBox
 		Vector3f.add(newColBox.width, newColBox.depth, newColBox.middle);
 		Vector3f.add(newColBox.middle, newColBox.height, newColBox.middle);
 		newColBox.middle.scale(0.5f);
-		Vector3f alpha = new Vector3f(0,0,1);
-		Plane beta = new Plane(new Vector3f(0,1,0), new Vector3f(1,1,1));
-		MathHelper.rotateVector(alpha, 90, beta);
 		return newColBox;
 	}
 	
@@ -628,8 +625,8 @@ public class CollisionBox
 	@Override
 	public String toString()
 	{
-		return "points:" + Arrays.toString(points) + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() +
-				"\nwidth: " + width.toString() + "\nheight: " + height.toString() + "\nstartingPoint: " +
-				startingPoint.toString() + "\nmass: " + mass;
+		return "points:" + Arrays.toString(points) + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() + " with length:" + depth.length() +
+				"\nwidth: " + width.toString() + " with length:" + width.length() + "\nheight: " + height.toString() + " with length:" + height.length()
+				+ "\nstartingPoint: " +	startingPoint.toString() + "\nmass: " + mass;
 	}
 }

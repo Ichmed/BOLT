@@ -107,6 +107,7 @@ public class Main
 
 		initGLSettings();
 		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
+		log.log(Level.INFO, c.toString());
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);

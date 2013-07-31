@@ -725,7 +725,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
-		entityCustomValues.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		entityCustomValues.putClientProperty("terminateEditOnFocusLost", true);
 		JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		entityCustomValues.setFillsViewportHeight(true);
 		entityCustomValues.setRowHeight(22);
@@ -742,6 +742,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		jsp.setPreferredSize(new Dimension(entityCustomValues.getWidth(), 150));
 		entityPanel.add(jsp);
+		
 		entityPanel.add(new JLabel());
 		browse.addActionListener(new ActionListener()
 		{
@@ -792,7 +793,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			final JComboBox<String> trigger = new JComboBox<String>(entity.triggers.toArray(new String[] {}));
 			trigger.setSelectedIndex(0);
 			eventEvents.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(trigger));
-			eventEvents.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+			eventEvents.putClientProperty("terminateEditOnFocusLost", true);
 			eventEvents.setRowHeight(22);
 			eventEvents.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jsp = new JScrollPane(eventEvents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -1036,7 +1037,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 
-		params.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		params.putClientProperty("terminateEditOnFocusLost", true);
 		params.setRowHeight(22);
 		Vector<String> cusVals = new Vector<>();
 		for (String key : entity.customValues.keySet())
@@ -1088,7 +1089,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
-		flags.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		flags.putClientProperty("terminateEditOnFocusLost", true);
 		flags.setRowHeight(22);
 		flags.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JCheckBox()));
 		flags.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

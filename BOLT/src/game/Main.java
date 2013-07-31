@@ -20,7 +20,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
-import physics.collisionmodels.CollisionBox;
+import physics.collisionObjects.CollisionBox;
 import render.Model;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;

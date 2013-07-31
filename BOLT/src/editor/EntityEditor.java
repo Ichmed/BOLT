@@ -175,8 +175,6 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			int selRow = tree.getSelectionRows()[0];
 			File f = new ArrayList<>(entityFiles.keySet()).get(selRow - 1);
 			boolean equals = entityFiles.get(new ArrayList<>(entityFiles.keySet()).get(selRow - 1)).equals(EntityIO.loadEntityFile(f));
-			System.out.println("me: " + entityFiles.get(new ArrayList<>(entityFiles.keySet()).get(selRow - 1)));
-			System.out.println("fl: " + EntityIO.loadEntityFile(f));
 			((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(((equals) ? "" : "*") + f.getName().replace(".entity", ""));
 			((DefaultTreeModel) tree.getModel()).reload((TreeNode) tree.getSelectionPath().getLastPathComponent());
 		}

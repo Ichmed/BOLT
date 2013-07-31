@@ -1,6 +1,5 @@
 package util.math;
 
-import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
 
@@ -146,7 +145,6 @@ public class Plane
 		Vector3f direction = new Vector3f();
 		Vector3f.cross(this.getNormal(), plane.getNormal(), direction);
 		direction.normalise();
-		Matrix3f m = new Matrix3f();
 		float[][] matrix = new float[3][4];
 		matrix[0][0] = this.normal.x;
 		matrix[0][1] = this.normal.y;
@@ -195,6 +193,18 @@ public class Plane
 			for(int i = 0; i <= 3; i++)
 				matrix[2][i] = matrix[2][i] * factor + matrix[0][i];
 		}
+		if(matrix[1][1] == 0)
+		{
+			float[] temp = {matrix[1][0], matrix[1][1], matrix[1][2], matrix[1][3]};
+			for(int a = 0; a<= 3; a++)
+			{
+				matrix[1][a] = matrix[2][a];
+				matrix[2][a] = temp[a];
+			}
+		}
+		//just for backup: -->
+		if(matrix[0][0] == 0 || matrix[1][1] == 0 || matrix[2][2] == 0)
+			return null;
 		if(matrix[2][1] != 0)
 		{
 			float factor = -1 * matrix[1][1] / matrix[2][1];

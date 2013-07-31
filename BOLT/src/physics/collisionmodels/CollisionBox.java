@@ -577,9 +577,6 @@ public class CollisionBox
 		bottom.transformToHesseNormalForm();
 		if(top.getNormal().x == bottom.getNormal().x && top.getNormal().y == bottom.getNormal().y && top.getNormal().z == bottom.getNormal().z)
 			bottom.negateNormal();
-		Main.log.log(Level.INFO, "front:\n" + front.toString() + "\nback:\n" + back.toString()  + "\nleft:\n" +
-					left.toString() + "\nright:\n" + right.toString() + "\ntop:\n" + top.toString() + "\nbottom:\n" +
-					bottom.toString());
 		//
 		//Calculating the edgePoints of the collisionBox
 		//

@@ -65,6 +65,7 @@ import org.json.JSONObject;
 
 import util.Compressor;
 import util.FileUtilities;
+import util.JSONUtilities;
 import util.JSuggestField;
 import util.SpringUtilities;
 import entity.EntityBuilder;
@@ -777,17 +778,18 @@ public class Editor extends JFrame implements TreeSelectionListener
 		{
 
 			JPanel eventPanel = new JPanel(new FlowLayout());
-			String[][] eventData = new String[entityData.getJSONArray("events").length()][4];
+			String[][] eventData = new String[entityData.getJSONArray("events").length()][5];
 			for (int i = 0; i < eventData.length; i++)
 			{
 				JSONObject o = entityData.getJSONArray("events").getJSONObject(i);
 				eventData[i][0] = o.getString("trigger");
 				eventData[i][1] = o.getString("target");
 				eventData[i][2] = o.getString("function");
-				eventData[i][3] = o.getJSONArray("params").join(", ");
+				eventData[i][3] = o.getJSONArray("params").join(", ").replace("\"", "");
+				eventData[i][4] = o.getJSONArray("flags").join(", ").replace("\"", "");
 			}
 
-			eventEvents = new JTable(new DefaultTableModel(eventData, new String[] { "Trigger", "Target", "Function", "Parameters" }))
+			eventEvents = new JTable(new DefaultTableModel(eventData, new String[] { "Trigger", "Target", "Function", "Parameters", "Flags" }))
 			{
 				private static final long serialVersionUID = 1L;
 
@@ -815,7 +817,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					((DefaultTableModel) eventEvents.getModel()).addRow(new String[] { trigger.getItemAt(0), "" });
+					((DefaultTableModel) eventEvents.getModel()).addRow(new String[] { trigger.getItemAt(0), "", "", "", "", "" });
 				}
 			}));
 			eventPanel.add(new JButton(new AbstractAction("Edit...")
@@ -870,13 +872,16 @@ public class Editor extends JFrame implements TreeSelectionListener
 						return;
 					}
 
-					entities.getJSONObject(entityIndex).put("id", entityID.getText());
-					entities.getJSONObject(entityIndex).put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
-					entities.getJSONObject(entityIndex).put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
-					EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
-					JSONObject custom = new JSONObject();
+					JSONObject data = entities.getJSONObject(entityIndex);
 					boolean valid = true;
 					String message = "";
+
+					data.put("id", entityID.getText());
+					data.put("pos", new JSONArray(new Double[] { (double) entityPosX.getValue(), (double) entityPosY.getValue(), (double) entityPosZ.getValue() }));
+					data.put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
+					EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
+					JSONObject custom = new JSONObject();
+
 					for (int i = 0; i < entityCustomValues.getModel().getRowCount(); i++)
 					{
 						String name = entityCustomValues.getValueAt(i, 0).toString().split(" ")[0];
@@ -890,17 +895,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 						else if (type.equals("File")) custom.put(name, content);
 					}
 
-					if (!valid)
-					{
-						JOptionPane.showMessageDialog(Editor.this, "Please enter your custom values in the same data type as specified in brackets!\n  at " + message, "Error!", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					entities.getJSONObject(entityIndex).put("custom", custom);
+					data.put("custom", custom);
 
 					// -- Events Tab Data -- //
-					valid = true;
-					message = "";
 					JSONArray events = new JSONArray();
 					for (int i = 0; i < eventEvents.getRowCount(); i++)
 					{
@@ -908,25 +905,37 @@ public class Editor extends JFrame implements TreeSelectionListener
 						String target = eventEvents.getValueAt(i, 1).toString();
 						String function = eventEvents.getValueAt(i, 2).toString();
 						String params = eventEvents.getValueAt(i, 3).toString();
+						String flags = eventEvents.getValueAt(i, 4).toString();
 
-						if (target.length() == 0 && function.length() == 0 && params.length() == 0)
+						if (target.length() == 0 || function.length() == 00)
 						{
-							valid = true;
-							message = "Please edit or remove Event #" + (i + 1);
+							valid = false;
+							message = "Please edit or remove Event #" + i;
 							break;
 						}
 
-						JSONObject o = new JSONObject();
-						o.put("trigger", trigger);
-						o.put("target", target);
-						o.put("function", function);
-						o.put("params", new JSONArray("[" + params + "]"));
+						if (valid)
+						{
+							JSONObject o = new JSONObject();
+							o.put("trigger", trigger);
+							o.put("target", target);
+							o.put("function", function);
+							o.put("params", new JSONArray("[" + params + "]"));
+							o.put("flags", new JSONArray("[" + flags + "]"));
 
-						events.put(o);
+							events.put(o);
+						}
 					}
 
-					entities.getJSONObject(entityIndex).put("events", events);
+					data.put("events", events);
 
+					if (!valid)
+					{
+						JOptionPane.showMessageDialog(Editor.this, message, "Error!", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					entities.put(entityIndex, data);
 					int selectedRow = tree.getSelectionRows()[0];
 					((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(entityID.getText());
 					((DefaultTreeModel) tree.getModel()).reload();
@@ -1058,7 +1067,40 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		panel.add(new JLabel("Flags:"));
 
-		final JTable flags = new JTable(new DefaultTableModel(new String[][] {}, new String[] { "Name", "Value" }));
+		ArrayList<String> flagKeys = new ArrayList<>();
+		flagKeys.add("onlyOnce");
+		for (String key : entity.customValues.keySet())
+		{
+			if (entity.customValues.get(key) instanceof Boolean) flagKeys.add(key);
+		}
+
+		String[][] flagData = new String[flagKeys.size()][2];
+		for (int i = 0; i < flagKeys.size(); i++)
+		{
+			String v = "false";
+
+			String flagString = eventEvents.getValueAt(eventEvents.getSelectedRow(), 4).toString();
+			if (flagString.length() > 0)
+			{
+				JSONArray array = new JSONArray("[" + flagString + "]");
+				System.out.println(JSONUtilities.containsValue(array, flagKeys.get(i)));
+				v = Boolean.toString(JSONUtilities.containsValue(array, flagKeys.get(i)));
+			}
+
+			flagData[i] = new String[] { flagKeys.get(i), v };
+		}
+
+		final JTable flags = new JTable(new DefaultTableModel(flagData, new String[] { "Name", "Value" }))
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column)
+			{
+				if (column == 0) return false; // name column
+				return true;
+			}
+		};
 		flags.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		flags.setRowHeight(22);
 		flags.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JCheckBox()));
@@ -1082,13 +1124,13 @@ public class Editor extends JFrame implements TreeSelectionListener
 				if (eventTarget.getText().length() == 0)
 				{
 					valid = false;
-					message += "Please enter a target ID!\n";
+					message = "Please enter a target ID!\n";
 				}
 
 				if (valid && eventFunction.getSelectedIndex() == 0)
 				{
 					valid = false;
-					message += "Please select a function!\n";
+					message = "Please select a function!\n";
 				}
 
 				if (valid)
@@ -1098,7 +1140,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 						if (params.getValueAt(i, 1).toString().length() == 0)
 						{
 							valid = false;
-							message += "Please enter a value for the parameter \"" + params.getValueAt(i, 0) + "\"!\n";
+							message = "Please enter a value for the parameter \"" + params.getValueAt(i, 0) + "\"!\n";
 							break;
 						}
 					}
@@ -1110,32 +1152,41 @@ public class Editor extends JFrame implements TreeSelectionListener
 					return;
 				}
 
-				String p = "";
+				eventEvents.setValueAt(eventTarget.getText(), eventEvents.getSelectedRow(), 1);
+				eventEvents.setValueAt(eventFunction.getSelectedItem().toString().replaceAll("\\(.{1,}\\)", ""), eventEvents.getSelectedRow(), 2);
 
+				String p = "";
 				for (int i = 0; i < params.getRowCount(); i++)
 					p += params.getValueAt(i, 1).toString() + ", ";
 
 				if (p.length() > 2) p = p.substring(0, p.length() - 2);
-
-				eventEvents.setValueAt(eventTarget.getText(), eventEvents.getSelectedRow(), 1);
-				eventEvents.setValueAt(eventFunction.getSelectedItem().toString().replaceAll("\\(.{1,}\\)", ""), eventEvents.getSelectedRow(), 2);
 				eventEvents.setValueAt(p, eventEvents.getSelectedRow(), 3);
+
+				String f = "";
+				for (int i = 0; i < flags.getRowCount(); i++)
+				{
+					if (flags.getValueAt(i, 1).toString().equals("true")) f += flags.getValueAt(i, 0).toString() + ", ";
+				}
+
+				if (f.length() > 2) f = f.substring(0, f.length() - 2);
+				eventEvents.setValueAt(f, eventEvents.getSelectedRow(), 4);
 
 				eventDialog.dispose();
 			}
 		});
 		panel.add(apply);
 
-		if (entityData.getJSONArray("events").length() > entityIndex)
+		eventTarget.setText(eventEvents.getValueAt(eventEvents.getSelectedRow(), 1).toString());
+		updateEditEventFunction();
+		eventFunction.setSelectedItem(eventEvents.getValueAt(eventEvents.getSelectedRow(), 2).toString());
+
+		String paramString = eventEvents.getValueAt(eventEvents.getSelectedRow(), 3).toString();
+		if (paramString.length() > 0)
 		{
-			eventTarget.setText(entityData.getJSONArray("events").getJSONObject(entityIndex).getString("target"));
-
-			updateEditEventFunction();
-			eventFunction.setSelectedItem(entityData.getJSONArray("events").getJSONObject(entityIndex).getString("function"));
-
-			for (int i = 0; i < entityData.getJSONArray("events").getJSONObject(entityIndex).getJSONArray("params").length(); i++)
+			JSONArray array = new JSONArray("[" + paramString + "]");
+			for (int i = 0; i < array.length(); i++)
 			{
-				params.setValueAt(entityData.getJSONArray("events").getJSONObject(entityIndex).getJSONArray("params").get(i), i, 1);
+				params.setValueAt(array.get(i), i, 1);
 			}
 		}
 

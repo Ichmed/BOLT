@@ -23,6 +23,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -954,13 +955,14 @@ public class Editor extends JFrame implements TreeSelectionListener
 		final EntityBuilder entity = EntityRegistry.getEntityBuilder(entityData.getString("name"));
 
 		eventDialog = new JDialog(this, "BOLT Event Editor", true);
-		eventDialog.setLayout(new FlowLayout());
+		JPanel panel = new JPanel(new SpringLayout());
+
+		panel.add(new JLabel("Target Entity:"));
+
 		Vector<String> data = new Vector<>();
 		for (int i = 0; i < entities.length(); i++)
 			data.add(entities.getJSONObject(i).getString("id"));
-
 		eventTarget = new JSuggestField((Window) eventDialog, data);
-
 		eventTarget.setPreferredSize(new Dimension(150, 22));
 		eventTarget.setFocusable(false);
 		eventTarget.addMouseListener(new MouseAdapter()
@@ -972,11 +974,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 				eventTarget.requestFocus();
 			}
 		});
-		eventDialog.add(eventTarget);
+		panel.add(eventTarget);
+
+		panel.add(new JLabel("Function:"));
 
 		ArrayList<String> functions = new ArrayList<>();
 		functions.add("-- Choose a function --");
-
 		eventFunction = new JComboBox<>(functions.toArray(new String[] {}));
 
 		eventTarget.getDocument().addDocumentListener(new DocumentListener()
@@ -1001,8 +1004,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 
-		eventDialog.add(eventFunction);
-		eventDialog.setSize(eventFunction.getPreferredSize().width + eventTarget.getPreferredSize().width + 30, 250);
+		panel.add(eventFunction);
+
+		panel.add(new JLabel("Parameters:"));
+
 		final JTable params = new JTable(new DefaultTableModel(new String[] { "Name (Type)", "Value" }, 0))
 		{
 			private static final long serialVersionUID = 1L;
@@ -1047,12 +1052,23 @@ public class Editor extends JFrame implements TreeSelectionListener
 		params.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(value));
 		params.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane jsp = new JScrollPane(params, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jsp.setPreferredSize(new Dimension(eventDialog.getWidth() - 20, eventDialog.getHeight() - 60 - 35));
+		jsp.setPreferredSize(new Dimension(300, 120));
 		params.setFillsViewportHeight(true);
-		eventDialog.add(jsp);
+		panel.add(jsp);
 
-		JPanel flagPanel = new JPanel(new FlowLayout());
-		// final JTextField flag =
+		panel.add(new JLabel("Flags:"));
+
+		final JTable flags = new JTable(new DefaultTableModel(new String[][] {}, new String[] { "Name", "Value" }));
+		flags.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		flags.setRowHeight(22);
+		flags.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+		flags.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsp = new JScrollPane(flags, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp.setPreferredSize(new Dimension(300, 120));
+		flags.setFillsViewportHeight(true);
+		panel.add(jsp);
+
+		panel.add(new JLabel());
 
 		JButton apply = new JButton(new AbstractAction("Apply")
 		{
@@ -1108,7 +1124,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				eventDialog.dispose();
 			}
 		});
-		apply.setPreferredSize(new Dimension(eventDialog.getWidth() - 20, 24));
+		panel.add(apply);
 
 		if (entityData.getJSONArray("events").length() > entityIndex)
 		{
@@ -1116,8 +1132,17 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 			updateEditEventFunction();
 			eventFunction.setSelectedItem(entityData.getJSONArray("events").getJSONObject(entityIndex).getString("function"));
+
+			for (int i = 0; i < entityData.getJSONArray("events").getJSONObject(entityIndex).getJSONArray("params").length(); i++)
+			{
+				params.setValueAt(entityData.getJSONArray("events").getJSONObject(entityIndex).getJSONArray("params").get(i), i, 1);
+			}
 		}
-		eventDialog.add(apply);
+
+		SpringUtilities.makeCompactGrid(panel, 5, 2, 6, 6, 6, 6);
+
+		eventDialog.setContentPane(panel);
+		eventDialog.pack();
 		eventDialog.setResizable(false);
 		eventDialog.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		eventDialog.setLocationRelativeTo(null);
@@ -1140,8 +1165,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 						functions.add(f.substring(0, f.indexOf("(")).trim());
 					}
 					eventFunction.setModel(new DefaultComboBoxModel<String>(functions.toArray(new String[] {})));
-
-					eventDialog.setSize(eventFunction.getPreferredSize().width + eventTarget.getPreferredSize().width + 30, 250);
 				}
 			}
 		}

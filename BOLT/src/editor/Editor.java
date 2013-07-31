@@ -927,7 +927,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 					tree.setSelectionRow(selectedRow);
 					tabs.setSelectedIndex(selectedTab);
 					refresh();
-
 				}
 				catch (JSONException e1)
 				{

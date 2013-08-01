@@ -122,6 +122,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JComboBox<String> eventFunction;
 
 	// -- toolbar -- //
+	JButton save, saveAs, rawFile;
 
 	public Editor()
 	{
@@ -193,7 +194,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				openMap();
 			}
 		}));
-		toolBar.add(createToolBarButton("Save", "save_edit", new AbstractAction()
+		save = createToolBarButton("Save", "save_edit", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -202,8 +203,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				saveMap();
 			}
-		}));
-		toolBar.add(createToolBarButton("Save As", "saveas_edit", new AbstractAction()
+		});
+		save.setEnabled(false);
+		toolBar.add(save);
+
+		saveAs = createToolBarButton("Save As", "saveas_edit", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -212,10 +216,13 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				saveUMap();
 			}
-		}));
+		});
+		saveAs.setEnabled(false);
+		toolBar.add(saveAs);
+
 		toolBar.addSeparator();
 
-		toolBar.add(createToolBarButton("Raw file", "file_obj", new AbstractAction()
+		rawFile = createToolBarButton("Raw file", "file_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -224,7 +231,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				showRawFile();
 			}
-		}));
+		});
+		rawFile.setEnabled(false);
+		toolBar.add(rawFile);
+
 		toolBar.addSeparator();
 
 		toolBar.add(createToolBarButton("Entity Editor", "entity", new AbstractAction()
@@ -256,11 +266,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 			{
 				Image image = ((ImageIcon) Editor.getIcon("enum_obj")).getImage();
-				setLeafIcon(new ImageIcon(image.getScaledInstance(16,16, Image.SCALE_FAST)));
-				
+				setLeafIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_FAST)));
+
 				image = ((ImageIcon) Editor.getIcon("fldr_obj")).getImage();
-				setOpenIcon(new ImageIcon(image.getScaledInstance(16,16, Image.SCALE_FAST)));
-				setClosedIcon(new ImageIcon(image.getScaledInstance(16,16, Image.SCALE_FAST)));
+				setOpenIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_FAST)));
+				setClosedIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_FAST)));
 			}
 		});
 		tree.setModel(null);
@@ -368,9 +378,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private void reset()
 	{
-		// saveFile.setEnabled(true);
-		// saveUFile.setEnabled(true);
-		// view.setEnabled(true);
+		save.setEnabled(true);
+		saveAs.setEnabled(true);
+		rawFile.setEnabled(true);
 		tree.setEnabled(true);
 		entities = new JSONArray();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
@@ -1242,7 +1252,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	{
 		try
 		{
-			return new ImageIcon(ImageIO.read(Editor.class.getResource("/editor/icons/" + name + ".png")).getScaledInstance(20, 20, Image.SCALE_FAST));
+			return new ImageIcon(ImageIO.read(Editor.class.getResource("/editor/icons/" + name + ".png")).getScaledInstance(20, 20, Image.SCALE_SMOOTH));
 		}
 		catch (IOException e)
 		{

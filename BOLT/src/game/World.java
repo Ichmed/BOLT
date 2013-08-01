@@ -36,12 +36,12 @@ public class World
 		return currentMap;
 	}
 	
-	public void addEntityToGroup(Entity entity, String group)
+	public void addEntityToGroup(Entity entity, String groupName)
 	{
-		List<Entity> l = this.entityGroups.get(group);
+		List<Entity> l = this.entityGroups.get(groupName);
 		if(l == null) l = new ArrayList<>();
 		l.add(entity);
-		this.entityGroups.put(group, l);
+		this.entityGroups.put(groupName, l);
 	}
 	
 	public List<Entity> getEntityList(String name)

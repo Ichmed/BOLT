@@ -50,8 +50,10 @@ public class EntityEvent
 	{
 		List<Entity> targets = Game.getCurrentGame().getCurrentWorld().getEntityList(target);
 		
+		
 		for(Entity e : targets)
 		{
+			System.out.println(owner + " " + target); 
 			Method[] methods = e.getClass().getMethods();
 			
 			Object[] o = new Object[parameters.length()];

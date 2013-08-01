@@ -34,7 +34,7 @@ public class MapIO
 				JSONArray groups = o.getJSONArray("groups");
 				for (int j = 0; j < groups.length(); j++)
 				{
-					Game.getCurrentGame().getCurrentWorld().addEntityToGroup(entity, groups.getString(i));
+					Game.getCurrentGame().getCurrentWorld().addEntityToGroup(entity, groups.getString(j));
 				}
 				JSONArray pos = o.getJSONArray("pos");
 				JSONArray rot = o.getJSONArray("rot");

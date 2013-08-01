@@ -36,10 +36,9 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -64,6 +63,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -122,7 +122,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JComboBox<String> eventFunction;
 
 	// -- toolbar -- //
-	JButton save, saveAs, rawFile;
+	JButton save, saveAs, rawFile, create, clone, delete;
 
 	public Editor()
 	{
@@ -160,7 +160,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
-		toolBar.add(createToolBarButton("New", "new_con", new AbstractAction()
+		toolBar.add(createToolBarButton("New Map", "new_con", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -248,6 +248,59 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		}));
 
+		toolBar.addSeparator();
+
+		create = createToolBarButton("New Entity", "newenum_wiz", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				newEntity();
+			}
+		});
+		create.setEnabled(false);
+		toolBar.add(create);
+		clone = createToolBarButton("Clone Entity", "copy_edit", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				int sel = tree.getSelectionRows()[0] - 2;
+				DefaultMutableTreeNode s = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
+				((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode(s.getUserObject().toString() + " (2)"), (MutableTreeNode) s.getParent(), s.getParent().getChildCount());
+				try
+				{
+					JSONObject o = entities.getJSONObject(sel);
+					o.put("id", s.getUserObject().toString() + " (2)");
+					entities.put(o);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
+		clone.setEnabled(false);
+		toolBar.add(clone);
+		delete = createToolBarButton("Remove Entity", "enum_private_obj", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				int sel = tree.getSelectionRows()[0] - 2;
+				((DefaultTreeModel) tree.getModel()).removeNodeFromParent((MutableTreeNode) tree.getSelectionPath().getLastPathComponent());
+				entities.remove(sel);
+			}
+		});
+		delete.setEnabled(false);
+		toolBar.add(delete);
+
 		// -- components -- //
 		JPanel contentPanel = new JPanel(new BorderLayout());
 
@@ -279,37 +332,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(this);
 		tree.setExpandsSelectedPaths(true);
-		tree.addMouseListener(new MouseAdapter()
-		{
-			public void mouseClicked(MouseEvent e)
-			{
-				if (e.getButton() != 3) return;
-
-				final int row = tree.getRowForLocation(e.getX(), e.getY());
-
-				if (row <= 1) return;
-
-				tree.setSelectionRow(row);
-
-				JPopupMenu menu = new JPopupMenu();
-				JMenuItem del = new JMenuItem(new AbstractAction("Delete")
-				{
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						entities.remove(row - 2);
-						DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
-						dtm.removeNodeFromParent((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent());
-						refresh();
-					}
-				});
-				menu.add(del);
-
-				menu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
+		// tree.addMouseListener(new MouseAdapter() { public void mouseClicked(MouseEvent e) { if (e.getButton() != 3) return;final int row = tree.getRowForLocation(e.getX(), e.getY());if (row <= 1) return;tree.setSelectionRow(row);JPopupMenu menu = new JPopupMenu(); JMenuItem del = new JMenuItem(new AbstractAction("Delete") { private static final long serialVersionUID = 1L; @Override public void actionPerformed(ActionEvent e) { entities.remove(row - 2); DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel(); dtm.removeNodeFromParent((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()); refresh(); } }); menu.add(del);menu.show(e.getComponent(), e.getX(), e.getY()); } });
 
 		treePanel.setViewportView(tree);
 
@@ -381,6 +404,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		save.setEnabled(true);
 		saveAs.setEnabled(true);
 		rawFile.setEnabled(true);
+		create.setEnabled(true);
 		tree.setEnabled(true);
 		entities = new JSONArray();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
@@ -525,82 +549,34 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private String[] loadEntityList()
 	{
-		ArrayList<String> list = new ArrayList<>();
-		list.add("-- Choose an Entity --");
+		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
 
-		for (String key : EntityIO.entitiesFound.keySet())
-		{
-			list.add(key);
-		}
+		ArrayList<String> list = new ArrayList<>(EntityIO.entitiesFound.keySet());
 		Collections.sort(list);
 		return list.toArray(new String[] {});
 	}
 
-	@Override
-	public void valueChanged(TreeSelectionEvent e)
+	private void newEntity()
 	{
-		uiPanel.setLayout(new FlowLayout());
-		uiPanel.removeAll();
-		refresh();
-
-		final DefaultMutableTreeNode s = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-
-		if (tree.getRowForPath(e.getPath()) == 1) // Entities
-		showEntitesUI(s);
-
-		if (tree.getRowForPath(e.getPath()) > 1) // Entity1, Entity2, ...
-		{
-			if (entities.length() == 0) return;
-
-			if (tree.getRowForPath(e.getPath()) - 2 < 0) return;
-
-			try
-			{
-				showEntityUI(e);
-			}
-			catch (Exception e1)
-			{
-				e1.printStackTrace();
-			}
-		}
-	}
-
-	private void showEntitesUI(final DefaultMutableTreeNode s)
-	{
-		final JButton newEntity = new JButton();
-
-		final JComboBox<String> entities = new JComboBox<>(loadEntityList());
-		entities.setSelectedIndex(0);
-		entities.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 10, 22));
-		entities.addItemListener(new ItemListener()
+		final JDialog dialog = new JDialog(this, "New Entity", true);
+		dialog.setSize(400, 170);
+		final JList<String> list = new JList<>(loadEntityList());
+		list.addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
-			public void itemStateChanged(ItemEvent e)
-			{
-				if (e.getStateChange() == ItemEvent.SELECTED)
-				{
-					newEntity.setEnabled(entities.getSelectedIndex() > 0);
-				}
-			}
-		});
-		uiPanel.add(entities);
-
-		newEntity.setAction(new AbstractAction("New Entity")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
+			public void valueChanged(ListSelectionEvent e)
 			{
 				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
+				DefaultMutableTreeNode s = (DefaultMutableTreeNode) tree.getPathForRow(1).getLastPathComponent();
+
 				dtm.insertNodeInto(new DefaultMutableTreeNode(s.getChildCount()), s, s.getChildCount());
 				tree.expandRow(1);
 				try
 				{
-					EntityBuilder entity = EntityRegistry.getEntityBuilder(entities.getSelectedItem().toString().replace(".entity", ""));
+					EntityBuilder entity = EntityRegistry.getEntityBuilder(list.getSelectedValue().replace(".entity", ""));
 
 					JSONObject object = new JSONObject();
-					object.put("name", entities.getSelectedItem().toString().replace(".entity", ""));
+					object.put("name", list.getSelectedValue().replace(".entity", ""));
 					object.put("id", "" + (s.getChildCount() - 1));
 					object.put("pos", new JSONArray(new Double[] { 0d, 0d, 0d }));
 					object.put("rot", new JSONArray(new Double[] { 0d, 0d, 0d }));
@@ -612,6 +588,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 					}
 					object.put("custom", custom);
 					Editor.this.entities.put(object);
+
+					dialog.dispose();
+
 					refresh();
 				}
 				catch (Exception e1)
@@ -620,10 +599,37 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 			}
 		});
-		newEntity.setEnabled(false);
-		newEntity.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 10, 22));
-		uiPanel.add(newEntity);
+		dialog.setContentPane(new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		dialog.setDefaultCloseOperation(HIDE_ON_CLOSE);
+		dialog.setResizable(false);
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent e)
+	{
+		uiPanel.setLayout(new FlowLayout());
+		uiPanel.removeAll();
 		refresh();
+
+		// -- toolbar -- //
+		clone.setEnabled(tree.getRowForPath(e.getPath()) > 1);
+		delete.setEnabled(tree.getRowForPath(e.getPath()) > 1);
+
+		if (tree.getRowForPath(e.getPath()) > 1) // Entity1, Entity2, ...
+		{
+			if (entities.length() == 0) return;
+
+			try
+			{
+				showEntityUI(e);
+			}
+			catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private void showEntityUI(TreeSelectionEvent e) throws Exception

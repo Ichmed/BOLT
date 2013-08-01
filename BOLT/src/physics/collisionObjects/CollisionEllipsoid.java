@@ -2,11 +2,12 @@ package physics.collisionObjects;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import util.math.MathHelper;
 
 /**
  * TODO: rescript
- * Mel: bitte ändere die Ellipsoid Formel bitte in: alpha²/length² + beta²/width² + gamma²/height² = 0
+ * Mel: bitte aendere die Ellipsoid Formel bitte in: alphaÂ²/lengthÂ² + betaÂ²/widthÂ² + gammaÂ²/heightÂ² = 1
  * 													^X = alpha*^length + beta*^width + gamma*^height + ^middle
  * ^ bedeutet Vektor
  */
@@ -21,16 +22,16 @@ public class CollisionEllipsoid extends CollisionObject
 	/**
 	 * the length of the ellipsoid
 	 */
-	public float length = 0;
+	public Vector3f length = null;
 	/**
 	 * the width of the ellipsoid
 	 */
-	public float width = 0;
+	public Vector3f width = null;
 
 	/**
 	 * the height of the ellipsoid
 	 */
-	public float height = 0;
+	public Vector3f height = null;
 
 	/**
 	 * create a new Collisionbox based on a Vector pointing at the middle,
@@ -47,9 +48,12 @@ public class CollisionEllipsoid extends CollisionObject
 	 * @param mass
 	 *            the mass used for the calculation of falling
 	 */
-	public CollisionEllipsoid(Vector3f middle, float length, float width, float height, float mass)
+	public CollisionEllipsoid(Vector3f middle, Vector3f length, Vector3f width, Vector3f height, float mass)
 	{
 		this.middle = new Vector3f(middle.getX(), middle.getY(), middle.getZ());
+		this.length = MathHelper.cloneVector(length);
+		this.width = MathHelper.cloneVector(width);
+		this.height = MathHelper.cloneVector(height);
 		this.mass = mass;
 	}
 
@@ -66,12 +70,12 @@ public class CollisionEllipsoid extends CollisionObject
 	 * @param height
 	 *            the third radius
 	 */
-	public CollisionEllipsoid(Vector3f middle, float length, float width, float height)
+	public CollisionEllipsoid(Vector3f middle, Vector3f length, Vector3f width, Vector3f height)
 	{
 		this.middle = new Vector3f(middle.getX(), middle.getY(), middle.getZ());
-		this.length = length;
-		this.width = width;
-		this.height = height;
+		this.length = MathHelper.cloneVector(length);
+		this.width = MathHelper.cloneVector(width);
+		this.height = MathHelper.cloneVector(height);
 	}
 
 	/**
@@ -91,12 +95,12 @@ public class CollisionEllipsoid extends CollisionObject
 	 * @param height
 	 *            the third radius
 	 */
-	public CollisionEllipsoid(float x, float y, float z, float length, float width, float height)
+	public CollisionEllipsoid(float x, float y, float z, Vector3f length, Vector3f width, Vector3f height)
 	{
 		this.middle = new Vector3f(x, y, z);
-		this.length = length;
-		this.width = width;
-		this.height = height;
+		this.length = MathHelper.cloneVector(length);
+		this.width = MathHelper.cloneVector(width);
+		this.height = MathHelper.cloneVector(height);
 	}
 
 	/**
@@ -118,19 +122,20 @@ public class CollisionEllipsoid extends CollisionObject
 	 * @param mass
 	 *            the mass used for the calculation of falling
 	 */
-	public CollisionEllipsoid(float x, float y, float z, float length, float width, float height, float mass)
+	public CollisionEllipsoid(float x, float y, float z, Vector3f length, Vector3f width, Vector3f height, float mass)
 	{
 		this.middle = new Vector3f(x, y, z);
-		this.length = length;
-		this.width = width;
-		this.height = height;
+		this.length = MathHelper.cloneVector(length);
+		this.width = MathHelper.cloneVector(width);
+		this.height = MathHelper.cloneVector(height);
 		this.mass = mass;
 	}
 
-	public static CollisionEllipsoid createCollisionEllipsoid(Vector3f... points)
+	@Override
+	public  CollisionObject create(Vector3f... points) throws NotImplementedException
 	{
-		CollisionSphere temp = CollisionSphere.create(points);
-		CollisionEllipsoid res = new CollisionEllipsoid(temp.middle, temp.radius * 2, temp.radius * 2, temp.radius * 2);
+		CollisionBox temp = CollisionBox.create(points);
+		CollisionEllipsoid res = new CollisionEllipsoid(temp.middle, (Vector3f) MathHelper.cloneVector(temp.depth).scale(2), (Vector3f) MathHelper.cloneVector(temp.width).scale(2), (Vector3f) MathHelper.cloneVector(temp.height).scale(2));
 		Vector3f[] ordered = points.clone();
 		float[] abstaende = new float[points.length];
 		for (int i = 0; i < points.length; i++)
@@ -169,8 +174,8 @@ public class CollisionEllipsoid extends CollisionObject
 					for (int a = 0; a < ordered.length; a++)
 					{
 						abstaende[a] = MathHelper.calculateDistancePointToPoint(res.middle, ordered[a]);
-						float b = ((ordered[a].getX() * ordered[a].getX()) / (res.length * res.length)) + ((ordered[a].getY() * ordered[a].getY()) / (res.width * res.width))
-								+ ((ordered[a].getZ() * ordered[a].getZ()) / (res.height * res.height));
+						float b = ((ordered[a].getX() * ordered[a].getX()) / (res.length.length() * res.length.length())) + ((ordered[a].getY() * ordered[a].getY()) / (res.width.length() * res.width.length()))
+								+ ((ordered[a].getZ() * ordered[a].getZ()) / (res.height.length() * res.height.length()));
 						if (b == 0)
 						{
 							// punkt liegt genau auf der Oberflaeche und es muss

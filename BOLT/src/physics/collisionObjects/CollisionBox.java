@@ -231,7 +231,7 @@ public class CollisionBox extends CollisionObject
 	 *            the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
-	public static CollisionBox create(Vector3f... points)
+	public static CollisionBox create(Vector3f... points) // <-- TODO: Darf nicht static sein da vererbt
 	{
 		//
 		// !!!VARIABLENAMES + COMMENTATION FOR AXIS IS FULLY BULLSHIT!!!

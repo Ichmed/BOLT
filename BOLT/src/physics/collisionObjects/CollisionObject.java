@@ -15,7 +15,7 @@ public abstract class CollisionObject
 	 */
 	public float mass = 0;
 	
-	public static CollisionObject create(Vector3f... points) throws NotImplementedException
+	public  CollisionObject create(Vector3f... points) throws NotImplementedException
 	{
 		 throw new NotImplementedException();
 	}

@@ -11,6 +11,7 @@
     },
     "name": "testObject",
     "id": "testID",
+    "groups": ["GROUP0",...],
     "events": [
       {
         "trigger": "TRIGGER",

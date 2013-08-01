@@ -401,8 +401,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private void reset()
 	{
-		save.setEnabled(true);
-		saveAs.setEnabled(true);
 		rawFile.setEnabled(true);
 		create.setEnabled(true);
 		tree.setEnabled(true);
@@ -614,6 +612,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 		refresh();
 
 		// -- toolbar -- //
+		boolean isChanged = isChanged();
+		save.setEnabled(isChanged);
+		saveAs.setEnabled(isChanged);
+
 		clone.setEnabled(tree.getRowForPath(e.getPath()) > 1);
 		delete.setEnabled(tree.getRowForPath(e.getPath()) > 1);
 

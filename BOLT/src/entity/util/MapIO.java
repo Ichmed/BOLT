@@ -30,6 +30,11 @@ public class MapIO
 				JSONObject o = entities.getJSONObject(i);
 				Entity entity = EntityRegistry.createEntity(o.getString("name"));
 
+				JSONArray groups = o.getJSONArray("groups");
+				for (int j = 0; j < groups.length(); j++)
+				{
+					entity.groups.add(groups.getString(i));
+				}
 				JSONArray pos = o.getJSONArray("pos");
 				JSONArray rot = o.getJSONArray("rot");
 				entity.setPosition((float) pos.getDouble(0), (float) pos.getDouble(1), (float) pos.getDouble(2));

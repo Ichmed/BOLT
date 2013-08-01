@@ -1,18 +1,20 @@
 package entity;
 
-import event.EntityEvent;
-import game.World;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotated;
+import static org.lwjgl.opengl.GL11.glTranslated;
 
-import static org.lwjgl.opengl.GL11.*;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import render.RenderHelper;
-
 import util.math.MathHelper;
+import event.EntityEvent;
+import game.World;
 
 public class Entity
 {
@@ -112,6 +114,8 @@ public class Entity
 	 */
 	public String key;
 
+	public ArrayList<String> groups = new ArrayList<>();
+	
 	/**
 	 * This method is called every game-tick to make the Entity perform whatever
 	 * it does

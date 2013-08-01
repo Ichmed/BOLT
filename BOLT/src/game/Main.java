@@ -232,6 +232,10 @@ public class Main
 			lightPos.x--;
 		}
 		glPushMatrix();
+		
+		glBegin(GL_POINTS);
+		glVertex3f(lightPos.x + 2, lightPos.y, lightPos.z);
+		glEnd();
 
 		glRotated(camera.rotation.x, 1f, 0f, 0f);
 		glRotated(camera.rotation.y, 0f, 1f, 0f);

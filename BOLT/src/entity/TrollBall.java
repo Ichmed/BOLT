@@ -51,6 +51,7 @@ public class TrollBall extends Entity
 		return (float) (Math.random() * 2) - 1;
 	}
 
+	@Override
 	protected void doRendering()
 	{
 		glTranslated(this.position.x, this.position.y, this.position.z);

@@ -62,6 +62,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
@@ -226,7 +227,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}));
 		toolBar.addSeparator();
 
-		toolBar.add(createToolBarButton("Entity Editor", "enum_obj", new AbstractAction()
+		toolBar.add(createToolBarButton("Entity Editor", "entity", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -249,6 +250,19 @@ public class Editor extends JFrame implements TreeSelectionListener
 		treePanel.setPreferredSize(new Dimension(200, 600));
 		panel.add(treePanel);
 		tree = new JTree(new DefaultMutableTreeNode("World"));
+		tree.setCellRenderer(new DefaultTreeCellRenderer()
+		{
+			private static final long serialVersionUID = 1L;
+
+			{
+				Image image = ((ImageIcon) Editor.getIcon("enum_obj")).getImage();
+				setLeafIcon(new ImageIcon(image.getScaledInstance(16,16, Image.SCALE_FAST)));
+				
+				image = ((ImageIcon) Editor.getIcon("fldr_obj")).getImage();
+				setOpenIcon(new ImageIcon(image.getScaledInstance(16,16, Image.SCALE_FAST)));
+				setClosedIcon(new ImageIcon(image.getScaledInstance(16,16, Image.SCALE_FAST)));
+			}
+		});
 		tree.setModel(null);
 		tree.setEnabled(false);
 		tree.setShowsRootHandles(true);

@@ -224,7 +224,7 @@ public class EntityIO
 		}
 
 		Compressor.compressFile(f, content);
-		FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
+		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
 	}
 
 	/**

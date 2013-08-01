@@ -507,6 +507,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 	public void showEntityUI()
 	{
+		refresh();
 
 		uiPanel.setLayout(null);
 
@@ -515,8 +516,6 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tabs.setPreferredSize(uiPanel.getPreferredSize());
 
 		if (tree.getSelectionRows()[0] - 1 < 0) return;
-
-		System.out.println("fired");
 
 		final EntityBuilder b = entityFiles.get(tree.getSelectionRows()[0] - 1).b;
 		final EntityBuilder p = getParent(b);
@@ -914,32 +913,18 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 				int index = tree.getSelectionRows()[0] - 1;
 
-				// TODO remove
-				// EntityBuilder fullBuilder = builder;
-				// try
-				// {
-				// File tempFile = new File(entityFiles.get(index).f.getPath() + ".tmp");
-				// tempFile.createNewFile();
-				// EntityIO.saveEntityFile(builder, tempFile);
-				//
-				// fullBuilder = EntityIO.loadEntityFile(tempFile);
-				//
-				// tempFile.delete();
-				// }
-				// catch (IOException e1)
-				// {
-				// e1.printStackTrace();
-				// }
-
 				entityFiles.set(index, new EntityFile(entityFiles.get(index).f, builder));
 
 				refresh();
 				checkChanged();
+
 				showEntityUI();
 			}
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
 		uiPanel.add(apply);
+
+		refresh();
 	}
 
 	private JButton createToolBarButton(String tooltip, String icon, Action action)

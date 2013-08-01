@@ -59,6 +59,7 @@ public class EntityIO
 		for (int i = 0; i < lines.length; i++)
 		{
 			String line = lines[i].trim();
+			if (line.length() == 0) continue;
 
 			if (line.startsWith("#"))
 			;
@@ -186,12 +187,12 @@ public class EntityIO
 		{
 			if (p == null || (p != null && !p.classPath.equals(b.classPath))) content += "class " + b.classPath + nl;
 		}
-		
+
 		if (!n(b.model).equals("null"))
 		{
 			if (p == null || (p != null && !p.model.equals(b.model))) content += "model " + b.model + nl;
 		}
-		
+
 		if (!n(b.collisionModel).equals("null"))
 		{
 			if (p == null || (p != null && !p.collisionModel.equals(b.collisionModel))) content += "collisionModel " + b.collisionModel + nl;

@@ -595,6 +595,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			data[i] = new String[] { b.customValues.get(key).getClass().getSimpleName(), key, b.customValues.get(key).toString() };
 		}
 		customVals = new JTable(new DefaultTableModel(data, new String[] { "Type", "Name", "Value" }));
+		customVals.getTableHeader().setResizingAllowed(false);
+		customVals.getTableHeader().setReorderingAllowed(false);
 		customVals.putClientProperty("terminateEditOnFocusLost", true);
 		JScrollPane jsp = new JScrollPane(customVals, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jsp.setPreferredSize(new Dimension(customVals.getWidth(), 150));
@@ -694,6 +696,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
+		triggers.getTableHeader().setResizingAllowed(false);
+		triggers.getTableHeader().setReorderingAllowed(false);
 		triggers.putClientProperty("terminateEditOnFocusLost", true);
 		triggers.setRowHeight(22);
 		triggers.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
@@ -750,6 +754,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
+		functions.getTableHeader().setResizingAllowed(false);
+		functions.getTableHeader().setReorderingAllowed(false);
 		functions.putClientProperty("terminateEditOnFocusLost", true);
 		functions.setRowHeight(22);
 		functions.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));

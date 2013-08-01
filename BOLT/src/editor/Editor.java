@@ -3,6 +3,7 @@ package editor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -111,7 +112,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JSpinner entityPosX, entityPosY, entityPosZ;
 	JSpinner entityRotX, entityRotY, entityRotZ;
 	JTextField entityID;
-	JTable entityCustomValues;
+	JTable entityCustomValues, entityGroups;
 
 	JTabbedPane tabs;
 
@@ -579,6 +580,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					object.put("pos", new JSONArray(new Double[] { 0d, 0d, 0d }));
 					object.put("rot", new JSONArray(new Double[] { 0d, 0d, 0d }));
 					object.put("events", new JSONArray());
+					object.put("groups", new JSONArray());
 					JSONObject custom = new JSONObject();
 					for (String key : entity.customValues.keySet())
 					{
@@ -650,7 +652,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		// -- Entity Tab -- //
 
 		JPanel entityPanel = new JPanel(new SpringLayout());
-		entityPanel.setPreferredSize(new Dimension(uiPanel.getWidth(), 315));
+		entityPanel.setPreferredSize(new Dimension(uiPanel.getWidth(), 473));
 		JLabel label = new JLabel("Name:");
 		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
 		entityPanel.add(label);
@@ -707,6 +709,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
+		entityCustomValues.getTableHeader().setResizingAllowed(false);
+		entityCustomValues.getTableHeader().setReorderingAllowed(false);
 		entityCustomValues.putClientProperty("terminateEditOnFocusLost", true);
 		JScrollPane jsp = new JScrollPane(entityCustomValues, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		entityCustomValues.setFillsViewportHeight(true);
@@ -737,8 +741,49 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		entityPanel.add(browse);
 
-		SpringUtilities.makeCompactGrid(entityPanel, 6, 2, 6, 6, 6, 6);
+		entityPanel.add(new JLabel("Groups:"));
+		String[][] groupData = new String[entityData.getJSONArray("groups").length()][];
+		for (int i = 0; i < groupData.length; i++)
+		{
+			groupData[i] = new String[] { entityData.getJSONArray("groups").getString(i) };
+		}
+		entityGroups = new JTable(new DefaultTableModel(groupData, new String[] { "Name" }));
+		entityGroups.getTableHeader().setResizingAllowed(false);
+		entityGroups.getTableHeader().setReorderingAllowed(false);
+		entityGroups.putClientProperty("terminateEditOnFocusLost", true);
+		jsp = new JScrollPane(entityGroups, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		entityGroups.setFillsViewportHeight(true);
+		entityGroups.setRowHeight(22);
+		entityGroups.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsp.setPreferredSize(new Dimension(entityGroups.getWidth(), 150));
+		entityPanel.add(jsp);
 
+		entityPanel.add(new JLabel());
+		JPanel panel2 = new JPanel(new GridLayout(1, 2));
+		panel2.setPreferredSize(new Dimension(uiPanel.getWidth() / 2, 22));
+		panel2.add(new JButton(new AbstractAction("Remove")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (entityGroups.getSelectedRow() > -1) ((DefaultTableModel) entityGroups.getModel()).removeRow(entityGroups.getSelectedRow());
+			}
+		}));
+		panel2.add(new JButton(new AbstractAction("Add")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				((DefaultTableModel) entityGroups.getModel()).addRow(new String[] { "" });
+			}
+		}));
+		entityPanel.add(panel2);
+		
+		SpringUtilities.makeCompactGrid(entityPanel, 8, 2, 6, 6, 6, 6);
 		JPanel wrap = new JPanel();
 		wrap.add(entityPanel);
 
@@ -772,6 +817,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 					return true;
 				}
 			};
+			eventEvents.getTableHeader().setResizingAllowed(false);
+			eventEvents.getTableHeader().setReorderingAllowed(false);
 			final JComboBox<String> trigger = new JComboBox<String>(entity.triggers.toArray(new String[] {}));
 			trigger.setSelectedIndex(0);
 			eventEvents.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(trigger));
@@ -853,7 +900,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 					data.put("rot", new JSONArray(new Double[] { (double) entityRotX.getValue(), (double) entityRotY.getValue(), (double) entityRotZ.getValue() }));
 					EntityBuilder builder = EntityRegistry.entries.get(entities.getJSONObject(entityIndex).getString("name"));
 					JSONObject custom = new JSONObject();
-
 					for (int i = 0; i < entityCustomValues.getModel().getRowCount(); i++)
 					{
 						String name = entityCustomValues.getValueAt(i, 0).toString().split(" ")[0];
@@ -866,8 +912,17 @@ public class Editor extends JFrame implements TreeSelectionListener
 						else if (type.equals("Boolean")) custom.put(name, Boolean.parseBoolean(content));
 						else if (type.equals("File")) custom.put(name, content);
 					}
-
 					data.put("custom", custom);
+
+					JSONArray groups = new JSONArray();
+					for (int i = 0; i < entityGroups.getRowCount(); i++)
+					{
+						String s = entityGroups.getValueAt(i, 0).toString();
+						if (s.length() == 0) continue;
+
+						groups.put(s);
+					}
+					data.put("groups", groups);
 
 					// -- Events Tab Data -- //
 					JSONArray events = new JSONArray();
@@ -998,6 +1053,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
+		params.getTableHeader().setResizingAllowed(false);
+		params.getTableHeader().setReorderingAllowed(false);
 
 		eventFunction.addItemListener(new ItemListener()
 		{
@@ -1070,6 +1127,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 				return true;
 			}
 		};
+		flags.getTableHeader().setResizingAllowed(false);
+		flags.getTableHeader().setReorderingAllowed(false);
 		flags.putClientProperty("terminateEditOnFocusLost", true);
 		flags.setRowHeight(22);
 		flags.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JCheckBox()));

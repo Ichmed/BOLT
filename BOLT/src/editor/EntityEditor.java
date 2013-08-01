@@ -205,7 +205,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			public void actionPerformed(ActionEvent e)
 			{
 				saveEntity(tree.getSelectionRows()[0] - 1);
-				showEntityUI();
+				reselect();
 			}
 		});
 		save.setEnabled(false);
@@ -922,15 +922,22 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				refresh();
 				checkChanged();
 
-				int sel = tree.getSelectionRows()[0];
-				tree.setSelectionRow(0);
-				tree.setSelectionRow(sel);
+				reselect();
 			}
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
 		uiPanel.add(apply);
 
 		refresh();
+	}
+
+	private void reselect()
+	{
+		int tab = tabs.getSelectedIndex();
+		int sel = tree.getSelectionRows()[0];
+		tree.setSelectionRow(0);
+		tree.setSelectionRow(sel);
+		tabs.setSelectedIndex(tab);
 	}
 
 	private JButton createToolBarButton(String tooltip, String icon, Action action)

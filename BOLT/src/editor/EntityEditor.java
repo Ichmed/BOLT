@@ -64,6 +64,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	private static final long serialVersionUID = 1L;
 
 	File entListFile;
+	int entListLines;
 
 	HashMap<File, EntityBuilder> entityFiles;
 
@@ -156,6 +157,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tree.setModel(new DefaultTreeModel(root));
 
 		entListFile = null;
+		entListLines = 0;
 		entityFiles.clear();
 	}
 
@@ -164,13 +166,15 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		revalidate();
 		repaint();
 		treePanel.revalidate();
+
+		checkChanged();
 	}
 
 	private void checkChanged()
 	{
 		try
 		{
-			if (tree.getSelectionRows().length == 0) return;
+			if (tree.getSelectionRows().length == 0 || tree.getSelectionRows()[0] < 1) return;
 
 			int selRow = tree.getSelectionRows()[0];
 			File f = new ArrayList<>(entityFiles.keySet()).get(selRow - 1);
@@ -205,6 +209,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			String line = "";
 			while ((line = br.readLine()) != null)
 			{
+				entListLines++;
 				File file = new File(FileUtilities.getJarFile().getParentFile(), line);
 				entityFiles.put(file, EntityIO.loadEntityFile(file));
 				((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode(file.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
@@ -652,25 +657,24 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		uiPanel.add(tabs);
 
-		JButton save = new JButton(new AbstractAction("Save")
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				apply.doClick();
-
-				File key = new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1);
-
-				EntityIO.saveEntityFile(entityFiles.get(key), key);
-
-				checkChanged();
-				refresh();
-			}
-		});
-		save.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth() / 2, 25);
-		uiPanel.add(save);
+		// JButton save = new JButton(new AbstractAction("Apply and Save")
+		// {
+		// private static final long serialVersionUID = 1L;
+		//
+		// @Override
+		// public void actionPerformed(ActionEvent e)
+		// {
+		// apply.getAction().actionPerformed(null);
+		//
+		// File key = new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1);
+		//
+		// EntityIO.saveEntityFile(entityFiles.get(key), key);
+		//
+		// refresh();
+		// }
+		// });
+		// save.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth() / 2, 25);
+		// uiPanel.add(save);
 
 		apply = new JButton(new AbstractAction("Apply")
 		{
@@ -762,11 +766,10 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 				entityFiles.put(new ArrayList<>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1), builder);
 
-				checkChanged();
 				refresh();
 			}
 		});
-		apply.setBounds(uiPanel.getWidth() / 2, uiPanel.getHeight() - 27, uiPanel.getWidth() / 2, 25);
+		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
 		uiPanel.add(apply);
 
 		refresh();

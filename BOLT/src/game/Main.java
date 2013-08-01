@@ -13,12 +13,15 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import javax.swing.UIManager;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
+
 
 import physics.collisionObjects.CollisionBox;
 import render.Model;
@@ -50,10 +53,21 @@ public class Main
 	{
 		Game.currentGame = new TestGame();
 		Game.currentGame.prepareGame();
-		
+
 		try
 		{
-			logmanager.readConfiguration(new FileInputStream(new File("./nonsync/logging.properties")));
+			File logFile = new File("./nonsync/logging.properties");
+			if (!logFile.exists()) logFile.createNewFile();
+			logmanager.readConfiguration(new FileInputStream(logFile));
+
+			//TODO: When uncommenting the following lines, JTattoo Library is needed! Changes editor appearance
+			
+			// Properties props = new Properties();
+			// props.put("logoString", "");
+			// AcrylLookAndFeel.setCurrentTheme(props);
+			// UIManager.setLookAndFeel(new AcrylLookAndFeel());
+			
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e2)
 		{
@@ -111,7 +125,7 @@ public class Main
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		Mouse.setGrabbed(true);
-		
+
 		Game.currentGame.initializeGame();
 
 		while (!Display.isCloseRequested())
@@ -230,9 +244,8 @@ public class Main
 		glRotated(camera.rotation.z, 0f, 0f, 1f);
 
 		glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
-		
-		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[]
-				{ lightPos.x, lightPos.y, lightPos.z, 1 }));
+
+		glLight(GL_LIGHT0, GL_POSITION, MathHelper.asFloatBuffer(new float[] { lightPos.x, lightPos.y, lightPos.z, 1 }));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

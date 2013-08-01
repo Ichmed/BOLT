@@ -1,10 +1,8 @@
 package util.math;
 
-import game.Main;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix3f;

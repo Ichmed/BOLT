@@ -46,7 +46,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
-import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -118,18 +117,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 	public Editor()
 	{
 		super("BOLT Editor");
-		try
-		{
-			EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
+		
 		addWindowListener(new WindowAdapter()
 		{
 			@Override
@@ -400,8 +392,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			JOptionPane.showMessageDialog(Editor.this, "Could not open file: \"" + mapFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
 			mapFile = null;
 
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
-			tree.setModel(new DefaultTreeModel(root));
+			tree.setModel(null);
 
 			return;
 		}

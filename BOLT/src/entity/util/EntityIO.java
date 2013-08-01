@@ -11,7 +11,6 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import util.Compressor;
-import util.FileUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 

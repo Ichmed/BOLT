@@ -1021,7 +1021,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 			if (flagString.length() > 0)
 			{
 				JSONArray array = new JSONArray("[" + flagString + "]");
-				System.out.println(JSONUtilities.containsValue(array, flagKeys.get(i)));
 				v = Boolean.toString(JSONUtilities.containsValue(array, flagKeys.get(i)));
 			}
 

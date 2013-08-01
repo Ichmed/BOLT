@@ -226,7 +226,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}));
 		toolBar.addSeparator();
 
-		toolBar.add(createToolBarButton("Entity Editor", "enum_alt_obj", new AbstractAction()
+		toolBar.add(createToolBarButton("Entity Editor", "enum_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 

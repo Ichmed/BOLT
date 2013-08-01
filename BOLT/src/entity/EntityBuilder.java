@@ -22,7 +22,7 @@ public class EntityBuilder
 	public String name = "";
 	public String fullName = "";
 
-	public Integer physicsType = 1;
+	public Integer physicsType = 0;
 	public Integer collisionType = 2;
 	public Boolean invisible = false;
 	public Boolean gravity = false;
@@ -77,7 +77,21 @@ public class EntityBuilder
 
 	public boolean equals(EntityBuilder o)
 	{
+//		System.out.println("me: " + toString());
+//		System.out.println("fl: " + o.toString());
 		return toString().equals(o.toString());
+	}
+
+	public void loadParent(EntityBuilder parent)
+	{
+		if (parent == null) return;
+
+		if (model.length() == 0) model = parent.model;
+		if (collisionModel.length() == 0) collisionModel = parent.collisionModel;
+		if (triggers.size() == 0) triggers = parent.triggers;
+		if (functions.size() == 0) functions = parent.functions;
+		if (classPath.length() == 0) classPath = parent.classPath;
+		if (customValues.size() == 0) customValues = parent.customValues;
 	}
 
 	@Override

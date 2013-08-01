@@ -11,6 +11,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import util.Compressor;
+import util.FileUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 
@@ -170,7 +171,7 @@ public class EntityIO
 		return e;
 	}
 
-	public static void saveEntityFile(EntityBuilder b, File f)
+	public static void saveEntityFile(EntityBuilder b, EntityBuilder p, File f)
 	{
 		String content = "";
 		String nl = "\n";
@@ -181,27 +182,48 @@ public class EntityIO
 		content += "collType " + b.collisionType + nl;
 		content += "invisible " + Boolean.toString(b.invisible) + nl;
 		content += "gravity " + Boolean.toString(b.gravity) + nl;
-		if (!n(b.classPath).equals("null")) content += "class " + b.classPath + nl;
-		if (!n(b.model).equals("null")) content += "model " + b.model + nl;
-		if (!n(b.collisionModel).equals("null")) content += "collisionModel " + b.collisionModel + nl;
+		if (!n(b.classPath).equals("null"))
+		{
+			if (p == null || (p != null && !p.classPath.equals(b.classPath))) content += "class " + b.classPath + nl;
+		}
+		
+		if (!n(b.model).equals("null"))
+		{
+			if (p == null || (p != null && !p.model.equals(b.model))) content += "model " + b.model + nl;
+		}
+		
+		if (!n(b.collisionModel).equals("null"))
+		{
+			if (p == null || (p != null && !p.collisionModel.equals(b.collisionModel))) content += "collisionModel " + b.collisionModel + nl;
+		}
 
 		for (String key : b.customValues.keySet())
-			content += b.customValues.get(key).getClass().getSimpleName().toLowerCase() + " " + key + " " + b.customValues.get(key) + nl;
+		{
+			if (p == null || (p != null && !p.customValues.containsKey(key))) content += b.customValues.get(key).getClass().getSimpleName().toLowerCase() + " " + key + " " + b.customValues.get(key) + nl;
+		}
 
 		for (String function : b.functions)
-			content += "function " + function + nl;
+		{
+			if (p == null || (p != null && !p.functions.contains(function))) content += "function " + function + nl;
+		}
 
 		for (String trigger : b.triggers)
-			content += "trigger " + trigger + nl;
+		{
+			if (p == null || (p != null && !p.triggers.contains(trigger))) content += "trigger " + trigger + nl;
+		}
 
 		for (String function : b.nonInheritedFunctions)
-			content += "-function " + function + nl;
+		{
+			if (p == null || (p != null && !p.nonInheritedFunctions.contains(function))) content += "-function " + function + nl;
+		}
 
 		for (String trigger : b.nonInheritedTriggers)
-			content += "-trigger " + trigger + nl;
+		{
+			if (p == null || (p != null && !p.nonInheritedTriggers.contains(trigger))) content += "-trigger " + trigger + nl;
+		}
 
 		Compressor.compressFile(f, content);
-		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
+		FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
 	}
 
 	/**

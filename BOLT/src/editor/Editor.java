@@ -90,6 +90,11 @@ import game.Game;
 // TODO: add comments to customvalues in entity files
 public class Editor extends JFrame implements TreeSelectionListener
 {
+	public static final FileFilter FILE_FILTER_ENTLIST = new FileNameExtensionFilter("BOLT EntityList-Files (*.entlist)", "entlist");
+	public static final FileFilter FILE_FILTER_ENTITY = new FileNameExtensionFilter("BOLT Entity-Files (*.entity)", "entity");
+	public static final FileFilter FILE_FILTER_OBJECT = new FileNameExtensionFilter("Wavefront geometry file (*.obj)", "obj");
+	public static final FileFilter FILE_FILTER_MAP = new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map");
+
 	private static final long serialVersionUID = 1L;
 
 	File mapFile;
@@ -375,7 +380,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void openMap()
 	{
-		File f = getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map"));
+		File f = getDefaultJFileChooser(true, this, FILE_FILTER_MAP);
 		if (f == null) return;
 		mapFile = f;
 		try
@@ -476,7 +481,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void saveUMap()
 	{
-		File f = getDefaultJFileChooser(false, this, new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map"));
+		File f = getDefaultJFileChooser(false, this, FILE_FILTER_MAP);
 		if (f == null) return;
 
 		if (f.exists())

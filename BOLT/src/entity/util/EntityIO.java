@@ -48,7 +48,10 @@ public class EntityIO
 
 	public static EntityBuilder loadEntityFile(File f) throws IOException
 	{
-		String[] lines = Compressor.decompressFile(f).split("\n");
+		String content = Compressor.decompressFile(f);
+		if (content == null) return new EntityBuilder();
+
+		String[] lines = content.split("\n");
 
 		EntityBuilder e = new EntityBuilder();
 		boolean parentFound = false;
@@ -176,8 +179,8 @@ public class EntityIO
 		content += "fullName " + b.fullName + nl;
 		content += "physType " + b.physicsType + nl;
 		content += "collType " + b.collisionType + nl;
-		content += "invis " + Boolean.toString(b.invisible) + nl;
-		content += "grav " + Boolean.toString(b.gravity) + nl;
+		content += "invisible " + Boolean.toString(b.invisible) + nl;
+		content += "gravity " + Boolean.toString(b.gravity) + nl;
 		if (!n(b.classPath).equals("null")) content += "class " + b.classPath + nl;
 		if (!n(b.model).equals("null")) content += "model " + b.model + nl;
 		if (!n(b.collisionModel).equals("null")) content += "collisionModel " + b.collisionModel + nl;
@@ -198,7 +201,7 @@ public class EntityIO
 			content += "-trigger " + trigger + nl;
 
 		Compressor.compressFile(f, content);
-		//FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
+		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
 	}
 
 	/**

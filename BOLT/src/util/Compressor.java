@@ -84,6 +84,8 @@ public class Compressor
 	public static String decompressFile(File f)
 	{
 		byte[] decompressed = decompress(getFileContentAsByteArray(f));
+		if (decompressed == null) return null;
+
 		String text = new String(decompressed);
 
 		return text;

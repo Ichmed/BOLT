@@ -9,10 +9,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -63,11 +64,34 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 {
 	private static final long serialVersionUID = 1L;
 
+	private class EntityFile
+	{
+		File f;
+		EntityBuilder b;
+
+		EntityFile(File f, EntityBuilder b)
+		{
+			this.f = f;
+			this.b = b;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (!(o instanceof EntityFile)) return false;
+			return f.equals(((EntityFile) o).f);
+		}
+	}
+
 	File entListFile;
-	int entListLines;
 
-	HashMap<File, EntityBuilder> entityFiles;
+	ArrayList<EntityFile> entityFiles;
 
+	// -- toolbar -- //
+	JToolBar toolBar;
+	JButton save, saveAll;
+
+	// -- components -- //
 	JPanel uiPanel;
 	JScrollPane treePanel;
 	JTree tree;
@@ -93,7 +117,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 	public void initComponents()
 	{
-		entityFiles = new HashMap<>();
+		entityFiles = new ArrayList<>();
+
+		// -- menu -- //
 
 		JMenuBar menu = new JMenuBar();
 		JMenu entlist = new JMenu("File");
@@ -126,6 +152,66 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		setJMenuBar(menu);
 
+		JPanel contentPanel = new JPanel(new BorderLayout());
+
+		// -- toolbar -- //
+		toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+		toolBar.setRollover(true);
+		toolBar.add(createToolBarButton("New EntityList", "newprj_wiz", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				newEntityList();
+			}
+		}));
+		toolBar.add(createToolBarButton("Open EntityList", "prj_obj", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				openEntityList();
+			}
+		}));
+		toolBar.addSeparator();
+
+		save = createToolBarButton("Save", "save_edit", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				saveEntity(tree.getSelectionRows()[0] - 1);
+			}
+		});
+		save.setEnabled(false);
+		toolBar.add(save);
+		saveAll = createToolBarButton("Save All", "saveall_edit", new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				for (int i = 0; i < entityFiles.size(); i++)
+				{
+					saveEntity(i);
+				}
+			}
+		});
+		saveAll.setEnabled(false);
+		toolBar.add(saveAll);
+
+		contentPanel.add(toolBar, BorderLayout.PAGE_START);
+
+		// -- components -- //
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -146,7 +232,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		uiPanel.setPreferredSize(new Dimension(600, 600));
 		panel.add(uiPanel);
 
-		setContentPane(panel);
+		contentPanel.add(panel, BorderLayout.PAGE_END);
+
+		setContentPane(contentPanel);
 		pack();
 	}
 
@@ -157,7 +245,6 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tree.setModel(new DefaultTreeModel(root));
 
 		entListFile = null;
-		entListLines = 0;
 		entityFiles.clear();
 	}
 
@@ -167,20 +254,26 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		repaint();
 		treePanel.revalidate();
 
-		checkChanged();
+		// -- toolbar -- //
+		save.setEnabled(tree.getSelectionRows().length > 0 && tree.getSelectionRows()[0] > 0 && ((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).getUserObject().toString().startsWith("*"));
+		saveAll.setEnabled(entityFiles.size() > 0);
 	}
 
 	private void checkChanged()
 	{
 		try
 		{
-			if (tree.getSelectionRows().length == 0 || tree.getSelectionRows()[0] < 1) return;
+			if (tree.getSelectionRows().length > 0 && tree.getSelectionRows()[0] > 0)
+			{
+				int sel = tree.getSelectionRows()[0] - 1;
+				EntityFile f = entityFiles.get(sel);
 
-			int selRow = tree.getSelectionRows()[0];
-			File f = new ArrayList<>(entityFiles.keySet()).get(selRow - 1);
-			boolean equals = entityFiles.get(new ArrayList<>(entityFiles.keySet()).get(selRow - 1)).equals(EntityIO.loadEntityFile(f));
-			((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(((equals) ? "" : "*") + f.getName().replace(".entity", ""));
-			((DefaultTreeModel) tree.getModel()).reload((TreeNode) tree.getSelectionPath().getLastPathComponent());
+				boolean equals = f.b.equals(EntityIO.loadEntityFile(f.f));
+				((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).setUserObject(((equals) ? "" : "*") + f.b.name);
+				((DefaultTreeModel) tree.getModel()).reload((TreeNode) tree.getSelectionPath().getLastPathComponent());
+
+				refresh();
+			}
 		}
 		catch (Exception e)
 		{
@@ -195,11 +288,8 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 	private void openEntityList()
 	{
-
 		File f = Editor.getDefaultJFileChooser(true, this, new FileNameExtensionFilter("BOLT EntityList-Files (*.entlist)", "entlist"));
 		if (f == null) return;
-
-		entListFile = f;
 
 		try
 		{
@@ -209,13 +299,13 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			String line = "";
 			while ((line = br.readLine()) != null)
 			{
-				entListLines++;
 				File file = new File(FileUtilities.getJarFile().getParentFile(), line);
-				entityFiles.put(file, EntityIO.loadEntityFile(file));
+				entityFiles.add(new EntityFile(file, EntityIO.loadEntityFile(file)));
 				((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode(file.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
 				tree.expandRow(0);
 			}
 			br.close();
+			entListFile = f;
 		}
 		catch (Exception e)
 		{
@@ -226,14 +316,43 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		}
 	}
 
+	private void saveEntity(int index)
+	{
+		refresh();
+		checkChanged();
+
+		EntityFile f = entityFiles.get(index);
+
+		if (f.b.name.length() > 0 && !f.b.name.equals(f.f.getName().replace(".entity", "")))
+		{
+			f.f.renameTo(new File(f.f.getParentFile(), f.b.name + ".entity"));
+			f.f = new File(f.f.getParentFile(), f.b.name + ".entity");
+
+			saveEntityList();
+		}
+
+		EntityIO.saveEntityFile(f.b, f.f);
+
+		refresh();
+		checkChanged();
+	}
+
+	private void saveEntityList()
+	{
+		String s = "";
+		for (EntityFile f : entityFiles)
+		{
+			s += FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f.f).replace("\\", "/") + "\n";
+		}
+		FileUtilities.setFileContent(entListFile, s);
+	}
+
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
 		uiPanel.setLayout(new FlowLayout());
 		uiPanel.removeAll();
 		refresh();
-
-		// final DefaultMutableTreeNode s = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
 		if (tree.getRowForPath(e.getPath()) == 0) // entityList
 		showEntitiesUI();
@@ -309,7 +428,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 			public void actionPerformed(ActionEvent e)
 			{
 				File f = new File(path.getText());
-				if (entityFiles.containsKey(f))
+				if (entityFiles.contains(new EntityFile(f, null)))
 				{
 					JOptionPane.showMessageDialog(EntityEditor.this, "This file already exists in this EntityList!", "Error!", JOptionPane.ERROR_MESSAGE);
 					path.setText("");
@@ -327,16 +446,19 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 					{
 						boolean created = f.createNewFile();
 						if (!created) JOptionPane.showMessageDialog(EntityEditor.this, "The entered filepath is invalid!", "Error!", JOptionPane.ERROR_MESSAGE);
-						else f.delete();
 					}
 					catch (IOException e1)
 					{
 						JOptionPane.showMessageDialog(EntityEditor.this, "The entered filepath is invalid!", "Error!", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				entityFiles.put(f, new EntityBuilder());
-				((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode(f.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
+				EntityBuilder b = new EntityBuilder();
+				b.name = f.getName().replace(".entity", "");
+				entityFiles.add(new EntityFile(f, b));
+				((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode("*" + f.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
 				tree.expandRow(0);
+				saveEntityList();
+
 				refresh();
 			}
 		});
@@ -358,7 +480,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		if (tree.getSelectionRows()[0] - 1 < 0) return;
 
-		final EntityBuilder b = entityFiles.get(new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1));
+		final EntityBuilder b = entityFiles.get(tree.getSelectionRows()[0] - 1).b;
 		EntityBuilder p = getParent(b);
 
 		// -- first tab -- //
@@ -370,12 +492,10 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		panel.add(label);
 
 		Vector<String> suggest = new Vector<String>();
-		ArrayList<File> keys = new ArrayList<File>(entityFiles.keySet());
 		for (int i = 0; i < entityFiles.size(); i++)
 		{
 			if (i == tree.getSelectionRows()[0] - 1) continue;
-			String name = keys.get(i).getName().replace(".entity", "");
-			suggest.add(name);
+			suggest.add(entityFiles.get(i).b.name);
 		}
 		parent = new JSuggestField(this, suggest);
 		parent.setText(b.parent);
@@ -657,25 +777,6 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		uiPanel.add(tabs);
 
-		// JButton save = new JButton(new AbstractAction("Apply and Save")
-		// {
-		// private static final long serialVersionUID = 1L;
-		//
-		// @Override
-		// public void actionPerformed(ActionEvent e)
-		// {
-		// apply.getAction().actionPerformed(null);
-		//
-		// File key = new ArrayList<File>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1);
-		//
-		// EntityIO.saveEntityFile(entityFiles.get(key), key);
-		//
-		// refresh();
-		// }
-		// });
-		// save.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth() / 2, 25);
-		// uiPanel.add(save);
-
 		apply = new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;
@@ -764,9 +865,12 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 					return;
 				}
 
-				entityFiles.put(new ArrayList<>(entityFiles.keySet()).get(tree.getSelectionRows()[0] - 1), builder);
+				int index = tree.getSelectionRows()[0] - 1;
+
+				entityFiles.set(index, new EntityFile(entityFiles.get(index).f, builder));
 
 				refresh();
+				checkChanged();
 			}
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
@@ -775,14 +879,26 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		refresh();
 	}
 
+	private JButton createToolBarButton(String tooltip, String icon, Action action)
+	{
+		JButton button = new JButton();
+		button.setPreferredSize(new Dimension(24, 24));
+		button.setIcon(Editor.getIcon(icon));
+		action.putValue(Action.SMALL_ICON, Editor.getIcon(icon));
+		action.putValue(Action.SHORT_DESCRIPTION, tooltip);
+		button.setAction(action);
+		button.setFocusPainted(false);
+
+		return button;
+	}
+
 	private EntityBuilder getParent(EntityBuilder b)
 	{
 		if (b.parent == null) return null;
 
-		for (File key : entityFiles.keySet())
+		for (EntityFile key : entityFiles)
 		{
-			EntityBuilder v = entityFiles.get(key);
-			if (v.name.equals(b.parent)) return v;
+			if (key.b.name.equals(b.parent)) return key.b;
 		}
 
 		return null;

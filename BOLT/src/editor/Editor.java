@@ -2,6 +2,7 @@ package editor;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,16 +13,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -46,6 +51,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.ToolTipManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -120,8 +126,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+		ToolTipManager.sharedInstance().setInitialDelay(0);
 		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
-		
+
 		addWindowListener(new WindowAdapter()
 		{
 			@Override
@@ -1222,5 +1229,18 @@ public class Editor extends JFrame implements TreeSelectionListener
 			e.printStackTrace();
 		}
 		return string;
+	}
+
+	public static Icon getIcon(String name)
+	{
+		try
+		{
+			return new ImageIcon(ImageIO.read(Editor.class.getResource("/editor/icons/" + name + ".png")).getScaledInstance(20, 20, Image.SCALE_FAST));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

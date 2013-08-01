@@ -131,7 +131,6 @@ public class CollisionEllipsoid extends CollisionObject
 		this.mass = mass;
 	}
 
-	@Override
 	public  CollisionObject create(Vector3f... points) throws NotImplementedException
 	{
 		CollisionBox temp = CollisionBox.create(points);

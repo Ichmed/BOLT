@@ -1,0 +1,12 @@
+parent null
+name staticProb
+fullName Static Prob
+physType 0
+collType 2
+invisible false
+gravity true
+class entity.probs.StaticProb
+model testObject.obj
+collisionModel testObject.obj
+file displayModel null
+double size 1.0

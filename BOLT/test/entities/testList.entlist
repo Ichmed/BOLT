@@ -1,2 +1,3 @@
 test/entities/staticProb.entity
 test/entities/trollBall.entity
+test/entities/logic_timer.entity

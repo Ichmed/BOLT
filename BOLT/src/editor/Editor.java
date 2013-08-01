@@ -782,7 +782,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		}));
 		entityPanel.add(panel2);
-		
+
 		SpringUtilities.makeCompactGrid(entityPanel, 8, 2, 6, 6, 6, 6);
 		JPanel wrap = new JPanel();
 		wrap.add(entityPanel);
@@ -991,7 +991,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		eventDialog = new JDialog(this, "BOLT Event Editor", true);
 		JPanel panel = new JPanel(new SpringLayout());
 
-		panel.add(new JLabel("Target Entity:"));
+		panel.add(new JLabel("Target:"));
 
 		Vector<String> data = new Vector<>();
 		for (int i = 0; i < entities.length(); i++)

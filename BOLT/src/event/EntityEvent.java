@@ -48,29 +48,33 @@ public class EntityEvent
 	
 	public boolean trigger()
 	{
-		Entity eTarget = Game.getCurrentGame().getCurrentWorld().getEntity(target);
-		Method[] methods = eTarget.getClass().getMethods();
+		List<Entity> targets = Game.getCurrentGame().getCurrentWorld().getEntityList(target);
 		
-		Object[] o = new Object[parameters.length()];
-		
-		try
+		for(Entity e : targets)
 		{
-			for(int i = 0; i < parameters.length(); i++)
-			{
-				Object obj = parameters.get(i);
-				if(obj instanceof String && ((String)obj).startsWith("@"))
-					o[i] = owner.customValues.get(((String)obj).replace("@", ""));
-				else o[i] = obj;				
-			}
+			Method[] methods = e.getClass().getMethods();
 			
-			for(Method m : methods)
-				if(m.getName().equals(targetFunction))
-					m.invoke(eTarget, o);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			return false;
+			Object[] o = new Object[parameters.length()];
+			
+			try
+			{
+				for(int i = 0; i < parameters.length(); i++)
+				{
+					Object obj = parameters.get(i);
+					if(obj instanceof String && ((String)obj).startsWith("@"))
+						o[i] = owner.customValues.get(((String)obj).replace("@", ""));
+					else o[i] = obj;				
+				}
+				
+				for(Method m : methods)
+					if(m.getName().equals(targetFunction))
+						m.invoke(e, o);
+			}
+			catch(Exception exc)
+			{
+				exc.printStackTrace();
+				return false;
+			}
 		}
 		
 		return true;

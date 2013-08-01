@@ -1,6 +1,9 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import entity.Entity;
 
 public class World
@@ -10,6 +13,8 @@ public class World
 	 * A HashMap containing every Entity in this World. Access them using 'getEntity(int key)'.
 	 */
 	private HashMap<String, Entity> entityMap = new HashMap<>();
+	
+	private HashMap<String, List<Entity>> entityGroups = new HashMap<>();
 
 	public void spawnEntity(Entity entity)
 	{
@@ -29,6 +34,25 @@ public class World
 	public Map getCurrentMap()
 	{
 		return currentMap;
+	}
+	
+	public void addEntityToGroup(Entity entity, String group)
+	{
+		List<Entity> l = this.entityGroups.get(group);
+		if(l == null) l = new ArrayList<>();
+		l.add(entity);
+		this.entityGroups.put(group, l);
+	}
+	
+	public List<Entity> getEntityList(String name)
+	{
+		if(name.startsWith("$")) return this.entityGroups.get(name.replace("$", ""));
+		else
+		{
+			List<Entity> l = new ArrayList<>();
+			l.add(this.entityMap.get(name));
+			return l;
+		}
 	}
 	
 	public void gameLoop()

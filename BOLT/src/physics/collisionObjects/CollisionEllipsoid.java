@@ -5,8 +5,9 @@ import org.lwjgl.util.vector.Vector3f;
 import util.math.MathHelper;
 
 /**
- * Mel: bitte ändere die Ellipsoid Formel bitte in: alpha/length + beta/width + gamma/height = 0
- * 													^X = alpha*^length + beta*^width + gamma*^height
+ * TODO: rescript
+ * Mel: bitte ändere die Ellipsoid Formel bitte in: alpha²/length² + beta²/width² + gamma²/height² = 0
+ * 													^X = alpha*^length + beta*^width + gamma*^height + ^middle
  * ^ bedeutet Vektor
  */
 

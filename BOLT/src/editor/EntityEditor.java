@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -112,46 +111,13 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	{
 		entityFiles = new ArrayList<>();
 
-		// -- menu -- //
-
-		// JMenuBar menu = new JMenuBar();
-		// JMenu entlist = new JMenu("File");
-		// JMenuItem newFile = new JMenuItem(new AbstractAction("New")
-		// {
-		// private static final long serialVersionUID = 1L;
-		//
-		// @Override
-		// public void actionPerformed(ActionEvent e)
-		// {
-		// newEntityList();
-		// }
-		// });
-		// newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
-		// entlist.add(newFile);
-		// JMenuItem openFile = new JMenuItem(new AbstractAction("Open...")
-		// {
-		// private static final long serialVersionUID = 1L;
-		//
-		// @Override
-		// public void actionPerformed(ActionEvent e)
-		// {
-		// openEntityList();
-		// }
-		// });
-		// openFile.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
-		// entlist.add(openFile);
-		//
-		// menu.add(entlist);
-		//
-		// setJMenuBar(menu);
-
 		JPanel contentPanel = new JPanel(new BorderLayout());
 
 		// -- toolbar -- //
 		toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
-		toolBar.add(createToolBarButton("New EntityList", "newprj_wiz", new AbstractAction()
+		toolBar.add(Editor.createToolBarButton("New EntityList", "newprj_wiz", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -161,7 +127,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				newEntityList();
 			}
 		}));
-		toolBar.add(createToolBarButton("Open EntityList", "prj_obj", new AbstractAction()
+		toolBar.add(Editor.createToolBarButton("Open EntityList", "prj_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -173,7 +139,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		}));
 		toolBar.addSeparator();
 
-		create = createToolBarButton("New Entity", "new_con", new AbstractAction()
+		create = Editor.createToolBarButton("New Entity", "new_con", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -185,7 +151,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		create.setEnabled(false);
 		toolBar.add(create);
-		open = createToolBarButton("Open Entity", "fldr_obj", new AbstractAction()
+		open = Editor.createToolBarButton("Open Entity", "fldr_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -197,7 +163,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		open.setEnabled(false);
 		toolBar.add(open);
-		save = createToolBarButton("Save Entity", "save_edit", new AbstractAction()
+		save = Editor.createToolBarButton("Save Entity", "save_edit", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -210,7 +176,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		save.setEnabled(false);
 		toolBar.add(save);
-		saveAll = createToolBarButton("Save All Entities", "saveall_edit", new AbstractAction()
+		saveAll = Editor.createToolBarButton("Save All Entities", "saveall_edit", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -225,7 +191,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		saveAll.setEnabled(false);
 		toolBar.add(saveAll);
-		remove = createToolBarButton("Unlink Entity", "remove_from_buildpath", new AbstractAction()
+		remove = Editor.createToolBarButton("Unlink Entity", "remove_from_buildpath", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -938,19 +904,6 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tree.setSelectionRow(0);
 		tree.setSelectionRow(sel);
 		tabs.setSelectedIndex(tab);
-	}
-
-	private JButton createToolBarButton(String tooltip, String icon, Action action)
-	{
-		JButton button = new JButton();
-		button.setPreferredSize(new Dimension(24, 24));
-		button.setIcon(Editor.getIcon(icon));
-		action.putValue(Action.SMALL_ICON, Editor.getIcon(icon));
-		action.putValue(Action.SHORT_DESCRIPTION, tooltip);
-		button.setAction(action);
-		button.setFocusPainted(false);
-
-		return button;
 	}
 
 	private EntityBuilder getParent(EntityBuilder b)

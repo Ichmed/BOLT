@@ -1,5 +1,6 @@
 package editor;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -22,6 +23,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -34,8 +36,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,8 +46,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
@@ -120,10 +120,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JSuggestField eventTarget;
 	JComboBox<String> eventFunction;
 
-	// -- menu -- //
-	JMenuItem saveFile;
-	JMenuItem saveUFile;
-	JMenu view;
+	// -- toolbar -- //
 
 	public Editor()
 	{
@@ -157,9 +154,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public void initComponents()
 	{
-		JMenuBar menu = new JMenuBar();
-		JMenu file = new JMenu("File");
-		JMenuItem newFile = new JMenuItem(new AbstractAction("New")
+		// -- toolbar -- //
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+		toolBar.setRollover(true);
+		toolBar.add(createToolBarButton("New", "new_con", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -175,10 +174,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 				newMap();
 			}
-		});
-		newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
-		file.add(newFile);
-		JMenuItem openFile = new JMenuItem(new AbstractAction("Open...")
+		}));
+		toolBar.add(createToolBarButton("Open", "fldr_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -194,10 +191,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 				openMap();
 			}
-		});
-		openFile.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
-		file.add(openFile);
-		saveFile = new JMenuItem(new AbstractAction("Save")
+		}));
+		toolBar.add(createToolBarButton("Save", "save_edit", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -206,11 +201,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				saveMap();
 			}
-		});
-		saveFile.setEnabled(false);
-		saveFile.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
-		file.add(saveFile);
-		saveUFile = new JMenuItem(new AbstractAction("Save as...")
+		}));
+		toolBar.add(createToolBarButton("Save As", "saveas_edit", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -219,14 +211,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				saveUMap();
 			}
-		});
-		saveUFile.setEnabled(false);
-		saveUFile.setAccelerator(KeyStroke.getKeyStroke("ctrl shift S"));
-		file.add(saveUFile);
-		menu.add(file);
+		}));
+		toolBar.addSeparator();
 
-		view = new JMenu("View");
-		JMenuItem raw = new JMenuItem(new AbstractAction("Raw file...")
+		toolBar.add(createToolBarButton("Raw file", "file_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -235,13 +223,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				showRawFile();
 			}
-		});
-		view.add(raw);
-		view.setEnabled(false);
-		menu.add(view);
+		}));
+		toolBar.addSeparator();
 
-		JMenu mode = new JMenu("Mode");
-		JMenuItem ent = new JMenuItem(new AbstractAction("Entity Editor")
+		toolBar.add(createToolBarButton("Entity Editor", "enum_alt_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -250,11 +235,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 			{
 				new EntityEditor();
 			}
-		});
-		mode.add(ent);
-		menu.add(mode);
+		}));
 
-		setJMenuBar(menu);
+		// -- components -- //
+		JPanel contentPanel = new JPanel(new BorderLayout());
+
+		contentPanel.add(toolBar, BorderLayout.PAGE_START);
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -308,7 +294,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 		uiPanel.setPreferredSize(new Dimension(600, 600));
 
 		panel.add(uiPanel);
-		setContentPane(panel);
+
+		contentPanel.add(panel, BorderLayout.PAGE_END);
+
+		setContentPane(contentPanel);
 		pack();
 	}
 
@@ -365,9 +354,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private void reset()
 	{
-		saveFile.setEnabled(true);
-		saveUFile.setEnabled(true);
-		view.setEnabled(true);
+		// saveFile.setEnabled(true);
+		// saveUFile.setEnabled(true);
+		// view.setEnabled(true);
 		tree.setEnabled(true);
 		entities = new JSONArray();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("World");
@@ -1247,5 +1236,18 @@ public class Editor extends JFrame implements TreeSelectionListener
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static JButton createToolBarButton(String tooltip, String icon, Action action)
+	{
+		JButton button = new JButton();
+		button.setPreferredSize(new Dimension(24, 24));
+		button.setIcon(Editor.getIcon(icon));
+		action.putValue(Action.SMALL_ICON, Editor.getIcon(icon));
+		action.putValue(Action.SHORT_DESCRIPTION, tooltip);
+		button.setAction(action);
+		button.setFocusPainted(false);
+
+		return button;
 	}
 }

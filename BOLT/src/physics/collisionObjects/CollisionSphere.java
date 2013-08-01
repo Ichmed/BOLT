@@ -109,7 +109,7 @@ public class CollisionSphere extends CollisionObject
 	 */
 	public CollisionSphere(Vector3f... points)
 	{
-		CollisionSphere temp = createCollisionSphere(points);
+		CollisionSphere temp = create(points);
 		radius = temp.radius;
 		middle = temp.middle;
 	}
@@ -146,7 +146,7 @@ public class CollisionSphere extends CollisionObject
 	 *            all the points of the object
 	 * @return the best CollisionSphere of the object
 	 */
-	public static CollisionSphere createCollisionSphere(Vector3f... points)
+	public static CollisionSphere create(Vector3f... points)
 	{
 		CollisionSphere temp = new CollisionSphere();
 		Vector3f middle = new Vector3f();
@@ -179,9 +179,9 @@ public class CollisionSphere extends CollisionObject
 	 *            all the points of the object
 	 * @return the best CollisionSphere of the object with a mass
 	 */
-	public static CollisionSphere createCollisionSphere(float mass, Vector3f... points)
+	public static CollisionSphere create(float mass, Vector3f... points)
 	{
-		CollisionSphere temp = createCollisionSphere(points);
+		CollisionSphere temp = create(points);
 		temp.mass = mass;
 		return temp;
 	}

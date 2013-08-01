@@ -24,6 +24,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 
 import physics.collisionObjects.CollisionBox;
+import physics.collisionObjects.CollisionObject;
 import render.Model;
 import render.util.OBJLoader;
 import render.util.ShaderLoader;
@@ -120,7 +121,7 @@ public class Main
 		}
 
 		initGLSettings();
-		c = CollisionBox.createCollisionBox(m.getVerteciesAsArray());
+		c = CollisionBox.create(m.getVerteciesAsArray());
 		log.log(Level.INFO, c.toString());
 
 		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);

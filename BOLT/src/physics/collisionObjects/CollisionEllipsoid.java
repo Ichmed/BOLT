@@ -129,7 +129,7 @@ public class CollisionEllipsoid extends CollisionObject
 
 	public static CollisionEllipsoid createCollisionEllipsoid(Vector3f... points)
 	{
-		CollisionSphere temp = CollisionSphere.createCollisionSphere(points);
+		CollisionSphere temp = CollisionSphere.create(points);
 		CollisionEllipsoid res = new CollisionEllipsoid(temp.middle, temp.radius * 2, temp.radius * 2, temp.radius * 2);
 		Vector3f[] ordered = points.clone();
 		float[] abstaende = new float[points.length];

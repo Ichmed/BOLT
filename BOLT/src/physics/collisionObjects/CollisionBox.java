@@ -24,8 +24,8 @@ public class CollisionBox extends CollisionObject
 	/**
 	 * a array which contains all 8 edges of the box
 	 */
-	public Vector3f[] points = { new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
-			new Vector3f(0, 0, 0) };
+	public Vector3f[] points = { new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
+			new Vector3f(0, 0, 0), new Vector3f(0, 0, 0) };
 
 	/**
 	 * the depth of the box
@@ -135,7 +135,7 @@ public class CollisionBox extends CollisionObject
 		}
 		else
 		{
-			CollisionBox temp = createCollisionBox(points);
+			CollisionBox temp = create(points);
 			startingPoint = temp.startingPoint;
 			this.points = temp.points;
 			middle = temp.middle;
@@ -231,7 +231,7 @@ public class CollisionBox extends CollisionObject
 	 *            the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
-	public static CollisionBox createCollisionBox(Vector3f... points)
+	public static CollisionBox create(Vector3f... points)
 	{
 		//
 		// !!!VARIABLENAMES + COMMENTATION FOR AXIS IS FULLY BULLSHIT!!!
@@ -647,9 +647,9 @@ public class CollisionBox extends CollisionObject
 	 *            the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
-	public static CollisionBox createCollisionBox(float mass, Vector3f... points)
+	public static CollisionBox create(float mass, Vector3f... points)
 	{
-		CollisionBox newColBox = createCollisionBox(points);
+		CollisionBox newColBox = create(points);
 		newColBox.mass = mass;
 		return newColBox;
 	}

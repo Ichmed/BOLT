@@ -3,6 +3,7 @@ package entity.util;
 import entity.Entity;
 import entity.EntityRegistry;
 import event.EntityEvent;
+import game.Game;
 import game.World;
 
 import java.io.File;
@@ -33,7 +34,7 @@ public class MapIO
 				JSONArray groups = o.getJSONArray("groups");
 				for (int j = 0; j < groups.length(); j++)
 				{
-					entity.groups.add(groups.getString(i));
+					Game.getCurrentGame().getCurrentWorld().addEntityToGroup(entity, groups.getString(i));
 				}
 				JSONArray pos = o.getJSONArray("pos");
 				JSONArray rot = o.getJSONArray("rot");

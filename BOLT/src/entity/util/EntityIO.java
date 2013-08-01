@@ -11,6 +11,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import util.Compressor;
+import util.FileUtilities;
 import entity.EntityBuilder;
 import entity.EntityRegistry;
 
@@ -201,7 +202,7 @@ public class EntityIO
 			content += "-trigger " + trigger + nl;
 
 		Compressor.compressFile(f, content);
-		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
+		FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
 	}
 
 	/**

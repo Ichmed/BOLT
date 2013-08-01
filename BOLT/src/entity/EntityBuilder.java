@@ -22,7 +22,7 @@ public class EntityBuilder
 	public String name = "";
 	public String fullName = "";
 
-	public Integer physicsType = 1;
+	public Integer physicsType = 0;
 	public Integer collisionType = 2;
 	public Boolean invisible = false;
 	public Boolean gravity = false;
@@ -77,6 +77,8 @@ public class EntityBuilder
 
 	public boolean equals(EntityBuilder o)
 	{
+		System.out.println(toString());
+		System.out.println(o.toString());
 		return toString().equals(o.toString());
 	}
 

@@ -431,7 +431,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		}
 
 		EntityBuilder b = new EntityBuilder();
-		b.name = f.getName().replace(".entity", "");
+		b.name = b.fullName = f.getName().replace(".entity", "");
 		entityFiles.add(new EntityFile(f, b));
 		((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode("*" + f.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
 		tree.expandRow(0);
@@ -493,9 +493,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
-		uiPanel.setLayout(new FlowLayout());
-		uiPanel.removeAll();
-		refresh();
+		// uiPanel.setLayout(new FlowLayout());
+		// uiPanel.removeAll();
+		// refresh();
 
 		if (tree.getSelectionRows().length == 0) return;
 
@@ -511,9 +511,13 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		uiPanel.setLayout(null);
 
-		tabs = new JTabbedPane();
-		tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
-		tabs.setPreferredSize(uiPanel.getPreferredSize());
+		if (tabs == null)
+		{
+			tabs = new JTabbedPane();
+			tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
+			tabs.setPreferredSize(uiPanel.getPreferredSize());
+		}
+		tabs.removeAll();
 
 		if (tree.getSelectionRows()[0] - 1 < 0) return;
 
@@ -918,7 +922,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 				refresh();
 				checkChanged();
 
-				showEntityUI();
+				int sel = tree.getSelectionRows()[0];
+				tree.setSelectionRow(0);
+				tree.setSelectionRow(sel);
 			}
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);

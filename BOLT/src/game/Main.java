@@ -60,13 +60,6 @@ public class Main
 			File logFile = new File("./nonsync/logging.properties");
 			if (!logFile.exists()) logFile.createNewFile();
 			logmanager.readConfiguration(new FileInputStream(logFile));
-
-			//TODO: When uncommenting the following lines, JTattoo Library is needed! Changes editor appearance
-			
-			// Properties props = new Properties();
-			// props.put("logoString", "");
-			// AcrylLookAndFeel.setCurrentTheme(props);
-			// UIManager.setLookAndFeel(new AcrylLookAndFeel());
 			
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}

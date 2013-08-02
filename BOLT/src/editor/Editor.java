@@ -72,6 +72,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lwjgl.util.vector.Vector3f;
 
 import util.Compressor;
 import util.FileUtilities;
@@ -99,11 +100,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 	public static final FileFilter FILE_FILTER_OBJECT = new FileNameExtensionFilter("Wavefront geometry file (*.obj)", "obj");
 	public static final FileFilter FILE_FILTER_MAP = new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map");
 
-	private static final long serialVersionUID = 1L;
+	static final long serialVersionUID = 1L;
 
 	public static class EditorTreeCellRenderer extends DefaultTreeCellRenderer
 	{
-		private static final long serialVersionUID = 1L;
+		static final long serialVersionUID = 1L;
 		Icon entity;
 		Icon folder;
 		int skipped;
@@ -130,6 +131,18 @@ public class Editor extends JFrame implements TreeSelectionListener
 			else setLeafIcon(folder);
 
 			return super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+		}
+	}
+
+	public static class EntityDummy
+	{
+		public Vector3f pos;
+		public String name;
+
+		public EntityDummy(Vector3f p, String n)
+		{
+			pos = p;
+			name = n;
 		}
 	}
 
@@ -196,7 +209,36 @@ public class Editor extends JFrame implements TreeSelectionListener
 		setVisible(true);
 	}
 
-	public void initComponents()
+	public void setTitle(String s)
+	{
+		super.setTitle(((s != null) ? s + " - " : "") + "BOLT Editor");
+	}
+
+	public String getTitle()
+	{
+		return super.getTitle().replaceAll("( - )(BOLT Editor)", "");
+	}
+
+	public ArrayList<EntityDummy> getEntitiesAsDummies()
+	{
+		ArrayList<EntityDummy> dummies = new ArrayList<>();
+		try
+		{
+			for (int i = 0; i < entities.length(); i++)
+			{
+				JSONObject o = entities.getJSONObject(i);
+				JSONArray pos = o.getJSONArray("pos");
+				dummies.add(new EntityDummy(new Vector3f((float) pos.getDouble(0), (float) pos.getDouble(1), (float) pos.getDouble(2)), o.getString("name")));
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return dummies;
+	}
+
+	void initComponents()
 	{
 		// -- toolbar -- //
 		final JToolBar toolBar = new JToolBar();
@@ -204,7 +246,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		toolBar.setRollover(true);
 		toolBar.add(createToolBarButton("New Map", "new_con", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -221,7 +263,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}));
 		toolBar.add(createToolBarButton("Open", "fldr_obj", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -238,7 +280,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}));
 		save = createToolBarButton("Save", "save_edit", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -251,7 +293,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		saveAs = createToolBarButton("Save As", "saveas_edit", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -266,7 +308,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		rawFile = createToolBarButton("Raw file", "file_obj", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -281,7 +323,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		toolBar.add(createToolBarButton("Entity Editor", "entity", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -294,7 +336,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		create = createToolBarButton("New Entity", "newenum_wiz", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -306,7 +348,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		toolBar.add(create);
 		clone = createToolBarButton("Clone Entity", "copy_edit", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -328,9 +370,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		clone.setEnabled(false);
 		toolBar.add(clone);
-		delete = createToolBarButton("Remove Entity", "enum_private_obj", new AbstractAction()
+		delete = createToolBarButton("Remove Entity", "enum__obj", new AbstractAction()
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -345,20 +387,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		// -- components -- //
 		JPanel contentPanel = new JPanel(new BorderLayout());
-		addComponentListener(new ComponentAdapter()
-		{
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				// uiPanel.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - toolBar.getHeight()));
-
-				if (tabs != null)
-				{
-					tabs.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
-					apply.setSize(new Dimension(getContentPane().getWidth() - 200, 25));
-				}
-			}
-		});
 
 		contentPanel.add(toolBar, BorderLayout.PAGE_START);
 
@@ -386,12 +414,26 @@ public class Editor extends JFrame implements TreeSelectionListener
 		pack();
 		setMinimumSize(getSize());
 
+		addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				if (tabs != null)
+				{
+					tabs.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
+					apply.setSize(new Dimension(getContentPane().getWidth() - 200, 25));
+				}
+			}
+		});
+
 		ui = new JDialog(this, "BOLT Editor", false);
 
 		uiPanel = new JPanel(new FlowLayout());
 		uiPanel.setEnabled(false);
 		uiPanel.setPreferredSize(new Dimension(600, 600));
 
+		ui.setResizable(false);
 		ui.setContentPane(uiPanel);
 		ui.pack();
 		ui.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -399,7 +441,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		ui.setVisible(false);
 	}
 
-	public boolean isChanged()
+	boolean isChanged()
 	{
 		if (mapFile == null) return false;
 
@@ -414,7 +456,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
-	public void showRawFile()
+	void showRawFile()
 	{
 		try
 		{
@@ -434,23 +476,13 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
-	public void setTitle(String s)
-	{
-		super.setTitle(((s != null) ? s + " - " : "") + "BOLT Editor");
-	}
-
-	public String getTitle()
-	{
-		return super.getTitle().replaceAll("( - )(BOLT Editor)", "");
-	}
-
-	public void newMap()
+	void newMap()
 	{
 		mapFile = null;
 		reset();
 	}
 
-	private void reset()
+	void reset()
 	{
 		rawFile.setEnabled(true);
 		create.setEnabled(true);
@@ -463,7 +495,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	}
 
-	public void openMap()
+	void openMap()
 	{
 		File f = getDefaultJFileChooser(true, this, FILE_FILTER_MAP);
 		if (f == null) return;
@@ -495,7 +527,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
-	private JSONObject getData()
+	JSONObject getData()
 	{
 		try
 		{
@@ -510,7 +542,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
-	public JSONObject validateCustomValues(JSONObject customValues, String entityName) throws JSONException
+	JSONObject validateCustomValues(JSONObject customValues, String entityName) throws JSONException
 	{
 		HashMap<String, Object> cv = EntityRegistry.getEntityBuilder(entityName).customValues;
 		if (customValues.length() == cv.size()) return customValues;
@@ -533,7 +565,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		return customValues;
 	}
 
-	public void saveMap()
+	void saveMap()
 	{
 		if (mapFile == null)
 		{
@@ -564,7 +596,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		refresh();
 	}
 
-	public void saveUMap()
+	void saveUMap()
 	{
 		File f = getDefaultJFileChooser(false, this, FILE_FILTER_MAP);
 		if (f == null) return;
@@ -579,7 +611,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		saveMap();
 	}
 
-	private void refresh()
+	void refresh()
 	{
 		if (isChanged())
 		{
@@ -611,7 +643,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	}
 
-	private String[] loadEntityList()
+	String[] loadEntityList()
 	{
 		EntityIO.entitiesFound.clear();
 		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
@@ -621,7 +653,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		return list.toArray(new String[] {});
 	}
 
-	private void newEntity()
+	void newEntity()
 	{
 		final JDialog dialog = new JDialog(this, "New Entity", true);
 		dialog.setSize(400, 170);
@@ -697,7 +729,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}
 	}
 
-	private void showEntityUI(TreeSelectionEvent e) throws Exception
+	void showEntityUI(TreeSelectionEvent e) throws Exception
 	{
 		uiPanel.setLayout(null);
 
@@ -756,7 +788,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		entityCustomValues = new JTable(new DefaultTableModel(data, new String[] { "Name (Type)", "Value" }))
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			public boolean isCellEditable(int row, int column)
 			{
@@ -821,7 +853,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		panel2.setPreferredSize(new Dimension(uiPanel.getWidth() / 2, 22));
 		panel2.add(new JButton(new AbstractAction("Remove")
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -831,7 +863,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		}));
 		panel2.add(new JButton(new AbstractAction("Add")
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -866,7 +898,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 			eventEvents = new JTable(new DefaultTableModel(eventData, new String[] { "Trigger", "Target", "Function", "Parameters", "Flags" }))
 			{
-				private static final long serialVersionUID = 1L;
+				static final long serialVersionUID = 1L;
 
 				@Override
 				public boolean isCellEditable(int row, int column)
@@ -889,7 +921,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			eventPanel.add(jsp);
 			eventPanel.add(new JButton(new AbstractAction("New")
 			{
-				private static final long serialVersionUID = 1L;
+				static final long serialVersionUID = 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent e)
@@ -899,7 +931,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}));
 			eventPanel.add(new JButton(new AbstractAction("Edit...")
 			{
-				private static final long serialVersionUID = 1L;
+				static final long serialVersionUID = 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent e)
@@ -919,7 +951,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}));
 			eventPanel.add(new JButton(new AbstractAction("Delete")
 			{
-				private static final long serialVersionUID = 1L;
+				static final long serialVersionUID = 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent e)
@@ -935,7 +967,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		apply = new JButton(new AbstractAction("Apply")
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -1043,7 +1075,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		refresh();
 	}
 
-	private void editEvent() throws JSONException
+	void editEvent() throws JSONException
 	{
 		final int entityIndex = tree.getSelectionRows()[0] - 2;
 
@@ -1099,7 +1131,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		final JTable params = new JTable(new DefaultTableModel(new String[] { "Name (Type)", "Value" }, 0))
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public boolean isCellEditable(int row, int column)
@@ -1173,7 +1205,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		final JTable flags = new JTable(new DefaultTableModel(flagData, new String[] { "Name", "Value" }))
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public boolean isCellEditable(int row, int column)
@@ -1197,7 +1229,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		JButton apply = new JButton(new AbstractAction("Apply")
 		{
-			private static final long serialVersionUID = 1L;
+			static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -1283,7 +1315,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		eventDialog.setVisible(true);
 	}
 
-	private void updateEditEventFunction()
+	void updateEditEventFunction()
 	{
 		try
 		{
@@ -1323,7 +1355,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	 * @param group
 	 *            Shall not contain the $ group indicator
 	 */
-	private ArrayList<String> getGroupFunctions(String group)
+	ArrayList<String> getGroupFunctions(String group)
 	{
 		ArrayList<String> initFunctions = new ArrayList<>();
 		ArrayList<String> functions = new ArrayList<>();
@@ -1363,7 +1395,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		return functions;
 	}
 
-	private ArrayList<String> getGroups()
+	ArrayList<String> getGroups()
 	{
 		ArrayList<String> groups = new ArrayList<>();
 		try

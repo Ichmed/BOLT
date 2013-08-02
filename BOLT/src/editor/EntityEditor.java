@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,7 +15,6 @@ import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -102,7 +103,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		initComponents();
 
-		setResizable(false);
+		// setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -225,13 +226,9 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		contentPanel.add(toolBar, BorderLayout.PAGE_START);
 
 		// -- components -- //
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-
 		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treePanel.setPreferredSize(new Dimension(200, 0));
-		panel.add(treePanel);
+		contentPanel.add(treePanel, BorderLayout.LINE_START);
 		tree = new JTree(new DefaultMutableTreeNode("EntityList"));
 		tree.setCellRenderer(new Editor.EditorTreeCellRenderer(0));
 		tree.setModel(null);
@@ -245,12 +242,28 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 
 		uiPanel = new JPanel(new FlowLayout());
 		uiPanel.setPreferredSize(new Dimension(600, 600));
-		panel.add(uiPanel);
-
-		contentPanel.add(panel, BorderLayout.PAGE_END);
+		contentPanel.add(uiPanel, BorderLayout.LINE_END);
 
 		setContentPane(contentPanel);
 		pack();
+		setMinimumSize(getSize());
+
+		addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				if (tabs != null)
+				{
+					uiPanel.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
+					tabs.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
+					JPanel p = (JPanel) tabs.getSelectedComponent();
+
+					SpringUtilities.makeCompactGrid(p, p.getComponentCount() / 2, 2, 6, 6, 6, 6);
+					apply.setSize(new Dimension(getContentPane().getWidth() - 200, 25));
+				}
+			}
+		});
 	}
 
 	private void reset()

@@ -1,5 +1,11 @@
 package editor;
 
+import entity.EntityBuilder;
+import entity.EntityRegistry;
+import entity.util.EntityIO;
+import game.Game;
+import game.TestGame;
+
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Component;
@@ -14,8 +20,11 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,11 +88,6 @@ import util.FileUtilities;
 import util.JSONUtilities;
 import util.JSuggestField;
 import util.SpringUtilities;
-import entity.EntityBuilder;
-import entity.EntityRegistry;
-import entity.util.EntityIO;
-import game.Game;
-import game.TestGame;
 
 /**
  * Map Editor GUI
@@ -155,7 +159,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JPanel uiPanel;
 	JDialog ui;
 
-	public Canvas canvas;
+	Canvas canvas;
 
 	// -- Entity Tab -- //
 	JSONArray entities;
@@ -175,7 +179,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JComboBox<String> eventFunction;
 
 	// -- toolbar -- //
+	JToolBar toolBar;
 	JButton save, saveAs, rawFile, create, clone, delete;
+
+	boolean mouseOverCanvas;
 
 	public Editor()
 	{
@@ -240,10 +247,15 @@ public class Editor extends JFrame implements TreeSelectionListener
 		return dummies;
 	}
 
+	public boolean isMouseOverCanvas()
+	{
+		return mouseOverCanvas;
+	}
+
 	void initComponents()
 	{
 		// -- toolbar -- //
-		final JToolBar toolBar = new JToolBar();
+		toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
 		toolBar.add(createToolBarButton("New Map", "new_con", new AbstractAction()
@@ -409,6 +421,20 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(600, 600));
+		canvas.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseExited(MouseEvent e)
+			{
+				mouseOverCanvas = false;
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e)
+			{
+				mouseOverCanvas = true;
+			}
+		});
 
 		contentPanel.add(canvas, BorderLayout.EAST);
 
@@ -416,6 +442,24 @@ public class Editor extends JFrame implements TreeSelectionListener
 		pack();
 		setMinimumSize(getSize());
 
+		addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				handleResized();
+			}
+		});
+		addWindowStateListener(new WindowStateListener()
+		{
+
+			@Override
+			public void windowStateChanged(WindowEvent e)
+			{
+				System.out.println(e);
+				handleResized();
+			}
+		});
 		ui = new JDialog(this, "BOLT Editor", false);
 
 		uiPanel = new JPanel(new FlowLayout());
@@ -425,9 +469,16 @@ public class Editor extends JFrame implements TreeSelectionListener
 		ui.setResizable(false);
 		ui.setContentPane(uiPanel);
 		ui.pack();
-		ui.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		ui.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		ui.setLocationRelativeTo(null);
 		ui.setVisible(false);
+	}
+
+	void handleResized()
+	{
+		canvas.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
+		canvas.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
+		refresh();
 	}
 
 	boolean isChanged()

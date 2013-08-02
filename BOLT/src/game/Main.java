@@ -11,8 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -20,19 +18,15 @@ import java.util.logging.Logger;
 
 import javax.swing.UIManager;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.collisionObjects.CollisionBox;
 import render.Model;
-import render.util.OBJLoader;
-import render.util.ShaderLoader;
 import util.math.MathHelper;
 import editor.Editor;
 import editor.Editor.EntityDummy;
@@ -119,7 +113,7 @@ public class Main
 				{
 					Display.setParent(editor.canvas);
 				}
-				catch (LWJGLException e)
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}

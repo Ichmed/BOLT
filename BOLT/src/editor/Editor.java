@@ -416,19 +416,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		pack();
 		setMinimumSize(getSize());
 
-		addComponentListener(new ComponentAdapter()
-		{
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				if (tabs != null)
-				{
-					tabs.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
-					apply.setSize(new Dimension(getContentPane().getWidth() - 200, 25));
-				}
-			}
-		});
-
 		ui = new JDialog(this, "BOLT Editor", false);
 
 		uiPanel = new JPanel(new FlowLayout());

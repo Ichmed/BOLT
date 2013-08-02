@@ -380,7 +380,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		canvas.setPreferredSize(new Dimension(600, 600));
 
 		contentPanel.add(canvas, BorderLayout.EAST);
-
+		
 		// contentPanel.add(uiPanel, BorderLayout.EAST);
 
 		setContentPane(contentPanel);

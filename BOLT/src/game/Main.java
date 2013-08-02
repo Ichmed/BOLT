@@ -121,6 +121,9 @@ public class Main
 				}
 				editor.toFront();
 				engineState = EngineState.EDITOR;
+				
+				while (!Display.isCloseRequested())
+					editorLoop();
 			}
 		}
 		else
@@ -133,6 +136,11 @@ public class Main
 		}
 
 		Display.destroy();
+	}
+
+	private static void editorLoop()
+	{
+		
 	}
 
 	public static void enterFullscreen() throws LWJGLException

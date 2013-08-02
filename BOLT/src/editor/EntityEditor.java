@@ -204,7 +204,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		saveAll.setEnabled(false);
 		toolBar.add(saveAll);
-		remove = Editor.createToolBarButton("Unlink Entity", "enum_obj", new AbstractAction()
+		remove = Editor.createToolBarButton("Unlink Entity", "enum_private_obj", new AbstractAction()
 		{
 			static final long serialVersionUID = 1L;
 

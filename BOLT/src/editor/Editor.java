@@ -384,7 +384,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		clone.setEnabled(false);
 		toolBar.add(clone);
-		delete = createToolBarButton("Remove Entity", "enum_obj", new AbstractAction()
+		delete = createToolBarButton("Remove Entity", "enum_private_obj", new AbstractAction()
 		{
 			static final long serialVersionUID = 1L;
 

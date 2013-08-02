@@ -1485,7 +1485,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 	{
 		try
 		{
-			System.out.println(name);
 			return new ImageIcon(ImageIO.read(Editor.class.getResource("/editor/icons/" + name + ".png")).getScaledInstance(20, 20, Image.SCALE_SMOOTH));
 		}
 		catch (IOException e)

@@ -119,6 +119,7 @@ public class Main
 				{
 					e.printStackTrace();
 				}
+				editor.toFront();
 				engineState = EngineState.EDITOR;
 			}
 		}

@@ -34,6 +34,7 @@ public class Main
 	public static boolean fullscreen;
 	public static int resX = 0;
 	public static int resY = 0;
+	public static int frequenzy = 0;
 	public static CollisionBox c;
 	private static DisplayMode[] fullscreenmodes;
 	public static final LogManager logmanager = LogManager.getLogManager();
@@ -135,9 +136,9 @@ public class Main
 		moveCamera();
 
 		glPushMatrix();
-		
-		glViewport(0,0,editor.canvas.getWidth(), editor.canvas.getHeight());
-		
+
+		glViewport(0, 0, editor.canvas.getWidth(), editor.canvas.getHeight());
+
 		{
 			glRotated(camera.rotation.x, 1f, 0f, 0f);
 			glRotated(camera.rotation.y, 0f, 1f, 0f);
@@ -150,7 +151,7 @@ public class Main
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			for(EntityDummy d : entityDummies)
+			for (EntityDummy d : entityDummies)
 			{
 				glPushMatrix();
 				{
@@ -159,7 +160,7 @@ public class Main
 					RenderHelper.renderBox(0.2f, 0.2f, 0.2f);
 				}
 				glPopMatrix();
-			}			
+			}
 
 			Display.update();
 			Display.sync(50);
@@ -287,6 +288,7 @@ public class Main
 				if (line.startsWith("fullscreen")) fullscreen = Boolean.valueOf(line.split("=")[1]);
 				if (line.startsWith("resX")) resX = Integer.valueOf(line.split("=")[1]);
 				if (line.startsWith("resY")) resY = Integer.valueOf(line.split("=")[1]);
+				if (line.startsWith("hz")) frequenzy = Integer.valueOf(line.split("=")[1]);
 			}
 			reader.close();
 		}
@@ -302,10 +304,11 @@ public class Main
 		boolean found = false;
 		for (DisplayMode akt : fullscreenmodes)
 		{
-			if (akt.getWidth() == resX && akt.getHeight() == resY)
+			if (akt.getWidth() == resX && akt.getHeight() == resY && akt.getFrequency() == frequenzy)
 			{
 				Display.setDisplayModeAndFullscreen(akt);
 				found = true;
+				break;
 			}
 		}
 		if (!found)

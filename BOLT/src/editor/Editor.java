@@ -159,7 +159,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JPanel uiPanel;
 	JDialog ui;
 
-	Canvas canvas;
+	public Canvas canvas;
 
 	// -- Entity Tab -- //
 	JSONArray entities;
@@ -456,7 +456,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void windowStateChanged(WindowEvent e)
 			{
-				System.out.println(e);
 				handleResized();
 			}
 		});
@@ -1419,8 +1418,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 				{
 					if (!entity.functions.contains(function))
 					{
-						System.out.println(entity.functions);
-						System.out.println("removing: " + function);
 						functions.remove(function);
 					}
 

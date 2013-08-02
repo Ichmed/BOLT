@@ -17,7 +17,8 @@ Stretch Goals
 
 options.txt commands:
 
-cameraSpeed=int
-fullscreen=boolean
-resX=int
-resY=int
+cameraSpeed=int<br>
+fullscreen=boolean<br>
+resX=int<br>
+resY=int<br>
+hz=int

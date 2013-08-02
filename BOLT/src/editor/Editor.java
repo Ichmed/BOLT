@@ -140,6 +140,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JScrollPane treePanel;
 	JTree tree;
 	JPanel uiPanel;
+	JDialog ui;
 
 	public Canvas canvas;
 
@@ -170,7 +171,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		ToolTipManager.sharedInstance().setInitialDelay(0);
-		
+
 		Game.setCurrentGame(new TestGame());
 		Game.getCurrentGame().prepareGame();
 		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
@@ -349,7 +350,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			@Override
 			public void componentResized(ComponentEvent e)
 			{
-				uiPanel.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - toolBar.getHeight()));
+				// uiPanel.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - toolBar.getHeight()));
 
 				if (tabs != null)
 				{
@@ -376,20 +377,26 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		treePanel.setViewportView(tree);
 
-		uiPanel = new JPanel(new FlowLayout());
-		uiPanel.setEnabled(false);
-		uiPanel.setPreferredSize(new Dimension(600, 600));
-
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(600, 600));
 
 		contentPanel.add(canvas, BorderLayout.EAST);
-		
-		// contentPanel.add(uiPanel, BorderLayout.EAST);
 
 		setContentPane(contentPanel);
 		pack();
 		setMinimumSize(getSize());
+
+		ui = new JDialog(this, "BOLT Editor", false);
+
+		uiPanel = new JPanel(new FlowLayout());
+		uiPanel.setEnabled(false);
+		uiPanel.setPreferredSize(new Dimension(600, 600));
+
+		ui.setContentPane(uiPanel);
+		ui.pack();
+		ui.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		ui.setLocationRelativeTo(null);
+		ui.setVisible(false);
 	}
 
 	public boolean isChanged()
@@ -454,7 +461,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		root.add(entities);
 		tree.setModel(new DefaultTreeModel(root));
 
-		uiPanel.setEnabled(true);
 	}
 
 	public void openMap()
@@ -669,9 +675,10 @@ public class Editor extends JFrame implements TreeSelectionListener
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
-		uiPanel.setLayout(new FlowLayout());
-		uiPanel.removeAll();
-		refresh();
+		/*
+		 * uiPanel.setLayout(new FlowLayout()); uiPanel.removeAll(); refresh();
+		 */
+		ui.setVisible(tree.getRowForPath(e.getPath()) > 1);
 
 		// -- toolbar -- //
 

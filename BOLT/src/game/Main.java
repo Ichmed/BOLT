@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ import render.util.OBJLoader;
 import render.util.ShaderLoader;
 import util.math.MathHelper;
 import editor.Editor;
+import editor.Editor.EntityDummy;
 
 public class Main
 {
@@ -55,6 +57,8 @@ public class Main
 	public static final Logger log = Logger.getLogger("BOLT");
 
 	public static EngineState engineState;
+	
+	static Editor editor;
 
 	public static void main(String[] args)
 	{
@@ -110,7 +114,7 @@ public class Main
 		{
 			if (args[0].toLowerCase().equals("-editor"))
 			{
-				Editor editor = new Editor();
+				editor = new Editor();
 				try
 				{
 					Display.setParent(editor.canvas);
@@ -140,7 +144,24 @@ public class Main
 
 	private static void editorLoop()
 	{
+		List<EntityDummy> entityDummies = editor.getEntitiesAsDummies();
 		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		for(EntityDummy d : entityDummies)
+		{
+			glBegin(GL_POINTS);
+			{
+				glVertex3f(d.pos.x, d.pos.y, d.pos.z);
+			}
+			glEnd();
+		}
+		
+		Display.update();
+		Display.sync(50);
 	}
 
 	public static void enterFullscreen() throws LWJGLException

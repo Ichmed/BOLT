@@ -139,7 +139,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		}));
 		toolBar.addSeparator();
 
-		create = Editor.createToolBarButton("New Entity", "new_con", new AbstractAction()
+		create = Editor.createToolBarButton("New Entity", "newenum_wiz", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -191,7 +191,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		});
 		saveAll.setEnabled(false);
 		toolBar.add(saveAll);
-		remove = Editor.createToolBarButton("Unlink Entity", "remove_from_buildpath", new AbstractAction()
+		remove = Editor.createToolBarButton("Unlink Entity", "enum_private_obj", new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -233,6 +233,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		treePanel.setPreferredSize(new Dimension(200, 0));
 		panel.add(treePanel);
 		tree = new JTree(new DefaultMutableTreeNode("EntityList"));
+		tree.setCellRenderer(new Editor.EditorTreeCellRenderer(0));
 		tree.setModel(null);
 		tree.setEnabled(false);
 		tree.setShowsRootHandles(true);

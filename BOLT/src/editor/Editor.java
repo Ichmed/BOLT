@@ -1,6 +1,7 @@
 package editor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -98,6 +99,38 @@ public class Editor extends JFrame implements TreeSelectionListener
 	public static final FileFilter FILE_FILTER_MAP = new FileNameExtensionFilter("BOLT Map-Files (*.map)", "map");
 
 	private static final long serialVersionUID = 1L;
+
+	public static class EditorTreeCellRenderer extends DefaultTreeCellRenderer
+	{
+		private static final long serialVersionUID = 1L;
+		Icon entity;
+		Icon folder;
+		int skipped;
+
+		public EditorTreeCellRenderer(int skipped)
+		{
+			this.skipped = skipped;
+
+			Image i = ((ImageIcon) Editor.getIcon("enum_obj")).getImage();
+			entity = new ImageIcon(i.getScaledInstance(16, 16, Image.SCALE_FAST));
+
+			i = ((ImageIcon) Editor.getIcon("fldr_obj")).getImage();
+
+			folder = new ImageIcon(i.getScaledInstance(16, 16, Image.SCALE_FAST));
+
+			setOpenIcon(folder);
+			setClosedIcon(folder);
+		}
+
+		@Override
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
+		{
+			if (row > skipped) setLeafIcon(entity);
+			else setLeafIcon(folder);
+
+			return super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+		}
+	}
 
 	File mapFile;
 	File entListFile;
@@ -314,19 +347,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		treePanel.setPreferredSize(new Dimension(200, 600));
 		panel.add(treePanel);
 		tree = new JTree(new DefaultMutableTreeNode("World"));
-		tree.setCellRenderer(new DefaultTreeCellRenderer()
-		{
-			private static final long serialVersionUID = 1L;
-
-			{
-				Image image = ((ImageIcon) Editor.getIcon("enum_obj")).getImage();
-				setLeafIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_FAST)));
-
-				image = ((ImageIcon) Editor.getIcon("fldr_obj")).getImage();
-				setOpenIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_FAST)));
-				setClosedIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_FAST)));
-			}
-		});
+		tree.setCellRenderer(new EditorTreeCellRenderer(1));
 		tree.setModel(null);
 		tree.setEnabled(false);
 		tree.setShowsRootHandles(true);
@@ -548,6 +569,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	private String[] loadEntityList()
 	{
+		EntityIO.entitiesFound.clear();
 		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
 
 		ArrayList<String> list = new ArrayList<>(EntityIO.entitiesFound.keySet());

@@ -11,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -565,6 +563,22 @@ public class Editor extends JFrame implements TreeSelectionListener
 		revalidate();
 		repaint();
 		treePanel.revalidate();
+
+		boolean isChanged = isChanged();
+		save.setEnabled(isChanged);
+		saveAs.setEnabled(isChanged);
+
+		if (tree.getSelectionRows().length > 0)
+		{
+			clone.setEnabled(tree.getSelectionRows()[0] > 1);
+			delete.setEnabled(tree.getSelectionRows()[0] > 1);
+		}
+		else
+		{
+			clone.setEnabled(false);
+			delete.setEnabled(false);
+		}
+
 	}
 
 	private String[] loadEntityList()
@@ -636,12 +650,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		refresh();
 
 		// -- toolbar -- //
-		boolean isChanged = isChanged();
-		save.setEnabled(isChanged);
-		saveAs.setEnabled(isChanged);
-
-		clone.setEnabled(tree.getRowForPath(e.getPath()) > 1);
-		delete.setEnabled(tree.getRowForPath(e.getPath()) > 1);
 
 		if (tree.getRowForPath(e.getPath()) > 1) // Entity1, Entity2, ...
 		{
@@ -947,32 +955,36 @@ public class Editor extends JFrame implements TreeSelectionListener
 					data.put("groups", groups);
 
 					// -- Events Tab Data -- //
+
 					JSONArray events = new JSONArray();
-					for (int i = 0; i < eventEvents.getRowCount(); i++)
+					if (tabs.getTabCount() > 1)
 					{
-						String trigger = eventEvents.getValueAt(i, 0).toString();
-						String target = eventEvents.getValueAt(i, 1).toString();
-						String function = eventEvents.getValueAt(i, 2).toString();
-						String params = eventEvents.getValueAt(i, 3).toString();
-						String flags = eventEvents.getValueAt(i, 4).toString();
-
-						if (target.length() == 0 || function.length() == 00)
+						for (int i = 0; i < eventEvents.getRowCount(); i++)
 						{
-							valid = false;
-							message = "Please edit or remove Event #" + i;
-							break;
-						}
+							String trigger = eventEvents.getValueAt(i, 0).toString();
+							String target = eventEvents.getValueAt(i, 1).toString();
+							String function = eventEvents.getValueAt(i, 2).toString();
+							String params = eventEvents.getValueAt(i, 3).toString();
+							String flags = eventEvents.getValueAt(i, 4).toString();
 
-						if (valid)
-						{
-							JSONObject o = new JSONObject();
-							o.put("trigger", trigger);
-							o.put("target", target);
-							o.put("function", function);
-							o.put("params", new JSONArray("[" + params + "]"));
-							o.put("flags", new JSONArray("[" + flags + "]"));
+							if (target.length() == 0 || function.length() == 00)
+							{
+								valid = false;
+								message = "Please edit or remove Event #" + i;
+								break;
+							}
 
-							events.put(o);
+							if (valid)
+							{
+								JSONObject o = new JSONObject();
+								o.put("trigger", trigger);
+								o.put("target", target);
+								o.put("function", function);
+								o.put("params", new JSONArray("[" + params + "]"));
+								o.put("flags", new JSONArray("[" + flags + "]"));
+
+								events.put(o);
+							}
 						}
 					}
 
@@ -1018,18 +1030,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 		Vector<String> data = new Vector<>();
 		for (int i = 0; i < entities.length(); i++)
 			data.add(entities.getJSONObject(i).getString("id"));
+
+		data.addAll(getGroups());
+
 		eventTarget = new JSuggestField((Window) eventDialog, data);
 		eventTarget.setPreferredSize(new Dimension(150, 22));
-		eventTarget.setFocusable(false);
-		eventTarget.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mouseClicked(MouseEvent e)
-			{
-				eventTarget.setFocusable(true);
-				eventTarget.requestFocus();
-			}
-		});
 		panel.add(eventTarget);
 
 		panel.add(new JLabel("Function:"));
@@ -1268,12 +1273,91 @@ public class Editor extends JFrame implements TreeSelectionListener
 					eventFunction.setModel(new DefaultComboBoxModel<String>(functions.toArray(new String[] {})));
 				}
 			}
+
+			if (eventTarget.getText().startsWith("$"))
+			{
+				ArrayList<String> functions = new ArrayList<>();
+				functions.add("-- Choose a function --");
+				for (String f : getGroupFunctions(eventTarget.getText().substring(1)))
+				{
+					functions.add(f.substring(0, f.indexOf("(")).trim());
+				}
+				eventFunction.setModel(new DefaultComboBoxModel<String>(functions.toArray(new String[] {})));
+			}
 		}
 		catch (JSONException e1)
 		{
 			e1.printStackTrace();
 		}
 	}
+
+	/**
+	 * @param group
+	 *            Shall not contain the $ group indicator
+	 */
+	private ArrayList<String> getGroupFunctions(String group)
+	{
+		ArrayList<String> initFunctions = new ArrayList<>();
+		ArrayList<String> functions = new ArrayList<>();
+
+		try
+		{
+			for (int i = 0; i < entities.length(); i++)
+			{
+				JSONObject o = entities.getJSONObject(i);
+				JSONArray gr = o.getJSONArray("groups");
+				if (!JSONUtilities.containsValue(gr, group)) continue;
+
+				EntityBuilder entity = EntityRegistry.getEntityBuilder(o.getString("name"));
+				if (initFunctions.size() == 0)
+				{
+					initFunctions.addAll(entity.functions);
+					functions.addAll(entity.functions);
+				}
+
+				else for (String function : initFunctions)
+				{
+					if (!entity.functions.contains(function))
+					{
+						System.out.println(entity.functions);
+						System.out.println("removing: " + function);
+						functions.remove(function);
+					}
+
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return functions;
+	}
+
+	private ArrayList<String> getGroups()
+	{
+		ArrayList<String> groups = new ArrayList<>();
+		try
+		{
+			for (int i = 0; i < entities.length(); i++)
+			{
+				JSONObject o = entities.getJSONObject(i);
+				JSONArray gr = o.getJSONArray("groups");
+				for (int j = 0; j < gr.length(); j++)
+				{
+					if (!groups.contains("$" + gr.getString(j))) groups.add("$" + gr.getString(j));
+				}
+			}
+		}
+		catch (Exception e)
+		{
+		}
+		Collections.sort(groups);
+		return groups;
+	}
+
+	// -- statics -- //
 
 	public static File getDefaultJFileChooser(boolean open, Window parent, FileFilter filter)
 	{

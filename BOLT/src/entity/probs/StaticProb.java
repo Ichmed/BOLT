@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL11.glTranslated;
 
 import org.lwjgl.opengl.GL11;
 
-import render.RenderHelper;
+import render.util.RenderHelper;
 
 import entity.Entity;
 

@@ -82,6 +82,7 @@ import entity.EntityBuilder;
 import entity.EntityRegistry;
 import entity.util.EntityIO;
 import game.Game;
+import game.TestGame;
 
 /**
  * Map Editor GUI
@@ -169,6 +170,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		ToolTipManager.sharedInstance().setInitialDelay(0);
+		
+		Game.setCurrentGame(new TestGame());
+		Game.getCurrentGame().prepareGame();
 		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
 
 		addWindowListener(new WindowAdapter()

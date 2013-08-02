@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import render.RenderHelper;
+import render.util.RenderHelper;
 import util.math.MathHelper;
 import event.EntityEvent;
 import game.World;

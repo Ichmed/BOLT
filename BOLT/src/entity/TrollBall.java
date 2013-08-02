@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import render.RenderHelper;
+import render.util.RenderHelper;
 
 public class TrollBall extends Entity
 {

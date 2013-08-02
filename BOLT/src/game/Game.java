@@ -91,4 +91,17 @@ public abstract class Game
 		peak = Math.max(peak, l);
 //		System.out.println("Last Tick: " + l + " Peak: " + peak + "\n Average: " + sum / ticks);
 	}
+	
+	public static void launchGame(String classPath)
+	{
+		try
+		{
+			Game.currentGame = (Game) Class.forName(classPath).newInstance();
+			Game.currentGame.prepareGame();
+			Game.currentGame.initializeGame();
+		}
+		catch (Exception e)
+		{
+		}
+	}	
 }

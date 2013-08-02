@@ -1,6 +1,7 @@
 package game;
 
 import render.util.RenderHelper;
+import render.util.ShaderLoader;
 import entity.util.EntityIO;
 import entity.util.MapIO;
 
@@ -12,6 +13,7 @@ public class TestGame extends Game
 	{
 		this.entListFilePath = "test/entities/testList.entlist";
 		RenderHelper.initGLSettings();
+		ShaderLoader.useProgram("test/", "shader");
 	}
 	
 	@Override

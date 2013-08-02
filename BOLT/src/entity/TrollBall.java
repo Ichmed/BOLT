@@ -67,7 +67,7 @@ public class TrollBall extends Entity
 		return (double)((int)this.customValues.get(color)) / 256D;
 	}
 
-	public void setColor3i(int red, int blue, int green)
+	public void setColor3i(int red, int green, int blue)
 	{
 		this.customValues.put("red", red);
 		this.customValues.put("green", green);

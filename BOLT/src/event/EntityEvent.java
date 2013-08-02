@@ -53,7 +53,6 @@ public class EntityEvent
 		
 		for(Entity e : targets)
 		{
-			System.out.println(owner + " " + target); 
 			Method[] methods = e.getClass().getMethods();
 			
 			Object[] o = new Object[parameters.length()];

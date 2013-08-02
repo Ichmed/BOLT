@@ -68,6 +68,8 @@ public class Main
 			e2.printStackTrace();
 		}
 		log.setLevel(Level.ALL);
+		
+		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 
 		if (args.length > 0)
 		{

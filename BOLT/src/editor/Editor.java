@@ -714,7 +714,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		JPanel entityPanel = new JPanel(new SpringLayout());
 		entityPanel.setPreferredSize(new Dimension(uiPanel.getWidth(), 473));
 		JLabel label = new JLabel("Name:");
-		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
+		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 4 - 20, 22));
 		entityPanel.add(label);
 		JTextField name = new JTextField(entity.fullName + " (" + entity.name + ")");
 		name.setEditable(false);

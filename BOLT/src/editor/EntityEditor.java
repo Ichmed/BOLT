@@ -497,7 +497,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		JPanel panel = new JPanel(new SpringLayout());
 		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 525));
 		JLabel label = new JLabel("Parent:");
-		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
+		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 4 - 20, 22));
 		panel.add(label);
 
 		Vector<String> suggest = new Vector<String>();
@@ -670,7 +670,7 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 370));
 
 		label = new JLabel("Triggers:");
-		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 2 - 20, 22));
+		label.setPreferredSize(new Dimension(uiPanel.getWidth() / 4 - 20, 22));
 		panel.add(label);
 
 		String[][] eventData = new String[b.triggers.size() + b.nonInheritedTriggers.size()][];

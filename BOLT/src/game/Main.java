@@ -104,6 +104,7 @@ public class Main
 				editor = new Editor();
 				try
 				{
+					leaveFullscreen();
 					Display.setParent(editor.canvas);
 				}
 				catch (Exception e)

@@ -221,7 +221,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 	public ArrayList<EntityDummy> getEntitiesAsDummies()
 	{
-		if (entities == null) return null;
+		if (entities == null) return new ArrayList<>();
 
 		ArrayList<EntityDummy> dummies = new ArrayList<>();
 		try

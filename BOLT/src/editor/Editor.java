@@ -1,11 +1,5 @@
 package editor;
 
-import entity.EntityBuilder;
-import entity.EntityRegistry;
-import entity.util.EntityIO;
-import game.Game;
-import game.TestGame;
-
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Component;
@@ -88,6 +82,10 @@ import util.FileUtilities;
 import util.JSONUtilities;
 import util.JSuggestField;
 import util.SpringUtilities;
+import entity.EntityBuilder;
+import entity.EntityRegistry;
+import entity.util.EntityIO;
+import game.Game;
 
 /**
  * Map Editor GUI
@@ -191,10 +189,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		ToolTipManager.sharedInstance().setInitialDelay(0);
-
-		Game.setCurrentGame(new TestGame());
-		Game.getCurrentGame().prepareGame();
-		EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
 
 		addWindowListener(new WindowAdapter()
 		{

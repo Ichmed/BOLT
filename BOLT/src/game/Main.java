@@ -1,6 +1,7 @@
 package game;
 
 import static org.lwjgl.opengl.GL11.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,13 +21,11 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.collisionObjects.CollisionBox;
-import render.util.ModelLoader;
 import render.util.RenderHelper;
 import util.math.MathHelper;
 import editor.Editor;
 import editor.Editor.EntityDummy;
-import entity.EntityBuilder;
-import entity.EntityRegistry;
+import entity.util.EntityIO;
 
 public class Main
 {
@@ -86,7 +85,6 @@ public class Main
 			{
 				leaveFullscreen();
 			}
-			Display.create();
 		}
 		catch (LWJGLException e1)
 		{
@@ -97,37 +95,48 @@ public class Main
 		// c = CollisionBox.create(m.getVerteciesAsArray());
 		// log.log(Level.INFO, c.toString());
 
-		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 		// Mouse.setGrabbed(true);
 
 		if (args.length > 0)
 		{
 			if (args[0].toLowerCase().equals("-editor"))
 			{
-				editor = new Editor();
 				try
 				{
+					editor = new Editor();
 					leaveFullscreen();
 					Display.setParent(editor.canvas);
+					Display.create();
+					Game.setCurrentGame(new TestGame());
+					Game.getCurrentGame().prepareGame();
+					EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
+					editor.toFront();
+					engineState = EngineState.EDITOR;
+					Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+					while (!Display.isCloseRequested())
+						editorLoop();
 				}
 				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
-				editor.toFront();
-				engineState = EngineState.EDITOR;
-
-				while (!Display.isCloseRequested())
-					editorLoop();
 			}
 		}
 		else
 		{
-			Game.launchGame("game.TestGame");
-			engineState = EngineState.GAME;
-
-			while (!Display.isCloseRequested())
-				gameLoop();
+			try
+			{
+				Display.create();
+				Game.launchGame("game.TestGame");
+				engineState = EngineState.GAME;
+				Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+				while (!Display.isCloseRequested())
+					gameLoop();
+			}
+			catch (LWJGLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		Display.destroy();

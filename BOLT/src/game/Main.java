@@ -20,10 +20,13 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.collisionObjects.CollisionBox;
+import render.util.ModelLoader;
 import render.util.RenderHelper;
 import util.math.MathHelper;
 import editor.Editor;
 import editor.Editor.EntityDummy;
+import entity.EntityBuilder;
+import entity.EntityRegistry;
 
 public class Main
 {
@@ -136,6 +139,13 @@ public class Main
 
 		moveCamera();
 
+		if (Mouse.isButtonDown(1))
+		{
+			rotateCamera();
+			Mouse.setGrabbed(true);
+		}
+		else Mouse.setGrabbed(false);
+
 		glPushMatrix();
 
 		glViewport(0, 0, editor.canvas.getWidth(), editor.canvas.getHeight());
@@ -156,9 +166,23 @@ public class Main
 			{
 				glPushMatrix();
 				{
-					glTranslatef(d.pos.x, d.pos.y, d.pos.z);
-					glTranslatef(-0.1f, -0.1f, -0.1f);
-					RenderHelper.renderBox(0.2f, 0.2f, 0.2f);
+//					EntityBuilder b = EntityRegistry.getEntityBuilder(d.name);
+
+//					if (b.model.equals(""))
+//					{
+						glTranslatef(d.pos.x, d.pos.y, d.pos.z);
+						glTranslatef(-0.1f, -0.1f, -0.1f);
+						RenderHelper.renderBox(0.2f, 0.2f, 0.2f);
+//					}
+//					else try
+//					{
+//						ModelLoader.loadModel(b.model).renderModel();
+//					}
+//					catch (Exception e)
+//					{
+//						e.printStackTrace();
+//					}
+
 				}
 				glPopMatrix();
 			}

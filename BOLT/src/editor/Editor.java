@@ -1,6 +1,7 @@
 package editor;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -139,6 +140,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JTree tree;
 	JPanel uiPanel;
 
+	public Canvas canvas;
+
 	// -- Entity Tab -- //
 	JSONArray entities;
 	JSpinner entityPosX, entityPosY, entityPosZ;
@@ -147,7 +150,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JTable entityCustomValues, entityGroups;
 
 	JTabbedPane tabs;
-	
+
 	JButton apply;
 
 	// -- Events Tab -- //
@@ -184,7 +187,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 		initComponents();
-		// setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -374,7 +376,12 @@ public class Editor extends JFrame implements TreeSelectionListener
 		uiPanel.setEnabled(false);
 		uiPanel.setPreferredSize(new Dimension(600, 600));
 
-		contentPanel.add(uiPanel, BorderLayout.EAST);
+		canvas = new Canvas();
+		canvas.setPreferredSize(new Dimension(600, 600));
+
+		contentPanel.add(canvas, BorderLayout.EAST);
+
+		// contentPanel.add(uiPanel, BorderLayout.EAST);
 
 		setContentPane(contentPanel);
 		pack();

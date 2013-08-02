@@ -135,6 +135,9 @@ public class Main
 		moveCamera();
 
 		glPushMatrix();
+		
+		glViewport(0,0,editor.canvas.getWidth(), editor.canvas.getHeight());
+		
 		{
 			glRotated(camera.rotation.x, 1f, 0f, 0f);
 			glRotated(camera.rotation.y, 0f, 1f, 0f);

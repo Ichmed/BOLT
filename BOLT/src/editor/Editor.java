@@ -9,6 +9,8 @@ import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
@@ -24,7 +26,6 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
@@ -146,6 +147,8 @@ public class Editor extends JFrame implements TreeSelectionListener
 	JTable entityCustomValues, entityGroups;
 
 	JTabbedPane tabs;
+	
+	JButton apply;
 
 	// -- Events Tab -- //
 	JTable eventEvents;
@@ -181,7 +184,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 			}
 		});
 		initComponents();
-		setResizable(false);
+		// setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -189,7 +192,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	public void initComponents()
 	{
 		// -- toolbar -- //
-		JToolBar toolBar = new JToolBar();
+		final JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
 		toolBar.add(createToolBarButton("New Map", "new_con", new AbstractAction()
@@ -335,15 +338,27 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		// -- components -- //
 		JPanel contentPanel = new JPanel(new BorderLayout());
+		addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				uiPanel.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - toolBar.getHeight()));
+
+				if (tabs != null)
+				{
+					tabs.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
+					apply.setSize(new Dimension(getContentPane().getWidth() - 200, 25));
+				}
+			}
+		});
 
 		contentPanel.add(toolBar, BorderLayout.PAGE_START);
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-
 		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treePanel.setPreferredSize(new Dimension(200, 600));
-		panel.add(treePanel);
+
+		contentPanel.add(treePanel, BorderLayout.LINE_START);
 		tree = new JTree(new DefaultMutableTreeNode("World"));
 		tree.setCellRenderer(new EditorTreeCellRenderer(1));
 		tree.setModel(null);
@@ -352,7 +367,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(this);
 		tree.setExpandsSelectedPaths(true);
-		// tree.addMouseListener(new MouseAdapter() { public void mouseClicked(MouseEvent e) { if (e.getButton() != 3) return;final int row = tree.getRowForLocation(e.getX(), e.getY());if (row <= 1) return;tree.setSelectionRow(row);JPopupMenu menu = new JPopupMenu(); JMenuItem del = new JMenuItem(new AbstractAction("Delete") { private static final long serialVersionUID = 1L; @Override public void actionPerformed(ActionEvent e) { entities.remove(row - 2); DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel(); dtm.removeNodeFromParent((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()); refresh(); } }); menu.add(del);menu.show(e.getComponent(), e.getX(), e.getY()); } });
 
 		treePanel.setViewportView(tree);
 
@@ -360,12 +374,11 @@ public class Editor extends JFrame implements TreeSelectionListener
 		uiPanel.setEnabled(false);
 		uiPanel.setPreferredSize(new Dimension(600, 600));
 
-		panel.add(uiPanel);
-
-		contentPanel.add(panel, BorderLayout.PAGE_END);
+		contentPanel.add(uiPanel, BorderLayout.EAST);
 
 		setContentPane(contentPanel);
 		pack();
+		setMinimumSize(getSize());
 	}
 
 	public boolean isChanged()
@@ -672,7 +685,6 @@ public class Editor extends JFrame implements TreeSelectionListener
 
 		tabs = new JTabbedPane();
 		tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
-		tabs.setPreferredSize(uiPanel.getPreferredSize());
 		final int entityIndex = tree.getSelectionRows()[0] - 2;
 
 		JSONObject entityData = entities.getJSONObject(entityIndex);
@@ -905,7 +917,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		// -- Final -- //
 		uiPanel.add(tabs);
 
-		JButton apply = new JButton(new AbstractAction("Apply")
+		apply = new JButton(new AbstractAction("Apply")
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -1009,7 +1021,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 				}
 			}
 		});
-		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
+		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getPreferredSize().width, 25);
 		uiPanel.add(apply);
 
 		refresh();

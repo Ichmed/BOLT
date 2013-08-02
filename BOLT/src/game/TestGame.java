@@ -13,7 +13,6 @@ public class TestGame extends Game
 	{
 		this.entListFilePath = "test/entities/testList.entlist";
 		RenderHelper.initGLSettings();
-		ShaderLoader.useProgram("test/", "shader");
 	}
 	
 	@Override
@@ -22,5 +21,6 @@ public class TestGame extends Game
 		EntityIO.findEntities(this.entListFilePath);
 		this.currentWorld = new World();
 		MapIO.loadMap(currentWorld, "test/testMap.map");
+		ShaderLoader.useProgram("test/", "shader");
 	}
 }

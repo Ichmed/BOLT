@@ -20,15 +20,12 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.collisionObjects.CollisionBox;
-import render.Model;
 import util.math.MathHelper;
 import editor.Editor;
 import editor.Editor.EntityDummy;
 
 public class Main
 {
-	public static Model m;
-
 	static int i = 0;
 	static Camera camera = new Camera();
 
@@ -90,7 +87,7 @@ public class Main
 		{
 			e1.printStackTrace();
 		}
-
+		
 		// setUpFrameBufferObject();
 		// c = CollisionBox.create(m.getVerteciesAsArray());
 		// log.log(Level.INFO, c.toString());
@@ -149,13 +146,7 @@ public class Main
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			
-
-			glBegin(GL_POINTS);
-			glVertex3f(0, 0, -5);
-			glVertex3f(10, 0, -5);
-			glVertex3f(5, 0, 0);
-			glEnd();
+			glPointSize(10);
 			
 			for (EntityDummy d : entityDummies)
 			{
@@ -169,9 +160,6 @@ public class Main
 			Display.sync(50);
 		}
 		glPopMatrix();
-		
-		System.out.println(camera.position);
-
 	}
 
 	public static void gameLoop()

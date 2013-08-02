@@ -1,12 +1,6 @@
 package game;
 
-import static org.lwjgl.opengl.ARBFramebufferObject.*;
-import static org.lwjgl.opengl.ARBShadowAmbient.GL_TEXTURE_COMPARE_FAIL_VALUE_ARB;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL14.*;
-import static org.lwjgl.util.glu.GLU.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,7 +45,7 @@ public class Main
 	public static final Logger log = Logger.getLogger("BOLT");
 
 	public static EngineState engineState;
-	
+
 	static Editor editor;
 
 	public static void main(String[] args)
@@ -119,7 +113,7 @@ public class Main
 				}
 				editor.toFront();
 				engineState = EngineState.EDITOR;
-				
+
 				while (!Display.isCloseRequested())
 					editorLoop();
 			}
@@ -139,106 +133,52 @@ public class Main
 	private static void editorLoop()
 	{
 		List<EntityDummy> entityDummies = editor.getEntitiesAsDummies();
-		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		for(EntityDummy d : entityDummies)
+		moveCamera();
+
+		glPushMatrix();
 		{
+			glRotated(camera.rotation.x, 1f, 0f, 0f);
+			glRotated(camera.rotation.y, 0f, 1f, 0f);
+			glRotated(camera.rotation.z, 0f, 0f, 1f);
+
+			glTranslatef(-camera.position.x, -camera.position.y, -camera.position.z);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			
+
 			glBegin(GL_POINTS);
-			{
-				glVertex3f(d.pos.x, d.pos.y, d.pos.z);
-			}
+			glVertex3f(0, 0, -5);
+			glVertex3f(10, 0, -5);
+			glVertex3f(5, 0, 0);
 			glEnd();
+			
+			for (EntityDummy d : entityDummies)
+			{
+				glBegin(GL_POINTS);
+				{
+					glVertex3f(d.pos.x, d.pos.y, d.pos.z);
+				}
+				glEnd();
+			}
+			Display.update();
+			Display.sync(50);
 		}
+		glPopMatrix();
 		
-		Display.update();
-		Display.sync(50);
-	}
+		System.out.println(camera.position);
 
-	public static void enterFullscreen() throws LWJGLException
-	{
-		// Display.setFullscreen(true);
-		boolean found = false;
-		for (DisplayMode akt : fullscreenmodes)
-		{
-			if (akt.getWidth() == resX && akt.getHeight() == resY)
-			{
-				Display.setDisplayModeAndFullscreen(akt);
-				found = true;
-			}
-		}
-		if (!found)
-		{
-			System.out.printf("can not find matching resolution - falling back to desktop resolution\n");
-			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-		}
-	}
-
-	public static void leaveFullscreen() throws LWJGLException
-	{
-		Display.setDisplayMode(new DisplayMode(resX, resY));
-		Display.setFullscreen(false);
-	}
-
-	public static void toggleFullscreen()
-	{
-		try
-		{
-			if (Display.isFullscreen())
-			{
-				leaveFullscreen();
-			}
-			else
-			{
-				enterFullscreen();
-			}
-		}
-		catch (LWJGLException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	public static void gameLoop()
 	{
-		i++;
-
-		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float) Display.getWidth()) * cameraSpeed;
-		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float) Display.getHeight()) * cameraSpeed;
-
-		camera.rotation.x = MathHelper.clamp(camera.rotation.x, -90, 90);
-
-		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
-
-		double x = Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
-		double y = -Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
-		double z = -Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_W))
-		{
-			camera.position.x += x * Math.cos(Math.toRadians(camera.rotation.x));
-			camera.position.y += y;
-			camera.position.z += z * Math.cos(Math.toRadians(camera.rotation.x));
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S))
-		{
-			camera.position.x -= x * Math.cos(Math.toRadians(camera.rotation.x));
-			camera.position.y -= y;
-			camera.position.z -= z * Math.cos(Math.toRadians(camera.rotation.x));
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A))
-		{
-			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
-			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D))
-		{
-			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
-			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
-		}
+		moveCamera();
+		rotateCamera();
+		Mouse.setGrabbed(true);
 		if (Keyboard.isKeyDown(Keyboard.KEY_E))
 		{
 			lightPos.x = camera.position.x;
@@ -298,8 +238,47 @@ public class Main
 			Display.update();
 			Display.sync(50);
 		}
-
 		glPopMatrix();
+	}
+
+	public static void moveCamera()
+	{
+		double x = Math.sin(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+		double y = -Math.sin(Math.toRadians(camera.rotation.x)) * GameRules.cameraSpeed;
+		double z = -Math.cos(Math.toRadians(camera.rotation.y)) * GameRules.cameraSpeed;
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_W))
+		{
+			camera.position.x += x * Math.cos(Math.toRadians(camera.rotation.x));
+			camera.position.y += y;
+			camera.position.z += z * Math.cos(Math.toRadians(camera.rotation.x));
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S))
+		{
+			camera.position.x -= x * Math.cos(Math.toRadians(camera.rotation.x));
+			camera.position.y -= y;
+			camera.position.z -= z * Math.cos(Math.toRadians(camera.rotation.x));
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_A))
+		{
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y - 90)) * GameRules.cameraSpeed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D))
+		{
+			camera.position.x += Math.sin(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
+			camera.position.z -= Math.cos(Math.toRadians(camera.rotation.y + 90)) * GameRules.cameraSpeed;
+		}
+	}
+
+	public static void rotateCamera()
+	{
+		camera.rotation.y += ((Mouse.getX() - (Display.getWidth() / 2)) / (float) Display.getWidth()) * cameraSpeed;
+		camera.rotation.x -= ((Mouse.getY() - (Display.getHeight() / 2)) / (float) Display.getHeight()) * cameraSpeed;
+
+		camera.rotation.x = MathHelper.clamp(camera.rotation.x, -90, 90);
+
+		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 	}
 
 	public static void loadOptions()
@@ -321,6 +300,50 @@ public class Main
 		catch (Exception e1)
 		{
 			e1.printStackTrace();
+		}
+	}
+
+	public static void enterFullscreen() throws LWJGLException
+	{
+		// Display.setFullscreen(true);
+		boolean found = false;
+		for (DisplayMode akt : fullscreenmodes)
+		{
+			if (akt.getWidth() == resX && akt.getHeight() == resY)
+			{
+				Display.setDisplayModeAndFullscreen(akt);
+				found = true;
+			}
+		}
+		if (!found)
+		{
+			System.out.printf("can not find matching resolution - falling back to desktop resolution\n");
+			Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+		}
+	}
+
+	public static void leaveFullscreen() throws LWJGLException
+	{
+		Display.setDisplayMode(new DisplayMode(resX, resY));
+		Display.setFullscreen(false);
+	}
+
+	public static void toggleFullscreen()
+	{
+		try
+		{
+			if (Display.isFullscreen())
+			{
+				leaveFullscreen();
+			}
+			else
+			{
+				enterFullscreen();
+			}
+		}
+		catch (LWJGLException e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

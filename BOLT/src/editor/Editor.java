@@ -370,7 +370,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 		});
 		clone.setEnabled(false);
 		toolBar.add(clone);
-		delete = createToolBarButton("Remove Entity", "enum__obj", new AbstractAction()
+		delete = createToolBarButton("Remove Entity", "enum_obj", new AbstractAction()
 		{
 			static final long serialVersionUID = 1L;
 
@@ -1485,6 +1485,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 	{
 		try
 		{
+			System.out.println(name);
 			return new ImageIcon(ImageIO.read(Editor.class.getResource("/editor/icons/" + name + ".png")).getScaledInstance(20, 20, Image.SCALE_SMOOTH));
 		}
 		catch (IOException e)

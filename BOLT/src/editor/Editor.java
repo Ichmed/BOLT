@@ -201,7 +201,7 @@ public class Editor extends JFrame implements TreeSelectionListener
 					if (r == JOptionPane.YES_OPTION) saveMap();
 					else if (r == JOptionPane.CANCEL_OPTION) return;
 				}
-
+				dispose();
 				System.exit(0);
 			}
 		});

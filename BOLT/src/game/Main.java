@@ -112,7 +112,6 @@ public class Main
 					EntityIO.findEntities(Game.getCurrentGame().entListFilePath);
 					editor.toFront();
 					engineState = EngineState.EDITOR;
-					Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
 					while (!Display.isCloseRequested())
 						editorLoop();
 				}

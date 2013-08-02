@@ -55,7 +55,6 @@ public class RenderHelper
 	@Deprecated
 	public static final char[] characterChart = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.', ',', ':', ';',
 			'-', '+', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', '"', '!', '?', '=', '*', '_', '#', '\'', ' ' };
-
 	
 	public static boolean bindTexture(String path)
 	{
@@ -222,7 +221,6 @@ public class RenderHelper
 
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, MathHelper.asFloatBuffer(new float[] { 0.1f, 0.1f, 0.1f, 1 }));
 	}
-
 	
 	public static void setUpFrameBufferObject()
 	{
@@ -303,5 +301,63 @@ public class RenderHelper
 		textureBuffer.put(3, depthModelViewProjection.m33);
 
 		glTexGen(GL_Q, GL_EYE_PLANE, textureBuffer);
+	}
+
+	public static void renderBox(float x, float y, float z)
+	{
+		glDisable(GL_CULL_FACE);
+		glBegin(GL_QUADS);
+		{
+			glVertex3f(0, 0, 0);
+			glVertex3f(x, 0, 0);
+			glVertex3f(x, 0, z);
+			glVertex3f(0, 0, z);
+		}
+		glEnd();
+		
+		glBegin(GL_QUADS);
+		{
+			glVertex3f(0, 0, 0);
+			glVertex3f(x, 0, 0);
+			glVertex3f(x, y, 0);
+			glVertex3f(0, y, 0);
+		}
+		glEnd();
+		
+		glBegin(GL_QUADS);
+		{
+			glVertex3f(0, 0, 0);
+			glVertex3f(0, y, 0);
+			glVertex3f(0, y, z);
+			glVertex3f(0, 0, z);
+		}
+		glEnd();
+		
+		glBegin(GL_QUADS);
+		{
+			glVertex3f(x, 0, 0);
+			glVertex3f(x, y, 0);
+			glVertex3f(x, y, z);
+			glVertex3f(x, 0, z);
+		}
+		glEnd();
+		
+		glBegin(GL_QUADS);
+		{
+			glVertex3f(0, y, 0);
+			glVertex3f(x, y, 0);
+			glVertex3f(x, y, z);
+			glVertex3f(0, y, z);
+		}
+		glEnd();
+		
+		glBegin(GL_QUADS);
+		{
+			glVertex3f(0, 0, z);
+			glVertex3f(x, 0, z);
+			glVertex3f(x, y, z);
+			glVertex3f(0, y, z);
+		}
+		glEnd();
 	}
 }

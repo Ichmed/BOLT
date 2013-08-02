@@ -20,6 +20,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.collisionObjects.CollisionBox;
+import render.util.RenderHelper;
 import util.math.MathHelper;
 import editor.Editor;
 import editor.Editor.EntityDummy;
@@ -87,7 +88,7 @@ public class Main
 		{
 			e1.printStackTrace();
 		}
-		
+
 		// setUpFrameBufferObject();
 		// c = CollisionBox.create(m.getVerteciesAsArray());
 		// log.log(Level.INFO, c.toString());
@@ -146,16 +147,17 @@ public class Main
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			glPointSize(10);
-			
-			for (EntityDummy d : entityDummies)
+			for(EntityDummy d : entityDummies)
 			{
-				glBegin(GL_POINTS);
+				glPushMatrix();
 				{
-					glVertex3f(d.pos.x, d.pos.y, d.pos.z);
+					glTranslatef(d.pos.x, d.pos.y, d.pos.z);
+					glTranslatef(-0.1f, -0.1f, -0.1f);
+					RenderHelper.renderBox(0.2f, 0.2f, 0.2f);
 				}
-				glEnd();
-			}
+				glPopMatrix();
+			}			
+
 			Display.update();
 			Display.sync(50);
 		}

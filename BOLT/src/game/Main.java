@@ -91,7 +91,6 @@ public class Main
 				try
 				{
 					Display.setParent(editor.canvas);
-
 				}
 				catch (LWJGLException e)
 				{
@@ -273,7 +272,6 @@ public class Main
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glEnable(GL_BLEND);
-			glLoadIdentity();
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			Game.currentGame.gameLoop();

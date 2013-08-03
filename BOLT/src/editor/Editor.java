@@ -555,7 +555,9 @@ public class Editor extends JFrame implements TreeSelectionListener
 			mapFile = null;
 
 			tree.setModel(null);
-
+			create.setEnabled(false);
+			rawFile.setEnabled(false);
+			
 			return;
 		}
 	}

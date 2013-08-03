@@ -107,6 +107,7 @@ public class Main
 					leaveFullscreen();
 					Display.setParent(editor.canvas);
 					Display.create();
+					Display.setVSyncEnabled(true);
 					Game.setCurrentGame(new TestGame());
 					Game.getCurrentGame().prepareGame();
 					EntityIO.findEntities(Game.getCurrentGame().entListFilePath);

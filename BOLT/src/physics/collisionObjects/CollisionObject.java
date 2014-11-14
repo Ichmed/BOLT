@@ -4,8 +4,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public abstract class CollisionObject
-{
+public abstract class CollisionObject {
 	/**
 	 * a vector pointing at the middle of the object
 	 */
@@ -15,8 +14,8 @@ public abstract class CollisionObject
 	 */
 	public float mass = 0;
 	
-//	public  CollisionObject create(Vector3f... points) throws NotImplementedException
-//	{
-//		 throw new NotImplementedException();
-//	}
+	// public CollisionObject create(Vector3f... points) throws NotImplementedException
+	// {
+	// throw new NotImplementedException();
+	// }
 }

@@ -9,17 +9,14 @@ import render.util.RenderHelper;
 
 import entity.Entity;
 
-public class StaticProb extends Entity
-{
+public class StaticProb extends Entity {
 	@Override
-	public void render()
-	{
+	public void render() {
 		this.model = (String) customValues.get("displayModel");
 		super.render();
 	}
-
-	protected void doRendering()
-	{
+	
+	protected void doRendering() {
 		glTranslated(this.position.x, this.position.y, this.position.z);
 		glRotated(this.rotation.x, 1, 0, 0);
 		glRotated(this.rotation.y, 0, 1, 0);

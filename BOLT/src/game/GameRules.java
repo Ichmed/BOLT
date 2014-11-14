@@ -7,10 +7,9 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.Display;
 
-public class GameRules
-{
+public class GameRules {
 	/**
-	 *  Gravity in m/s^2
+	 * Gravity in m/s^2
 	 */
 	public static float gravity = 9.8f;
 	
@@ -23,32 +22,24 @@ public class GameRules
 	 * Developer-mode on/off
 	 */
 	public static boolean devMode = false;
-
+	
 	public static double cameraSpeed = 0.1;
 	
 	/**
 	 * Loads game.rules to static variables
 	 */
-	public static void loadRules()
-	{
+	public static void loadRules() {
 		File file = new File("game.rules");
-		try
-		{
+		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
-			while((line = reader.readLine()) != null)
-			{
-				if(line.startsWith("gravity"))
-					gravity = Float.valueOf(line.split("=")[1]);
-				if(line.startsWith("playerMaxSpeed"))
-					playerMaxSpeed = Float.valueOf(line.split("=")[1]);
-				if(line.startsWith("devMode"))
-					devMode = Boolean.valueOf(line.split("=")[1]);
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("gravity")) gravity = Float.valueOf(line.split("=")[1]);
+				if (line.startsWith("playerMaxSpeed")) playerMaxSpeed = Float.valueOf(line.split("=")[1]);
+				if (line.startsWith("devMode")) devMode = Boolean.valueOf(line.split("=")[1]);
 			}
 			reader.close();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			System.err.println("Error reading game rule file!\nGame will shut down now.");
 			Display.destroy();
 			System.exit(1);

@@ -1,7 +1,6 @@
 package game;
 
-public enum EngineState
-{
+public enum EngineState {
 	GAME,
 	EDITOR;
 }

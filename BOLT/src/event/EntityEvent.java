@@ -11,8 +11,7 @@ import org.json.JSONObject;
 import entity.Entity;
 import game.Game;
 
-public class EntityEvent
-{
+public class EntityEvent {
 	public final Entity owner;
 	public String target;
 	public String targetFunction;
@@ -20,59 +19,45 @@ public class EntityEvent
 	public JSONArray parameters;
 	private List<String> flags = new ArrayList<>();
 	
-	public EntityEvent(Entity owner, JSONObject o)
-	{
+	public EntityEvent(Entity owner, JSONObject o) {
 		this.owner = owner;
-		try
-		{
+		try {
 			this.target = o.getString("target");
 			this.targetFunction = o.getString("function");
 			this.parameters = o.getJSONArray("params");
 			
 			JSONArray f = o.getJSONArray("flags");
-			for(int i = 0; i < f.length(); i++)
-			{
+			for (int i = 0; i < f.length(); i++) {
 				this.flags.add(f.getString(i));
 			}
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean isFlagSet(String name)
-	{
+	public boolean isFlagSet(String name) {
 		return this.flags.contains(name);
 	}
 	
-	public boolean trigger()
-	{
+	public boolean trigger() {
 		List<Entity> targets = Game.getCurrentGame().getCurrentWorld().getEntityList(target);
 		
 		
-		for(Entity e : targets)
-		{
+		for (Entity e : targets) {
 			Method[] methods = e.getClass().getMethods();
 			
 			Object[] o = new Object[parameters.length()];
 			
-			try
-			{
-				for(int i = 0; i < parameters.length(); i++)
-				{
+			try {
+				for (int i = 0; i < parameters.length(); i++) {
 					Object obj = parameters.get(i);
-					if(obj instanceof String && ((String)obj).startsWith("@"))
-						o[i] = owner.customValues.get(((String)obj).replace("@", ""));
-					else o[i] = obj;				
+					if (obj instanceof String && ((String) obj).startsWith("@")) o[i] = owner.customValues.get(((String) obj).replace("@", ""));
+					else o[i] = obj;
 				}
 				
-				for(Method m : methods)
-					if(m.getName().equals(targetFunction))
-						m.invoke(e, o);
-			}
-			catch(Exception exc)
-			{
+				for (Method m : methods)
+					if (m.getName().equals(targetFunction)) m.invoke(e, o);
+			} catch (Exception exc) {
 				exc.printStackTrace();
 				return false;
 			}

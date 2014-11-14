@@ -14,61 +14,56 @@ import util.math.Plane;
  * 
  * @author Felix Schmidt
  */
-public class CollisionBox extends CollisionObject
-{
+public class CollisionBox extends CollisionObject {
 	/**
 	 * one edge of the box where all the other vectors start
 	 */
 	public Vector3f startingPoint = new Vector3f(0, 0, 0);
-
+	
 	/**
 	 * a array which contains all 8 edges of the box
 	 */
-	public Vector3f[] points = { new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
-			new Vector3f(0, 0, 0), new Vector3f(0, 0, 0) };
-
+	public Vector3f[] points = { new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0) };
+	
 	/**
 	 * the depth of the box
 	 */
 	public Vector3f depth = new Vector3f(0, 0, 0);
-
+	
 	/**
 	 * the height of the box
 	 */
 	public Vector3f width = new Vector3f(0, 0, 0);
-
+	
 	/**
 	 * the width of the box
 	 */
 	public Vector3f height = new Vector3f(0, 0, 0);
-
+	
 	/**
 	 * the mass of the ellipsoid used to calculate falling of objects
 	 */
 	public float mass = 0;
-
+	
 	/**
 	 * creates a standard CollisionBox object with all values set to 0
 	 */
-	public CollisionBox()
-	{
-	}
-
+	public CollisionBox() {}
+	
 	/**
 	 * creates a CollisionBox with a startingPoint, depth, width and height but
 	 * mass set to 0
 	 * 
 	 * @param startingPoint
-	 *            one edge of the box where all the other vectors start
+	 *          one edge of the box where all the other vectors start
 	 * @param depth
-	 *            the depth of the box
+	 *          the depth of the box
 	 * @param width
-	 *            the width of the box
+	 *          the width of the box
 	 * @param height
-	 *            the height of the box
+	 *          the height of the box
 	 */
-	public CollisionBox(Vector3f startingPoint, Vector3f depth, Vector3f width, Vector3f height)
-	{
+	public CollisionBox(Vector3f startingPoint, Vector3f depth, Vector3f width, Vector3f height) {
 		this.startingPoint = MathHelper.cloneVector(startingPoint);
 		this.depth = MathHelper.cloneVector(depth);
 		this.width = MathHelper.cloneVector(width);
@@ -86,44 +81,41 @@ public class CollisionBox extends CollisionObject
 		Vector3f.add((Vector3f) MathHelper.cloneVector(depth).scale(0.5f), (Vector3f) MathHelper.cloneVector(width).scale(0.5f), middle);
 		Vector3f.add((Vector3f) middle, (Vector3f) MathHelper.cloneVector(height).scale(0.5f), middle);
 	}
-
+	
 	/**
 	 * creates a CollisionBox with a mass, startingPoint, depth, width and
 	 * height
 	 * 
 	 * @param mass
-	 *            the mass of the surrounded object used to calculate falling of
-	 *            objects
+	 *          the mass of the surrounded object used to calculate falling of
+	 *          objects
 	 * @param startingPoint
-	 *            one edge of the box where all the other vectors start
+	 *          one edge of the box where all the other vectors start
 	 * @param depth
-	 *            the depth of the box
+	 *          the depth of the box
 	 * @param width
-	 *            the width of the box
+	 *          the width of the box
 	 * @param height
-	 *            the height of the box
+	 *          the height of the box
 	 */
-	public CollisionBox(float mass, Vector3f startingPoint, Vector3f depth, Vector3f width, Vector3f height)
-	{
+	public CollisionBox(float mass, Vector3f startingPoint, Vector3f depth, Vector3f width, Vector3f height) {
 		this(startingPoint, depth, width, height);
 		this.mass = mass;
 	}
-
+	
 	/**
 	 * creates a CollisionBox based on points (from an object or the edges from
 	 * the CollisionBox)
 	 * 
 	 * @param completeCollisionBox
-	 *            set to true if the points are only the 8 edges of the
-	 *            CollisionBox
+	 *          set to true if the points are only the 8 edges of the
+	 *          CollisionBox
 	 * @param points
-	 *            all the points of the object/CollisionBox (first the bottom
-	 *            clockwise than the top clockwise)
+	 *          all the points of the object/CollisionBox (first the bottom
+	 *          clockwise than the top clockwise)
 	 */
-	public CollisionBox(boolean completeCollisionBox, Vector3f... points)
-	{
-		if (completeCollisionBox == true)
-		{
+	public CollisionBox(boolean completeCollisionBox, Vector3f... points) {
+		if (completeCollisionBox == true) {
 			this.points = MathHelper.cloneVectorArray(points);
 			startingPoint = MathHelper.cloneVector(points[0]);
 			Vector3f.sub(points[1], points[0], width);
@@ -132,9 +124,7 @@ public class CollisionBox extends CollisionObject
 			Vector3f.add(width, depth, middle);
 			Vector3f.add(middle, height, middle);
 			middle.scale(0.5f);
-		}
-		else
-		{
+		} else {
 			CollisionBox temp = create(points);
 			startingPoint = temp.startingPoint;
 			this.points = temp.points;
@@ -144,91 +134,78 @@ public class CollisionBox extends CollisionObject
 			height = temp.height;
 		}
 	}
-
+	
 	/**
 	 * creates a CollisionBox based on points (from a n object or the edges from
 	 * the CollisionBox)
 	 * 
 	 * @param mass
-	 *            the mass of the surrounded object
+	 *          the mass of the surrounded object
 	 * @param completeCollisionBox
-	 *            set to true if the points are only the 8 edges of the
-	 *            CollisionBox
+	 *          set to true if the points are only the 8 edges of the
+	 *          CollisionBox
 	 * @param points
-	 *            all the points of the object/CollisionBox (first the bottom
-	 *            clockwise than the top clockwise)
+	 *          all the points of the object/CollisionBox (first the bottom
+	 *          clockwise than the top clockwise)
 	 */
-	public CollisionBox(float mass, boolean completeCollisionBox, Vector3f... points)
-	{
+	public CollisionBox(float mass, boolean completeCollisionBox, Vector3f... points) {
 		this(completeCollisionBox, points);
 		this.mass = mass;
 	}
-
-	public Vector3f getStartingPoint()
-	{
+	
+	public Vector3f getStartingPoint() {
 		return MathHelper.cloneVector(startingPoint);
 	}
-
-	public Vector3f[] getPoints()
-	{
+	
+	public Vector3f[] getPoints() {
 		return MathHelper.cloneVectorArray(points);
 	}
-
-	public Vector3f getMiddle()
-	{
+	
+	public Vector3f getMiddle() {
 		return MathHelper.cloneVector(middle);
 	}
-
-	public Vector3f getDepth()
-	{
+	
+	public Vector3f getDepth() {
 		return MathHelper.cloneVector(depth);
 	}
-
-	public Vector3f getHeight()
-	{
+	
+	public Vector3f getHeight() {
 		return MathHelper.cloneVector(height);
 	}
-
-	public Vector3f getWidth()
-	{
+	
+	public Vector3f getWidth() {
 		return MathHelper.cloneVector(width);
 	}
-
-	public void setStartingPoint(Vector3f startingPoint)
-	{
+	
+	public void setStartingPoint(Vector3f startingPoint) {
 		this.startingPoint = MathHelper.cloneVector(startingPoint);
 	}
-
-	public void setPoints(Vector3f[] points)
-	{
+	
+	public void setPoints(Vector3f[] points) {
 		this.points = MathHelper.cloneVectorArray(points);
 	}
-
-	public void setMiddle(Vector3f middle)
-	{
+	
+	public void setMiddle(Vector3f middle) {
 		this.middle = MathHelper.cloneVector(middle);
 	}
-
-	public void setDepth(Vector3f depth)
-	{
+	
+	public void setDepth(Vector3f depth) {
 		this.depth = MathHelper.cloneVector(depth);
 	}
-
-	public void setHeight(Vector3f height)
-	{
+	
+	public void setHeight(Vector3f height) {
 		this.height = MathHelper.cloneVector(height);
 	}
-
-	public void setWidth(Vector3f width)
-	{
+	
+	public void setWidth(Vector3f width) {
 		this.width = MathHelper.cloneVector(width);
 	}
-
+	
 	/**
 	 * creates the best CollisionBox from an object given with points
 	 * 
 	 * @param points
-	 *            the points which represent the object
+	 *          the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
 	public static CollisionBox create(Vector3f... points) // <-- TODO: Darf nicht static sein da vererbt
@@ -255,35 +232,25 @@ public class CollisionBox extends CollisionObject
 		Vector3f pointTop = MathHelper.cloneVector(points[0]);
 		Vector3f pointBottom = MathHelper.cloneVector(points[0]);
 		// setting the standards to a start value
-		for (int a = 0; a < points.length; a++)
-		{
-			if (points[a].x < minX)
-			{
+		for (int a = 0; a < points.length; a++) {
+			if (points[a].x < minX) {
 				minX = points[a].x;
 				pointLeft = MathHelper.cloneVector(points[a]);
-			}
-			else if (points[a].x > maxX)
-			{
+			} else if (points[a].x > maxX) {
 				maxX = points[a].x;
 				pointRight = MathHelper.cloneVector(points[a]);
 			}
-			if (points[a].y < minY)
-			{
+			if (points[a].y < minY) {
 				minY = points[a].y;
 				pointBack = MathHelper.cloneVector(points[a]);
-			}
-			else if (points[a].y > maxY)
-			{
+			} else if (points[a].y > maxY) {
 				maxY = points[a].y;
 				pointFront = MathHelper.cloneVector(points[a]);
 			}
-			if (points[a].z < minZ)
-			{
+			if (points[a].z < minZ) {
 				minZ = points[a].z;
 				pointBottom = MathHelper.cloneVector(points[a]);
-			}
-			else if (points[a].z > maxZ)
-			{
+			} else if (points[a].z > maxZ) {
 				maxZ = points[a].z;
 				pointTop = MathHelper.cloneVector(points[a]);
 			}
@@ -307,8 +274,7 @@ public class CollisionBox extends CollisionObject
 		// planes are just swapped versions of the starting planes
 		Plane rotationPlane = new Plane(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
 		// Planes will rotate around the y-axis
-		for (int degree = 1; degree < 180; degree++)
-		{
+		for (int degree = 1; degree < 180; degree++) {
 			MathHelper.rotateVector(normalFront, degree, rotationPlane);
 			normalFront.normalise();
 			//
@@ -321,18 +287,15 @@ public class CollisionBox extends CollisionObject
 			Vector3f maxFrontPoint = new Vector3f(0, 0, 0);
 			float maxFrontDis = 0;
 			// calculating if the frontPlane has to be moved outwards
-			for (int i = 0; i < points.length; i++)
-			{
+			for (int i = 0; i < points.length; i++) {
 				float frontDis = front.calculateDistancePoint(false, points[i]);
-				if (frontDis > maxFrontDis)
-				{
+				if (frontDis > maxFrontDis) {
 					maxFrontDis = frontDis;
 					maxFrontPoint = points[i];
 				}
 			}
 			// calculating if the frontPlane has to be moved inwards
-			if (maxFrontDis == 0)
-			{
+			if (maxFrontDis == 0) {
 				// Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for (int i = 0; i < points.length; i++)
@@ -340,8 +303,7 @@ public class CollisionBox extends CollisionObject
 				// Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for (int i = 0; i < distances.size(); i++)
-					if (distances.get(i).floatValue() < mindistance)
-					{
+					if (distances.get(i).floatValue() < mindistance) {
 						maxFrontPoint = points[i];
 						mindistance = distances.get(i).floatValue();
 					}
@@ -355,32 +317,27 @@ public class CollisionBox extends CollisionObject
 			//
 			back = new Plane(normalFront, pointBack);
 			back.transformToHesseNormalForm();
-			if ((front.getNormal().getX() == back.getNormal().getX()) && (front.getNormal().getY() == back.getNormal().getY()) && (front.getNormal().getZ() == back.getNormal().getZ())) back
-					.negateNormal();
+			if ((front.getNormal().getX() == back.getNormal().getX()) && (front.getNormal().getY() == back.getNormal().getY()) && (front.getNormal().getZ() == back.getNormal().getZ())) back.negateNormal();
 			// Initializing temporary maximum values
 			Vector3f maxBackPoint = new Vector3f(0, 0, 0);
 			float maxBackDis = 0;
 			// calculating if the backPlane has to be moved outwards
-			for (int i = 0; i < points.length; i++)
-			{
+			for (int i = 0; i < points.length; i++) {
 				float backDis = back.calculateDistancePoint(false, points[i]);
-				if (backDis > maxBackDis)
-				{
+				if (backDis > maxBackDis) {
 					maxBackDis = backDis;
 					maxBackPoint = points[i];
 				}
 			}
 			// calculating if the backPlane has to be moved inwards
-			if (maxBackDis == 0)
-			{
+			if (maxBackDis == 0) {
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for (int i = 0; i < points.length; i++)
 					distances.add(Float.valueOf(Math.abs(back.calculateDistancePoint(false, points[i]))));
 				// Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for (int i = 0; i < distances.size(); i++)
-					if (distances.get(i).floatValue() < mindistance)
-					{
+					if (distances.get(i).floatValue() < mindistance) {
 						maxBackPoint = points[i];
 						mindistance = distances.get(i).floatValue();
 					}
@@ -389,11 +346,9 @@ public class CollisionBox extends CollisionObject
 			// compareValues)
 			back = new Plane(normalFront, maxBackPoint);
 			back.transformToHesseNormalForm();
-			if ((front.getNormal().getX() == back.getNormal().getX()) && (front.getNormal().getY() == back.getNormal().getY()) && (front.getNormal().getZ() == back.getNormal().getZ())) back
-					.negateNormal();
+			if ((front.getNormal().getX() == back.getNormal().getX()) && (front.getNormal().getY() == back.getNormal().getY()) && (front.getNormal().getZ() == back.getNormal().getZ())) back.negateNormal();
 			distanceFrontBack = Math.abs(front.calculateDistancePoint(false, maxBackPoint));
-			if (distanceFrontBack < minDistanceFrontBack)
-			{
+			if (distanceFrontBack < minDistanceFrontBack) {
 				minDistanceFrontBack = distanceFrontBack;
 				bestPointFront = maxFrontPoint;
 				bestPointBack = maxBackPoint;
@@ -427,10 +382,8 @@ public class CollisionBox extends CollisionObject
 		// planes are just swapped versions of the starting planes
 		rotationPlane = new Plane(front);
 		// Planes will rotate around the normalVector of the left/right-Plane
-		for (int degree = 0; degree < 180; degree++)
-		{
-			if (degree != 0)
-			{
+		for (int degree = 0; degree < 180; degree++) {
+			if (degree != 0) {
 				MathHelper.rotateVector(normalLeft, degree, rotationPlane);
 				normalLeft.normalise();
 			}
@@ -444,18 +397,15 @@ public class CollisionBox extends CollisionObject
 			Vector3f maxLeftPoint = new Vector3f(0, 0, 0);
 			float maxLeftDis = 0;
 			// calculating if the leftPlane has to be moved outwards
-			for (int i = 0; i < points.length; i++)
-			{
+			for (int i = 0; i < points.length; i++) {
 				float leftDis = left.calculateDistancePoint(false, points[i]);
-				if (leftDis > maxLeftDis)
-				{
+				if (leftDis > maxLeftDis) {
 					maxLeftDis = leftDis;
 					maxLeftPoint = points[i];
 				}
 			}
 			// calculating if the leftPlane has to be moved inwards
-			if (maxLeftDis == 0)
-			{
+			if (maxLeftDis == 0) {
 				// Calculating every distance
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for (int i = 0; i < points.length; i++)
@@ -463,8 +413,7 @@ public class CollisionBox extends CollisionObject
 				// Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for (int i = 0; i < distances.size(); i++)
-					if (distances.get(i).floatValue() < mindistance)
-					{
+					if (distances.get(i).floatValue() < mindistance) {
 						maxLeftPoint = points[i];
 						mindistance = distances.get(i).floatValue();
 					}
@@ -483,26 +432,22 @@ public class CollisionBox extends CollisionObject
 			Vector3f maxRightPoint = new Vector3f(0, 0, 0);
 			float maxRightDis = 0;
 			// calculating if the leftPlane has to be moved outwards
-			for (int i = 0; i < points.length; i++)
-			{
+			for (int i = 0; i < points.length; i++) {
 				float rightDis = right.calculateDistancePoint(false, points[i]);
-				if (rightDis > maxRightDis)
-				{
+				if (rightDis > maxRightDis) {
 					maxRightDis = rightDis;
 					maxRightPoint = points[i];
 				}
 			}
 			// calculating if the leftPlane has to be moved inwards
-			if (maxRightDis == 0)
-			{
+			if (maxRightDis == 0) {
 				ArrayList<Float> distances = new ArrayList<Float>();
 				for (int i = 0; i < points.length; i++)
 					distances.add(Float.valueOf(Math.abs(right.calculateDistancePoint(false, points[i]))));
 				// Comparing the distances and setting the minimum distance
 				float mindistance = Float.MAX_VALUE;
 				for (int i = 0; i < distances.size(); i++)
-					if (distances.get(i).floatValue() < mindistance)
-					{
+					if (distances.get(i).floatValue() < mindistance) {
 						maxRightPoint = points[i];
 						mindistance = distances.get(i).floatValue();
 					}
@@ -513,8 +458,7 @@ public class CollisionBox extends CollisionObject
 			right.transformToHesseNormalForm();
 			if (left.getNormal().x == right.getNormal().x && left.getNormal().y == right.getNormal().y && left.getNormal().z == right.getNormal().z) right.negateNormal();
 			distanceLeftRight = Math.abs(left.calculateDistancePoint(false, maxRightPoint));
-			if (distanceLeftRight < minDistanceLeftRight)
-			{
+			if (distanceLeftRight < minDistanceLeftRight) {
 				minDistanceLeftRight = distanceLeftRight;
 				bestPointRight = maxLeftPoint;
 				bestPointLeft = maxRightPoint;
@@ -542,26 +486,22 @@ public class CollisionBox extends CollisionObject
 		top.transformToHesseNormalForm();
 		float maxTopDis = 0;
 		// calculating if the topPlane has to be moved outwards
-		for (int i = 0; i < points.length; i++)
-		{
+		for (int i = 0; i < points.length; i++) {
 			float topDis = top.calculateDistancePoint(false, points[i]);
-			if (topDis > maxTopDis)
-			{
+			if (topDis > maxTopDis) {
 				maxTopDis = topDis;
 				maxPointTop = points[i];
 			}
 		}
 		// calculating if the topPlane has to be moved inwards
-		if (maxTopDis == 0)
-		{
+		if (maxTopDis == 0) {
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for (int i = 0; i < points.length; i++)
 				distances.add(Float.valueOf(Math.abs(top.calculateDistancePoint(false, points[i]))));
 			// Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for (int i = 0; i < distances.size(); i++)
-				if (distances.get(i).floatValue() < mindistance)
-				{
+				if (distances.get(i).floatValue() < mindistance) {
 					maxPointTop = points[i];
 					mindistance = distances.get(i).floatValue();
 				}
@@ -579,26 +519,22 @@ public class CollisionBox extends CollisionObject
 		if (top.getNormal().x == bottom.getNormal().x && top.getNormal().y == bottom.getNormal().y && top.getNormal().z == bottom.getNormal().z) bottom.negateNormal();
 		float maxBottomDis = 0;
 		// calculating if the bottomPlane has to be moved outwards
-		for (int i = 0; i < points.length; i++)
-		{
+		for (int i = 0; i < points.length; i++) {
 			float bottomDis = bottom.calculateDistancePoint(false, points[i]);
-			if (bottomDis > maxBottomDis)
-			{
+			if (bottomDis > maxBottomDis) {
 				maxBottomDis = bottomDis;
 				maxPointBottom = points[i];
 			}
 		}
 		// calculating if the bottomPlane has to be moved inwards
-		if (maxBottomDis == 0)
-		{
+		if (maxBottomDis == 0) {
 			ArrayList<Float> distances = new ArrayList<Float>();
 			for (int i = 0; i < points.length; i++)
 				distances.add(Float.valueOf(Math.abs(bottom.calculateDistancePoint(false, points[i]))));
 			// Comparing the distances and setting the minimum distance
 			float mindistance = Float.MAX_VALUE;
 			for (int i = 0; i < distances.size(); i++)
-				if (distances.get(i).floatValue() < mindistance)
-				{
+				if (distances.get(i).floatValue() < mindistance) {
 					maxPointBottom = points[i];
 					mindistance = distances.get(i).floatValue();
 				}
@@ -637,27 +573,24 @@ public class CollisionBox extends CollisionObject
 		newColBox.middle.scale(0.5f);
 		return newColBox;
 	}
-
+	
 	/**
 	 * creates the best CollisionBox from an object given with points
 	 * 
 	 * @param mass
-	 *            the mass of the surrounded object
+	 *          the mass of the surrounded object
 	 * @param points
-	 *            the points which represent the object
+	 *          the points which represent the object
 	 * @return returns the best CollisionBox of the object
 	 */
-	public static CollisionBox create(float mass, Vector3f... points)
-	{
+	public static CollisionBox create(float mass, Vector3f... points) {
 		CollisionBox newColBox = create(points);
 		newColBox.mass = mass;
 		return newColBox;
 	}
-
+	
 	@Override
-	public String toString()
-	{
-		return "points:" + Arrays.toString(points) + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() + " with length:" + depth.length() + "\nwidth: " + width.toString()
-				+ " with length:" + width.length() + "\nheight: " + height.toString() + " with length:" + height.length() + "\nstartingPoint: " + startingPoint.toString() + "\nmass: " + mass;
+	public String toString() {
+		return "points:" + Arrays.toString(points) + "\nmiddle: " + middle.toString() + "\ndepth: " + depth.toString() + " with length:" + depth.length() + "\nwidth: " + width.toString() + " with length:" + width.length() + "\nheight: " + height.toString() + " with length:" + height.length() + "\nstartingPoint: " + startingPoint.toString() + "\nmass: " + mass;
 	}
 }

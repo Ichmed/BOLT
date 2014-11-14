@@ -9,26 +9,22 @@ import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
- * 
  * @author Felix & Michael
- * 
  */
-public abstract class MathHelper
-{
+public abstract class MathHelper {
 	/**
 	 * The pythagorean-theorem
 	 * 
 	 * @param a
-	 *            the first cathetus
+	 *          the first cathetus
 	 * @param b
-	 *            the second cathetus
+	 *          the second cathetus
 	 * @return the hypotenuse
 	 */
-	public static double pyth(float a, float b)
-	{
+	public static double pyth(float a, float b) {
 		return Math.sqrt(a * a + b * b);
 	}
-
+	
 	/**
 	 * Clamps a value between two others
 	 * 
@@ -37,42 +33,38 @@ public abstract class MathHelper
 	 * @param max
 	 * @return min if the value is smaller then min, max if the value is greater than max and the value itself if it is between min and max
 	 */
-	public static float clamp(float value, float min, float max)
-	{
+	public static float clamp(float value, float min, float max) {
 		return Math.max(min, Math.min(value, max));
 	}
-
+	
 	/**
 	 * This method copies a vector and returns the copy. The copy contains no references to the original vector
 	 * 
 	 * @param vector
 	 * @return A copy of the vector
 	 */
-	public static Vector3f cloneVector(Vector3f vector)
-	{
+	public static Vector3f cloneVector(Vector3f vector) {
 		return new Vector3f(vector.x, vector.y, vector.z);
 	}
-
-	public static Vector3f[] cloneVectorArray(Vector3f[] vArr)
-	{
+	
+	public static Vector3f[] cloneVectorArray(Vector3f[] vArr) {
 		ArrayList<Vector3f> newArr = new ArrayList<Vector3f>();
 		for (Vector3f v : vArr)
 			newArr.add(cloneVector(v));
 		return (Vector3f[]) newArr.toArray();
 	}
-
+	
 	/**
 	 * A method for rotating a vector in a plane (around its normal vector) about degree degree
 	 * 
 	 * @param vector
-	 *            the vector which should be rotated
+	 *          the vector which should be rotated
 	 * @param degree
-	 *            the degree about which the vector should be rotated
+	 *          the degree about which the vector should be rotated
 	 * @param rotationPlane
-	 *            the plane within the vector should be rotated
+	 *          the plane within the vector should be rotated
 	 */
-	public static void rotateVector(Vector3f vector, float degree, Plane rotationPlane)
-	{
+	public static void rotateVector(Vector3f vector, float degree, Plane rotationPlane) {
 		double tempDegree = Math.toRadians(degree);
 		rotationPlane.transformToHesseNormalForm();
 		// Creating a Matrix for rotating the Vector
@@ -90,37 +82,33 @@ public abstract class MathHelper
 		// adopt rotatoinMatrix on vector
 		Matrix3f.transform(rotationMatrix, temp, vector);
 	}
-
+	
 	/**
 	 * creates a normalised perpendicular vector to the starting vector
 	 * 
 	 * @param startingVector
-	 *            the Vector on which the other one should be vertical on
+	 *          the Vector on which the other one should be vertical on
 	 * @return the perpendicular vector
 	 */
-	public static Vector3f createPerpendicularVector(Vector3f startingVector)
-	{
+	public static Vector3f createPerpendicularVector(Vector3f startingVector) {
 		Vector3f temp = new Vector3f(1, 0, 0);
 		if (startingVector.y == 0 && startingVector.z == 0) temp = new Vector3f(0, 1, 0);
 		return Vector3f.cross(startingVector, temp, null);
 	}
-
-	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2)
-	{
+	
+	public static float calculateDistancePointToPoint(Vector3f point1, Vector3f point2) {
 		float distance = 0;
 		Vector3f temp = new Vector3f();
 		Vector3f.sub(point1, point2, temp);
 		distance = (float) Math.sqrt(temp.getX() * temp.getX() + temp.getY() * temp.getY() + temp.getZ() * temp.getZ());
 		return distance;
 	}
-
-	public static boolean equalsVector3f(Vector3f a, Vector3f b)
-	{
+	
+	public static boolean equalsVector3f(Vector3f a, Vector3f b) {
 		return a.x == b.x && a.y == b.y && a.z == b.z;
 	}
-
-	public static FloatBuffer asFloatBuffer(float[] fs)
-	{
+	
+	public static FloatBuffer asFloatBuffer(float[] fs) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(fs.length);
 		buffer.put(fs);
 		buffer.flip();

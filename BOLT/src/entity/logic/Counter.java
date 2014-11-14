@@ -2,41 +2,33 @@ package entity.logic;
 
 import entity.Entity;
 
-public class Counter extends Entity
-{
+public class Counter extends Entity {
 	@Override
-	public void onTick()
-	{
-		if ((int) this.customValues.get("value") >= (int) this.customValues.get("targetValue"))
-		{
+	public void onTick() {
+		if ((int) this.customValues.get("value") >= (int) this.customValues.get("targetValue")) {
 			this.triggerEvent("onReachTargetValue");
-			if((boolean)this.customValues.get("reset"))
-				this.customValues.put("value", (int) this.customValues.get("startingValue"));
+			if ((boolean) this.customValues.get("reset")) this.customValues.put("value", (int) this.customValues.get("startingValue"));
 		}
 	}
-
+	
 	@Override
-	public void initEntity()
-	{
+	public void initEntity() {
 		this.customValues.put("value", (int) this.customValues.get("startingValue"));
 	}
-
-	public void increment()
-	{
+	
+	public void increment() {
 		int i = (int) this.customValues.get("value") + (int) this.customValues.get("incrementValue");
 		this.customValues.put("value", i);
 		this.triggerEvent("onIncrement");
 	}
-
-	public void decrement()
-	{
+	
+	public void decrement() {
 		int i = (int) this.customValues.get("value") - (int) this.customValues.get("decrementValue");
 		this.customValues.put("value", i);
 		this.triggerEvent("onDecrement");
 	}
-
-	public void reset()
-	{
+	
+	public void reset() {
 		this.customValues.put("value", (int) this.customValues.get("startingValue"));
 		this.triggerEvent("onReset");
 	}

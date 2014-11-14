@@ -48,40 +48,35 @@ import entity.util.EntityIO;
  * Entity Editor GUI
  * 
  * @author Dakror
- * 
  */
-public class EntityEditor extends JFrame implements TreeSelectionListener
-{
+public class EntityEditor extends JFrame implements TreeSelectionListener {
 	static final long serialVersionUID = 1L;
-
-	class EntityFile
-	{
+	
+	class EntityFile {
 		File f;
 		EntityBuilder b;
-
-		EntityFile(File f, EntityBuilder b)
-		{
+		
+		EntityFile(File f, EntityBuilder b) {
 			this.f = f;
 			this.b = b;
 		}
-
+		
 		@Override
-		public boolean equals(Object o)
-		{
+		public boolean equals(Object o) {
 			if (!(o instanceof EntityFile)) return false;
 			return f.equals(((EntityFile) o).f);
 		}
 	}
-
+	
 	File entListFile;
 	ArrayList<EntityFile> entityFiles;
-
+	
 	boolean changes;
-
+	
 	// -- toolbar -- //
 	JToolBar toolBar;
 	JButton create, open, save, saveAll, remove;
-
+	
 	// -- components -- //
 	JPanel uiPanel;
 	JScrollPane treePanel;
@@ -93,150 +88,131 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 	JButton browse, apply;
 	JTable customVals, functions, triggers;
 	JTabbedPane tabs;
-
-	public EntityEditor()
-	{
+	
+	public EntityEditor() {
 		super("BOLT Entity Editor");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-
+		
 		initComponents();
-
+		
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-
+	
 	@Override
-	public void valueChanged(TreeSelectionEvent e)
-	{
+	public void valueChanged(TreeSelectionEvent e) {
 		// uiPanel.setLayout(new FlowLayout());
 		// uiPanel.removeAll();
 		// refresh();
-
+		
 		if (tree.getSelectionRows().length == 0) return;
-
+		
 		if (tree.getSelectionRows()[0] > 0) // entity
 		showEntityUI();
-
+		
 		refresh();
 	}
-
-	void initComponents()
-	{
+	
+	void initComponents() {
 		entityFiles = new ArrayList<>();
-
+		
 		JPanel contentPanel = new JPanel(new BorderLayout());
-
+		
 		// -- toolbar -- //
 		toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
-		toolBar.add(Editor.createToolBarButton("New EntityList", "newprj_wiz", new AbstractAction()
-		{
+		toolBar.add(Editor.createToolBarButton("New EntityList", "newprj_wiz", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				newEntityList();
 			}
 		}));
-		toolBar.add(Editor.createToolBarButton("Open EntityList", "prj_obj", new AbstractAction()
-		{
+		toolBar.add(Editor.createToolBarButton("Open EntityList", "prj_obj", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				openEntityList();
 			}
 		}));
 		toolBar.addSeparator();
-
-		create = Editor.createToolBarButton("New Entity", "newenum_wiz", new AbstractAction()
-		{
+		
+		create = Editor.createToolBarButton("New Entity", "newenum_wiz", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				newEntity();
 			}
 		});
 		create.setEnabled(false);
 		toolBar.add(create);
-		open = Editor.createToolBarButton("Open Entity", "fldr_obj", new AbstractAction()
-		{
+		open = Editor.createToolBarButton("Open Entity", "fldr_obj", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				openEntity();
 			}
 		});
 		open.setEnabled(false);
 		toolBar.add(open);
-		save = Editor.createToolBarButton("Save Entity", "save_edit", new AbstractAction()
-		{
+		save = Editor.createToolBarButton("Save Entity", "save_edit", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				saveEntity(tree.getSelectionRows()[0] - 1);
 				reselect();
 			}
 		});
 		save.setEnabled(false);
 		toolBar.add(save);
-		saveAll = Editor.createToolBarButton("Save All Entities", "saveall_edit", new AbstractAction()
-		{
+		saveAll = Editor.createToolBarButton("Save All Entities", "saveall_edit", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				for (int i = 0; i < entityFiles.size(); i++)
-				{
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < entityFiles.size(); i++) {
 					saveEntity(i);
 				}
 			}
 		});
 		saveAll.setEnabled(false);
 		toolBar.add(saveAll);
-		remove = Editor.createToolBarButton("Unlink Entity", "enum_private_obj", new AbstractAction()
-		{
+		remove = Editor.createToolBarButton("Unlink Entity", "enum_private_obj", new AbstractAction() {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				int sel = tree.getSelectionRows()[0] - 1;
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
-
-				if (node.getUserObject().toString().startsWith("*"))
-				{
+				
+				if (node.getUserObject().toString().startsWith("*")) {
 					int r = JOptionPane.showConfirmDialog(EntityEditor.this, "\"" + node.getUserObject().toString().substring(1) + "\" has been modified. Save changes?", "Save Resource", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (r == JOptionPane.YES_OPTION) saveEntity(sel);
 					else if (r == JOptionPane.CANCEL_OPTION) return;
 				}
-
+				
 				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
 				dtm.removeNodeFromParent(node);
 				entityFiles.remove(sel);
 				dtm.reload();
 				tree.expandRow(0);
 				tree.setSelectionRow(0);
-
+				
 				saveEntityList();
 				refresh();
 			}
 		});
 		remove.setEnabled(false);
 		toolBar.add(remove);
-
+		
 		contentPanel.add(toolBar, BorderLayout.PAGE_START);
-
+		
 		// -- components -- //
 		treePanel = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treePanel.setPreferredSize(new Dimension(200, 0));
@@ -249,47 +225,43 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(this);
 		tree.setExpandsSelectedPaths(true);
-
+		
 		treePanel.setViewportView(tree);
-
+		
 		uiPanel = new JPanel(new FlowLayout());
 		uiPanel.setPreferredSize(new Dimension(600, 600));
 		contentPanel.add(uiPanel, BorderLayout.LINE_END);
-
+		
 		setContentPane(contentPanel);
 		pack();
 		setMinimumSize(getSize());
 	}
-
-	void handleResized()
-	{
-		if (tabs != null)
-		{
+	
+	void handleResized() {
+		if (tabs != null) {
 			uiPanel.setPreferredSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
 			tabs.setSize(new Dimension(getContentPane().getWidth() - 200, getContentPane().getHeight() - 28 - toolBar.getHeight()));
 			JPanel p = (JPanel) tabs.getSelectedComponent();
-
+			
 			SpringUtilities.makeCompactGrid(p, p.getComponentCount() / 2, 2, 6, 6, 6, 6);
 			apply.setSize(new Dimension(getContentPane().getWidth() - 200, 25));
 		}
 	}
-
-	void reset()
-	{
+	
+	void reset() {
 		tree.setEnabled(true);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("EntityList");
 		tree.setModel(new DefaultTreeModel(root));
-
+		
 		entListFile = null;
 		entityFiles.clear();
 	}
-
-	void refresh()
-	{
+	
+	void refresh() {
 		revalidate();
 		repaint();
 		treePanel.revalidate();
-
+		
 		// -- toolbar -- //
 		create.setEnabled(tree.getRowCount() > 0);
 		open.setEnabled(tree.getRowCount() > 0);
@@ -297,305 +269,267 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		remove.setEnabled(tree.getSelectionRows().length > 0 && tree.getSelectionRows()[0] > 0);
 		saveAll.setEnabled(changes);
 	}
-
-	void checkChanged()
-	{
-		try
-		{
+	
+	void checkChanged() {
+		try {
 			changes = false;
-
-			for (int i = 0; i < entityFiles.size(); i++)
-			{
+			
+			for (int i = 0; i < entityFiles.size(); i++) {
 				EntityFile f = entityFiles.get(i);
-
+				
 				boolean equals = f.b.equals(EntityIO.loadEntityFile(f.f));
 				if (!equals) changes = true;
-
+				
 				DefaultTreeModel dtm = (DefaultTreeModel) tree.getModel();
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) dtm.getChild(dtm.getRoot(), i);
-
+				
 				node.setUserObject(((equals) ? "" : "*") + f.b.name);
 				dtm.reload(node);
 			}
-
+			
 			refresh();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	void newEntityList()
-	{
+	
+	void newEntityList() {
 		reset();
-
+		
 		refresh();
 	}
-
-	void openEntityList()
-	{
+	
+	void openEntityList() {
 		File f = Editor.getDefaultJFileChooser(true, this, Editor.FILE_FILTER_ENTLIST);
 		if (f == null) return;
-
-		try
-		{
+		
+		try {
 			reset();
 			entListFile = f;
-
+			
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			String line = "";
-			while ((line = br.readLine()) != null)
-			{
+			while ((line = br.readLine()) != null) {
 				File file = new File(FileUtilities.getJarFile().getParentFile(), line);
 				addEntity(file);
 			}
 			br.close();
-
+			
 			refresh();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(EntityEditor.this, "Could not open file: \"" + entListFile.getPath() + "\"!", "Error!", JOptionPane.ERROR_MESSAGE);
-
+			
 			reset();
 		}
 	}
-
-	void addEntity(File file)
-	{
-		try
-		{
+	
+	void addEntity(File file) {
+		try {
 			EntityFile f = new EntityFile(file, EntityIO.loadEntityFile(file));
-
-			if (entityFiles.indexOf(f) > -1)
-			{
+			
+			if (entityFiles.indexOf(f) > -1) {
 				JOptionPane.showMessageDialog(EntityEditor.this, "This Entity is already in this EntityList!", "Error!", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-
+			
 			entityFiles.add(f);
 			((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode(f.f.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
 			tree.expandRow(0);
-
+			
 			saveEntityList();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	void newEntity()
-	{
+	
+	void newEntity() {
 		File f = Editor.getDefaultJFileChooser(false, this, Editor.FILE_FILTER_ENTITY);
 		if (f == null) return;
-
+		
 		f = new File(f.getPath().replace(".entity", "") + ".entity");
-
-		if (entityFiles.contains(new EntityFile(f, null)))
-		{
+		
+		if (entityFiles.contains(new EntityFile(f, null))) {
 			JOptionPane.showMessageDialog(EntityEditor.this, "This file already exists in this EntityList!", "Error!", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-
-		if (f.exists())
-		{
+		
+		if (f.exists()) {
 			int r = JOptionPane.showConfirmDialog(EntityEditor.this, "This file already exists! By creating a new entity in that file, it's old content will be lost!", "Warning!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (r == JOptionPane.CANCEL_OPTION) return;
-		}
-		else
-		{
-			try
-			{
+		} else {
+			try {
 				boolean created = f.createNewFile();
 				if (!created) JOptionPane.showMessageDialog(EntityEditor.this, "The entered filepath is invalid!", "Error!", JOptionPane.ERROR_MESSAGE);
-			}
-			catch (IOException e1)
-			{
+			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(EntityEditor.this, "The entered filepath is invalid!", "Error!", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-
+		
 		EntityBuilder b = new EntityBuilder();
 		b.name = b.fullName = f.getName().replace(".entity", "");
 		entityFiles.add(new EntityFile(f, b));
 		((DefaultTreeModel) tree.getModel()).insertNodeInto(new DefaultMutableTreeNode("*" + f.getName().replace(".entity", "")), (DefaultMutableTreeNode) tree.getModel().getRoot(), ((DefaultMutableTreeNode) tree.getModel().getRoot()).getChildCount());
 		tree.expandRow(0);
 		saveEntityList();
-
+		
 		saveEntity(entityFiles.size() - 1);
-
+		
 		refresh();
 		checkChanged();
 	}
-
-	void openEntity()
-	{
+	
+	void openEntity() {
 		File f = Editor.getDefaultJFileChooser(true, this, Editor.FILE_FILTER_ENTITY);
 		if (f == null) return;
-
+		
 		addEntity(f);
 	}
-
-	void saveEntity(int index)
-	{
+	
+	void saveEntity(int index) {
 		refresh();
 		checkChanged();
-
+		
 		EntityFile f = entityFiles.get(index);
-
-		if (f.b.name.length() > 0 && !f.b.name.equals(f.f.getName().replace(".entity", "")))
-		{
+		
+		if (f.b.name.length() > 0 && !f.b.name.equals(f.f.getName().replace(".entity", ""))) {
 			f.f.renameTo(new File(f.f.getParentFile(), f.b.name + ".entity"));
 			f.f = new File(f.f.getParentFile(), f.b.name + ".entity");
-
+			
 			saveEntityList();
 		}
-
+		
 		EntityIO.saveEntityFile(f.b, getParent(f.b), f.f);
-
+		
 		refresh();
 		checkChanged();
 	}
-
-	void saveEntityList()
-	{
-		if (entListFile == null)
-		{
+	
+	void saveEntityList() {
+		if (entListFile == null) {
 			File f = Editor.getDefaultJFileChooser(false, this, Editor.FILE_FILTER_ENTLIST);
 			if (f == null) return;
-
+			
 			entListFile = f;
 		}
-
+		
 		String s = "";
-		for (EntityFile f : entityFiles)
-		{
+		for (EntityFile f : entityFiles) {
 			s += FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f.f).replace("\\", "/") + "\n";
 		}
 		FileUtilities.setFileContent(entListFile, s);
 	}
-
-	void showEntityUI()
-	{
+	
+	void showEntityUI() {
 		refresh();
-
+		
 		uiPanel.setLayout(null);
-
-		if (tabs == null)
-		{
+		
+		if (tabs == null) {
 			tabs = new JTabbedPane();
 			tabs.setBounds(0, -1, uiPanel.getWidth() + 3, uiPanel.getHeight() - 28);
 			tabs.setPreferredSize(uiPanel.getPreferredSize());
 		}
 		tabs.removeAll();
-
+		
 		if (tree.getSelectionRows()[0] - 1 < 0) return;
-
+		
 		final EntityBuilder b = entityFiles.get(tree.getSelectionRows()[0] - 1).b;
 		final EntityBuilder p = getParent(b);
 		b.loadParent(p);
-
+		
 		// -- first tab -- //
-
+		
 		JPanel panel = new JPanel(new SpringLayout());
 		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 525));
 		panel.add(new JLabel("Parent:"));
-
+		
 		Vector<String> suggest = new Vector<String>();
-		for (int i = 0; i < entityFiles.size(); i++)
-		{
+		for (int i = 0; i < entityFiles.size(); i++) {
 			if (i == tree.getSelectionRows()[0] - 1) continue;
 			suggest.add(entityFiles.get(i).b.name);
 		}
 		parent = new JSuggestField(this, suggest);
 		parent.setText(b.parent);
 		panel.add(parent);
-
+		
 		panel.add(new JLabel("Name:"));
 		name = new JTextField(15);
 		name.setText(b.name);
 		panel.add(name);
-
+		
 		panel.add(new JLabel("Full Name:"));
 		fullName = new JTextField(15);
 		fullName.setText(b.fullName);
 		panel.add(fullName);
-
+		
 		panel.add(new JLabel("Physical Type:"));
 		physType = new JComboBox<>(new String[] { "none", "physical", "static" });
 		physType.setSelectedIndex(b.physicsType);
 		panel.add(physType);
-
+		
 		panel.add(new JLabel("Collision Type:"));
 		collType = new JComboBox<>(new String[] { "solid", "gameSolid", "nonSolid" });
 		collType.setSelectedIndex(b.collisionType);
 		panel.add(collType);
-
+		
 		panel.add(new JLabel("Invisible:"));
 		invis = new JCheckBox();
 		invis.setSelected(b.invisible);
 		panel.add(invis);
-
+		
 		panel.add(new JLabel("Gravity:"));
 		grav = new JCheckBox();
 		grav.setSelected(b.gravity);
 		panel.add(grav);
-
+		
 		panel.add(new JLabel("Class:"));
 		klass = new JTextField(15);
 		klass.setText(b.classPath);
 		panel.add(klass);
-
+		
 		panel.add(new JLabel("Model:"));
 		JPanel panel3 = new JPanel();
 		model = new JTextField(15);
 		model.setText(b.model);
 		panel3.add(model);
-		panel3.add(new JButton(new AbstractAction("Browse...")
-		{
+		panel3.add(new JButton(new AbstractAction("Browse...") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				File f = Editor.getDefaultJFileChooser(true, EntityEditor.this, Editor.FILE_FILTER_OBJECT);
 				if (f == null) return;
-
+				
 				model.setText(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"));
 			}
 		}));
 		panel.add(panel3);
-
+		
 		panel.add(new JLabel("Collision Model:"));
 		JPanel panel4 = new JPanel();
 		collModel = new JTextField(15);
 		collModel.setText(b.collisionModel);
 		panel4.add(collModel);
-		panel4.add(new JButton(new AbstractAction("Browse...")
-		{
+		panel4.add(new JButton(new AbstractAction("Browse...") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				File f = Editor.getDefaultJFileChooser(true, EntityEditor.this, Editor.FILE_FILTER_OBJECT);
 				if (f == null) return;
-
+				
 				model.setText(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"));
 			}
 		}));
 		panel.add(panel4);
-
+		
 		panel.add(new JLabel("Custom Values:"));
 		JPanel panel5 = new JPanel(new BorderLayout());
 		String[][] data = new String[b.customValues.size()][];
 		ArrayList<String> keySet = new ArrayList<>(b.customValues.keySet());
 		Collections.sort(keySet);
-		for (int i = 0; i < b.customValues.size(); i++)
-		{
+		for (int i = 0; i < b.customValues.size(); i++) {
 			String key = keySet.get(i);
 			data[i] = new String[] { b.customValues.get(key).getClass().getSimpleName(), key, b.customValues.get(key).toString() };
 		}
@@ -608,94 +542,82 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		customVals.setFillsViewportHeight(true);
 		customVals.setRowHeight(22);
 		customVals.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		customVals.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-		{
+		customVals.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
-			public void valueChanged(ListSelectionEvent e)
-			{
+			public void valueChanged(ListSelectionEvent e) {
 				if (customVals.getSelectedRow() > -1) browse.setEnabled(customVals.getValueAt(customVals.getSelectedRow(), 0).toString().equals("File"));
 			}
 		});
-
+		
 		JComboBox<String> type = new JComboBox<String>(new String[] { "Byte", "Integer", "Double", "Boolean", "String", "File" });
 		type.setSelectedIndex(4);
 		customVals.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(type));
 		jsp.setPreferredSize(new Dimension(customVals.getWidth(), 150));
 		panel5.add(jsp, BorderLayout.NORTH);
-		browse = new JButton(new AbstractAction("Browse...")
-		{
+		browse = new JButton(new AbstractAction("Browse...") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				File f = Editor.getDefaultJFileChooser(true, EntityEditor.this, null);
 				if (f == null) return;
-
+				
 				customVals.setValueAt(FileUtilities.getRelativePath(FileUtilities.getJarFile().getParentFile(), f).replace("\\", "/"), customVals.getSelectedRow(), 2);
 			}
 		});
 		browse.setEnabled(false);
 		panel5.add(browse, BorderLayout.PAGE_END);
-		panel5.add(new JButton(new AbstractAction("Remove")
-		{
+		panel5.add(new JButton(new AbstractAction("Remove") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				DefaultTableModel model = (DefaultTableModel) customVals.getModel();
 				if (customVals.getSelectedRow() == -1) return;
 				model.removeRow(customVals.getSelectedRow());
 			}
 		}), BorderLayout.WEST);
-		panel5.add(new JButton(new AbstractAction("New")
-		{
+		panel5.add(new JButton(new AbstractAction("New") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				DefaultTableModel model = (DefaultTableModel) customVals.getModel();
 				model.addRow(new Object[] { "String", "", "" });
 			}
 		}), BorderLayout.EAST);
 		panel.add(panel5);
-
+		
 		SpringUtilities.makeCompactGrid(panel, 11, 2, 6, 6, 6, 6);
-
+		
 		JPanel wrap = new JPanel();
 		wrap.add(panel);
-
+		
 		tabs.addTab("Basic", wrap);
-
+		
 		// -- second tab -- //
 		panel = new JPanel(new SpringLayout());
 		panel.setPreferredSize(new Dimension(uiPanel.getWidth(), 370));
-
+		
 		panel.add(new JLabel("Triggers:"));
-
+		
 		String[][] eventData = new String[b.triggers.size() + b.nonInheritedTriggers.size()][];
-
-		for (int i = 0; i < b.triggers.size(); i++)
-		{
+		
+		for (int i = 0; i < b.triggers.size(); i++) {
 			eventData[i] = new String[] { "false", ((p != null && p.triggers.contains(b.triggers.get(i))) ? "parent:" : "") + b.triggers.get(i) };
 		}
-		for (int i = b.triggers.size(); i < eventData.length; i++)
-		{
+		for (int i = b.triggers.size(); i < eventData.length; i++) {
 			eventData[i] = new String[] { "true", "parent:" + b.nonInheritedTriggers.get(i - b.triggers.size()) };
 		}
-
-		triggers = new JTable(new DefaultTableModel(eventData, new String[] { "nonInherit", "Name" }))
-		{
+		
+		triggers = new JTable(new DefaultTableModel(eventData, new String[] { "nonInherit", "Name" })) {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public boolean isCellEditable(int row, int column)
-			{
+			public boolean isCellEditable(int row, int column) {
 				if (!triggers.getValueAt(row, 1).toString().contains("parent:") && column == 0) return false; // disable nonInherit of not from parent
 				if (triggers.getValueAt(row, 1).toString().contains("parent:") && column > 0) return false;
-
+				
 				return true;
 			}
 		};
@@ -710,50 +632,42 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		jsp.setPreferredSize(new Dimension(0, 150));
 		JPanel panel2 = new JPanel(new BorderLayout());
 		panel2.add(jsp, BorderLayout.NORTH);
-		panel2.add(new JButton(new AbstractAction("Remove")
-		{
+		panel2.add(new JButton(new AbstractAction("Remove") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				if (triggers.getSelectedRow() > -1) ((DefaultTableModel) triggers.getModel()).removeRow(triggers.getSelectedRow());
 			}
 		}), BorderLayout.WEST);
-		panel2.add(new JButton(new AbstractAction("Add")
-		{
+		panel2.add(new JButton(new AbstractAction("Add") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				((DefaultTableModel) triggers.getModel()).addRow(new String[] { "false", "" });
 			}
 		}), BorderLayout.EAST);
 		panel.add(panel2);
-
+		
 		panel.add(new JLabel("Functions:"));
-
+		
 		String[][] functionData = new String[b.functions.size() + b.nonInheritedFunctions.size()][];
-		for (int i = 0; i < b.functions.size(); i++)
-		{
+		for (int i = 0; i < b.functions.size(); i++) {
 			String f = b.functions.get(i);
 			functionData[i] = new String[] { "false", ((p != null && p.functions.contains(f)) ? "parent:" : "") + f.substring(0, f.indexOf("(")).trim(), f.substring(f.indexOf("(") + 1, f.indexOf(")")).trim() };
 		}
-		for (int i = b.functions.size(); i < functionData.length; i++)
-		{
+		for (int i = b.functions.size(); i < functionData.length; i++) {
 			functionData[i] = new String[] { "true", "parent:" + b.nonInheritedFunctions.get(i - b.functions.size()).substring(0, b.nonInheritedFunctions.get(i - b.functions.size()).indexOf("(")).trim(), b.nonInheritedFunctions.get(i - b.functions.size()).substring(b.nonInheritedFunctions.get(i - b.functions.size()).indexOf("(") + 1, b.nonInheritedFunctions.get(i - b.functions.size()).indexOf(")")).trim() };
 		}
-		functions = new JTable(new DefaultTableModel(functionData, new String[] { "nonInherit", "Name", "Parameters" }))
-		{
+		functions = new JTable(new DefaultTableModel(functionData, new String[] { "nonInherit", "Name", "Parameters" })) {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public boolean isCellEditable(int row, int column)
-			{
+			public boolean isCellEditable(int row, int column) {
 				if (!functions.getValueAt(row, 1).toString().contains("parent:") && column == 0) return false; // disable nonInherit of not from parent
 				if (functions.getValueAt(row, 1).toString().contains("parent:") && column > 0) return false;
-
+				
 				return true;
 			}
 		};
@@ -768,162 +682,144 @@ public class EntityEditor extends JFrame implements TreeSelectionListener
 		jsp.setPreferredSize(new Dimension(0, 150));
 		panel2 = new JPanel(new BorderLayout());
 		panel2.add(jsp, BorderLayout.NORTH);
-		panel2.add(new JButton(new AbstractAction("Remove")
-		{
+		panel2.add(new JButton(new AbstractAction("Remove") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				if (functions.getSelectedRow() > -1) ((DefaultTableModel) functions.getModel()).removeRow(functions.getSelectedRow());
 			}
 		}), BorderLayout.WEST);
-		panel2.add(new JButton(new AbstractAction("Add")
-		{
+		panel2.add(new JButton(new AbstractAction("Add") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				((DefaultTableModel) functions.getModel()).addRow(new String[] { "false", "", "" });
 			}
 		}), BorderLayout.EAST);
 		panel.add(panel2);
-
+		
 		SpringUtilities.makeCompactGrid(panel, 2, 2, 6, 6, 6, 6);
-
+		
 		wrap = new JPanel();
 		wrap.add(panel);
-
+		
 		tabs.addTab("Events", wrap);
-
+		
 		uiPanel.add(tabs);
-
-		apply = new JButton(new AbstractAction("Apply")
-		{
+		
+		apply = new JButton(new AbstractAction("Apply") {
 			static final long serialVersionUID = 1L;
-
+			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				boolean valid = true;
 				String message = "";
-
+				
 				EntityBuilder builder = new EntityBuilder();
-
+				
 				builder.parent = parent.getText();
-
-				if (valid && name.getText().length() == 0)
-				{
+				
+				if (valid && name.getText().length() == 0) {
 					valid = false;
 					message = "Please enter a name!";
-				}
-				else builder.name = name.getText();
-
+				} else builder.name = name.getText();
+				
 				if (fullName.getText().length() == 0) builder.fullName = name.getText();
 				else builder.fullName = fullName.getText();
-
+				
 				builder.physicsType = physType.getSelectedIndex();
 				builder.collisionType = collType.getSelectedIndex();
 				builder.invisible = invis.isSelected();
 				builder.gravity = grav.isSelected();
 				builder.model = model.getText();
-
+				
 				builder.collisionModel = collModel.getText();
-
+				
 				builder.classPath = klass.getText();
-
-				for (int i = 0; i < customVals.getRowCount(); i++)
-				{
+				
+				for (int i = 0; i < customVals.getRowCount(); i++) {
 					String type = customVals.getValueAt(i, 0).toString();
 					String name = customVals.getValueAt(i, 1).toString();
 					String value = customVals.getValueAt(i, 2).toString();
-
-					if (type.length() == 0 || name.length() == 0 || value.length() == 0)
-					{
+					
+					if (type.length() == 0 || name.length() == 0 || value.length() == 0) {
 						valid = false;
 						message = "Please fill all fields for customValue #" + i + "!";
 						break;
 					}
-
+					
 					if (type.equals("Integer")) builder.customValues.put(name, Integer.parseInt(value));
 					else if (type.equals("Double")) builder.customValues.put(name, Double.parseDouble(value));
 					else if (type.equals("Byte")) builder.customValues.put(name, Byte.parseByte(value));
 					else if (type.equals("Boolean")) builder.customValues.put(name, Boolean.parseBoolean(value));
 					else if (type.equals("File")) builder.customValues.put(name, value);
 				}
-
-				for (int i = 0; i < triggers.getRowCount(); i++)
-				{
+				
+				for (int i = 0; i < triggers.getRowCount(); i++) {
 					Boolean nonInherit = Boolean.valueOf(triggers.getValueAt(i, 0).toString());
 					String name = triggers.getValueAt(i, 1).toString();
-					if (name.length() == 0)
-					{
+					if (name.length() == 0) {
 						valid = false;
 						message = "Please enter a name for trigger #" + i + "!";
 						break;
 					}
-
+					
 					if (name.startsWith("parent:") && nonInherit) builder.nonInheritedTriggers.add(name.replace("parent:", ""));
 					else builder.triggers.add(name.replace("parent:", ""));
 				}
-
-				for (int i = 0; i < functions.getRowCount(); i++)
-				{
+				
+				for (int i = 0; i < functions.getRowCount(); i++) {
 					Boolean nonInherit = Boolean.valueOf(functions.getValueAt(i, 0).toString());
 					String name = functions.getValueAt(i, 1).toString();
 					String params = functions.getValueAt(i, 2).toString();
-					if (name.length() == 0)
-					{
+					if (name.length() == 0) {
 						valid = false;
 						message = "Please enter a name for function #" + i + "!";
 						break;
 					}
-
+					
 					if (name.startsWith("parent:") && nonInherit) builder.nonInheritedFunctions.add(name.replace("parent:", "") + "(" + params + ")");
 					else builder.functions.add(name.replace("parent:", "") + "(" + params + ")");
 				}
-
-				if (!valid)
-				{
+				
+				if (!valid) {
 					JOptionPane.showMessageDialog(EntityEditor.this, message, "Error!", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-
+				
 				int index = tree.getSelectionRows()[0] - 1;
-
+				
 				entityFiles.set(index, new EntityFile(entityFiles.get(index).f, builder));
-
+				
 				refresh();
 				checkChanged();
-
+				
 				reselect();
 			}
 		});
 		apply.setBounds(0, uiPanel.getHeight() - 27, uiPanel.getWidth(), 25);
 		uiPanel.add(apply);
-
+		
 		refresh();
 	}
-
-	void reselect()
-	{
+	
+	void reselect() {
 		int tab = tabs.getSelectedIndex();
 		int sel = tree.getSelectionRows()[0];
 		tree.setSelectionRow(0);
 		tree.setSelectionRow(sel);
 		tabs.setSelectedIndex(tab);
 	}
-
-	EntityBuilder getParent(EntityBuilder b)
-	{
+	
+	EntityBuilder getParent(EntityBuilder b) {
 		if (b.parent == null) return null;
-
-		for (EntityFile key : entityFiles)
-		{
+		
+		for (EntityFile key : entityFiles) {
 			if (key.b.name.equals(b.parent)) return key.b;
 		}
-
+		
 		return null;
 	}
 }

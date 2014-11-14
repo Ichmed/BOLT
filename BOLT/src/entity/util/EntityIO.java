@@ -19,161 +19,105 @@ import entity.EntityRegistry;
  * This class will load and create EntityBuilders
  * 
  * @author Ichmed
- * 
  */
-public class EntityIO
-{
+public class EntityIO {
 	public static HashMap<String, EntityFound> entitiesFound = new HashMap<>();
-
+	
 	/**
 	 * This method will create a new instance of EntityBuilder containing the the values specified in a .entity file. You will have to call a .entlist file containing the path to the .entity file first
 	 * 
 	 * @param name
-	 *            the entity's name
+	 *          the entity's name
 	 * @return Returns an instance of EntityBuilder if successful and null if not
 	 * @throws IOException
 	 */
-	public static EntityBuilder loadEntity(String name) throws IOException
-	{
+	public static EntityBuilder loadEntity(String name) throws IOException {
 		String path = "";
-		if (doesEntityExist(name))
-		{
+		if (doesEntityExist(name)) {
 			if (isParentValid(entitiesFound.get(name).getParent())) path = entitiesFound.get(name).getPath();
 			else return null;
-		}
-		else return null;
-
+		} else return null;
+		
 		return loadEntityFile(new File(path));
-
+		
 	}
-
-	public static EntityBuilder loadEntityFile(File f) throws IOException
-	{
+	
+	public static EntityBuilder loadEntityFile(File f) throws IOException {
 		String content = Compressor.decompressFile(f);
 		if (content == null) return new EntityBuilder();
-
+		
 		String[] lines = content.split("\n");
-
+		
 		EntityBuilder e = new EntityBuilder();
 		boolean parentFound = false;
-		for (int i = 0; i < lines.length; i++)
-		{
+		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i].trim();
 			if (line.length() == 0) continue;
-
-			if (line.startsWith("#"))
-			;
-			else if (line.startsWith("parent "))
-			{
+			
+			if (line.startsWith("#")) ;
+			else if (line.startsWith("parent ")) {
 				String parent = line.split(" ")[1];
 				if (parent.equals("null")) parentFound = true;
-				else if (EntityIO.doesEntityExist(parent))
-				{
+				else if (EntityIO.doesEntityExist(parent)) {
 					EntityRegistry.registerEntityBuilder(EntityIO.loadEntity(parent));
 					e = EntityRegistry.entries.get(parent).clone();
 					e.parent = parent;
 					parentFound = true;
 				}
-			}
-			else if (!parentFound)
-			{
+			} else if (!parentFound) {
 				return null;
-			}
-			else if (line.startsWith("name "))
-			{
+			} else if (line.startsWith("name ")) {
 				e.name = line.split(" ")[1];
-			}
-			else if (line.startsWith("fullName "))
-			{
+			} else if (line.startsWith("fullName ")) {
 				e.fullName = line.substring(line.indexOf(" ", 8)).trim();
-			}
-			else if (line.startsWith("physicsType "))
-			{
+			} else if (line.startsWith("physicsType ")) {
 				e.physicsType = Integer.valueOf(line.split(" ")[1]);
-			}
-			else if (line.startsWith("collisionType "))
-			{
+			} else if (line.startsWith("collisionType ")) {
 				e.collisionType = Integer.valueOf(line.split(" ")[1]);
-			}
-			else if (line.startsWith("invisible "))
-			{
+			} else if (line.startsWith("invisible ")) {
 				e.invisible = Boolean.valueOf(line.split(" ")[1]);
-			}
-			else if (line.startsWith("gravity "))
-			{
+			} else if (line.startsWith("gravity ")) {
 				e.gravity = Boolean.valueOf(line.split(" ")[1]);
-			}
-			else if (line.startsWith("class "))
-			{
+			} else if (line.startsWith("class ")) {
 				e.classPath = line.split(" ")[1];
-			}
-			else if (line.startsWith("model "))
-			{
+			} else if (line.startsWith("model ")) {
 				e.model = line.split(" ")[1];
-			}
-			else if (line.startsWith("collisionModel "))
-			{
+			} else if (line.startsWith("collisionModel ")) {
 				e.collisionModel = line.split(" ")[1];
-			}
-			else if (line.startsWith("weight "))
-			{
+			} else if (line.startsWith("weight ")) {
 				e.weight = Float.valueOf(line.split(" ")[1]);
-			}
-			else if (line.startsWith("balancePoint "))
-			{
+			} else if (line.startsWith("balancePoint ")) {
 				e.balancePoint = new Vector3f(Float.valueOf(line.split(" ")[1]), Float.valueOf(line.split(" ")[2]), Float.valueOf(line.split(" ")[3]));
-			}
-			else if (line.startsWith("trigger "))
-			{
+			} else if (line.startsWith("trigger ")) {
 				e.triggers.add(line.split(" ")[1]);
-			}
-			else if (line.startsWith("-trigger "))
-			{
+			} else if (line.startsWith("-trigger ")) {
 				e.nonInheritedTriggers.add(line.split(" ")[1]);
 				e.triggers.remove(line.split(" ")[1]);
-			}
-			else if (line.startsWith("function "))
-			{
+			} else if (line.startsWith("function ")) {
 				e.functions.add(line.substring("function ".length()));
-			}
-			else if (line.startsWith("-function "))
-			{
+			} else if (line.startsWith("-function ")) {
 				e.nonInheritedFunctions.add(line.substring("-function ".length()));
 				e.functions.remove(line.substring("-function ".length()));
-			}
-			else
-			{
-				if (line.startsWith("byte "))
-				{
+			} else {
+				if (line.startsWith("byte ")) {
 					e.customValues.put(line.split(" ")[1], Byte.valueOf(line.split(" ")[2]));
-				}
-				else if (line.startsWith("integer "))
-				{
+				} else if (line.startsWith("integer ")) {
 					e.customValues.put(line.split(" ")[1], Integer.valueOf(line.split(" ")[2]));
-				}
-				else if (line.startsWith("double "))
-				{
+				} else if (line.startsWith("double ")) {
 					e.customValues.put(line.split(" ")[1], Double.valueOf(line.split(" ")[2]));
-				}
-				else if (line.startsWith("boolean "))
-				{
+				} else if (line.startsWith("boolean ")) {
 					e.customValues.put(line.split(" ")[1], Boolean.valueOf(line.split(" ")[2]));
-				}
-				else if (line.startsWith("string "))
-				{
+				} else if (line.startsWith("string ")) {
 					e.customValues.put(line.split(" ")[1], line.substring(line.indexOf(" ", 8)).trim());
-				}
-				else if (line.startsWith("file "))
-				{
+				} else if (line.startsWith("file ")) {
 					e.customValues.put(line.split(" ")[1], new File(line.split(" ")[2]));
 				}
 			}
 		}
 		return e;
 	}
-
-	public static void saveEntityFile(EntityBuilder b, EntityBuilder p, File f)
-	{
+	
+	public static void saveEntityFile(EntityBuilder b, EntityBuilder p, File f) {
 		String content = "";
 		String nl = "\n";
 		content += "parent " + n(b.parent) + nl;
@@ -183,165 +127,139 @@ public class EntityIO
 		content += "collType " + b.collisionType + nl;
 		content += "invisible " + Boolean.toString(b.invisible) + nl;
 		content += "gravity " + Boolean.toString(b.gravity) + nl;
-		if (!n(b.classPath).equals("null"))
-		{
+		if (!n(b.classPath).equals("null")) {
 			if (p == null || (p != null && !p.classPath.equals(b.classPath))) content += "class " + b.classPath + nl;
 		}
-
-		if (!n(b.model).equals("null"))
-		{
+		
+		if (!n(b.model).equals("null")) {
 			if (p == null || (p != null && !p.model.equals(b.model))) content += "model " + b.model + nl;
 		}
-
-		if (!n(b.collisionModel).equals("null"))
-		{
+		
+		if (!n(b.collisionModel).equals("null")) {
 			if (p == null || (p != null && !p.collisionModel.equals(b.collisionModel))) content += "collisionModel " + b.collisionModel + nl;
 		}
-
-		for (String key : b.customValues.keySet())
-		{
+		
+		for (String key : b.customValues.keySet()) {
 			if (p == null || (p != null && !p.customValues.containsKey(key))) content += b.customValues.get(key).getClass().getSimpleName().toLowerCase() + " " + key + " " + b.customValues.get(key) + nl;
 		}
-
-		for (String function : b.functions)
-		{
+		
+		for (String function : b.functions) {
 			if (p == null || (p != null && !p.functions.contains(function))) content += "function " + function + nl;
 		}
-
-		for (String trigger : b.triggers)
-		{
+		
+		for (String trigger : b.triggers) {
 			if (p == null || (p != null && !p.triggers.contains(trigger))) content += "trigger " + trigger + nl;
 		}
-
-		for (String function : b.nonInheritedFunctions)
-		{
+		
+		for (String function : b.nonInheritedFunctions) {
 			if (p == null || (p != null && !p.nonInheritedFunctions.contains(function))) content += "-function " + function + nl;
 		}
-
-		for (String trigger : b.nonInheritedTriggers)
-		{
+		
+		for (String trigger : b.nonInheritedTriggers) {
 			if (p == null || (p != null && !p.nonInheritedTriggers.contains(trigger))) content += "-trigger " + trigger + nl;
 		}
-
+		
 		Compressor.compressFile(f, content);
 		// FileUtilities.setFileContent(new File(f.getParentFile(), f.getName() + ".debug"), content);
 	}
-
+	
 	/**
 	 * Handles null values
 	 * 
 	 * @param o
-	 *            String to check
+	 *          String to check
 	 * @return 'null'-escaped String
 	 */
-	private static String n(String o)
-	{
+	private static String n(String o) {
 		if (o == null || o.length() == 0) return "null";
 		else return o;
 	}
-
-	private static boolean isParentValid(String parent)
-	{
+	
+	private static boolean isParentValid(String parent) {
 		if (parent.equals("null")) return true;
 		else if (doesEntityExist(parent)) return isParentValid(entitiesFound.get(parent).getParent());
 		return false;
 	}
-
+	
 	/**
 	 * This method will only work if a .entlist file containing the Entity's path was already parsed using findEntities(String path)
 	 * 
 	 * @param name
 	 * @return
 	 */
-	private static boolean doesEntityExist(String name)
-	{
+	private static boolean doesEntityExist(String name) {
 		return entitiesFound.containsKey(name);
 	}
-
+	
 	/**
 	 * This method will try to find any .entity files specified in a given .entlist file and put them into a HashMap for future access
 	 * 
 	 * @param path
-	 *            The path to an .entlist file
+	 *          The path to an .entlist file
 	 * @throws IOException
 	 */
-	public static void findEntities(String path)
-	{
-		try
-		{
+	public static void findEntities(String path) {
+		try {
 			File entFile = new File(path);
 			BufferedReader reader = new BufferedReader(new FileReader(entFile));
 			String line;
 			List<String> filesToParse = new ArrayList<>();
-			while ((line = reader.readLine()) != null)
-			{
+			while ((line = reader.readLine()) != null) {
 				filesToParse.add(line);
 			}
 			reader.close();
-
-			for (String s : filesToParse)
-			{
+			
+			for (String s : filesToParse) {
 				findEntity(s);
 			}
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public static void findEntity(String path)
-	{
+	
+	public static void findEntity(String path) {
 		File file = new File(path);
-
+		
 		String[] lines = Compressor.decompressFile(file).split("\n");
-
+		
 		String name = "", parent = "";
-
-		for (int i = 0; i < lines.length; i++)
-		{
+		
+		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i].trim();
-
-			if (line.startsWith("#"))
-			;
+			
+			if (line.startsWith("#")) ;
 			else if (line.startsWith("parent ")) parent = line.split(" ")[1];
 			else if (line.startsWith("name ")) name = line.split(" ")[1];
 		}
-
+		
 		if (name != "" && parent != "") entitiesFound.put(name, new EntityFound(parent, name, path));
 		else System.err.println(path + " could not be read properly");
 	}
-
+	
 	/**
 	 * Used internally for HashMap entries
 	 * 
 	 * @author Ichmed
-	 * 
 	 */
-	public static class EntityFound
-	{
+	public static class EntityFound {
 		private final String parent, name, path;
-
-		public EntityFound(String parent, String name, String path)
-		{
+		
+		public EntityFound(String parent, String name, String path) {
 			super();
 			this.parent = parent;
 			this.name = name;
 			this.path = path;
 		}
-
-		public String getParent()
-		{
+		
+		public String getParent() {
 			return parent;
 		}
-
-		public String getName()
-		{
+		
+		public String getName() {
 			return name;
 		}
-
-		public String getPath()
-		{
+		
+		public String getPath() {
 			return path;
 		}
 	}
